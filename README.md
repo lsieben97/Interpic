@@ -1,1 +1,43 @@
 # Interpic
+Semi-automatic interactive reference documentation generator.
+
+Interpic (short for INteractive PICture) is a Semi-automatic interactive reference documentation generator primarily focussed towards web applications. (allthough with the right extensions it should be possible to generate documentation for any kind of project)
+
+## Project status
+This project is still a proof of concept. there is a lot to be done before v1.0  
+
+what follows is a non-exhaustive list of things to be done.
+- [ ] More complete settings system (sections, helper settings, events(?))
+- [ ] Multi-language documentation support
+- [ ] Multiple web drivers support (eg. firefox, IE, Edge, Safari)
+- [ ] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
+- [ ] Working extension system (loading unloading, importing)
+- [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
+- [ ] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
+- [ ] Maximum amount of 1 selenium instance per session per driver.
+
+
+## Project structure
+The codebase consists of the following assemblies:
+### Interpic.Studio
+The main studio assembly containing the studio application.
+### Interpic.UI
+Contains style files as well as all icons used by the studio.
+### Interpic.Extensions
+Contains the extension system. as well as the `IStudioEnvironment` class which the studio implements.
+### Interpic.Models
+Contains the object model interpic uses.
+### Interpic.Alerts
+Contains various alert dialogs the studio uses.
+### Interpic.AsyncTasks
+Contains Interpic's asynchronous task framework.
+### Interpic.Settings
+Contains Interpic's settings framework.
+### Interpic.Web
+The build-in web project type. build like an interpic extension. It's loaded in by default.
+### Interpic.Web.Selenium
+Contains the selenium wrapper used to communicate with selenium.
+### Interpic.Builders.MarkdownMKDocs
+Contains the `IProjectBuilder` implementation to generate markdown files for use with MKDocs.
+### Interpic.Utils
+Contains various utilities.
