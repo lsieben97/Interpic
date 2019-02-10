@@ -1,0 +1,55 @@
+﻿<Window x:Class="Interpic.Studio.Windows.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Studio.Windows"
+        mc:Ignorable="d"
+        Title="Welcome!" Height="312" Width="550" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/Icon.png">
+    <Grid>
+        <Image Margin="0,10,234,-41">
+            <Image.Source>
+                <BitmapImage DecodePixelWidth="300" UriSource="/Interpic.UI;component/Icons/Logo.png" />
+            </Image.Source>
+        </Image>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="About" VerticalAlignment="Top" FontSize="36" FontFamily="Verdana" Foreground="White"/>
+        <Button x:Name="btnClose" Content="X" HorizontalAlignment="Left" Margin="525,1.03,-8,0" VerticalAlignment="Top" Width="25" Height="25" Background="#FFEB2F2F" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" Click="btnClose_Click"/>
+        <TextBlock x:Name="lbVersion" HorizontalAlignment="Left" Margin="234,57,0,0" TextWrapping="Wrap" Text="version
+                   " VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="20" FontStyle="Italic"/>
+        <TextBlock HorizontalAlignment="Left" Margin="234,95,0,0" TextWrapping="Wrap" Text="Developed by Luc Sieben" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="22"/>
+        <ScrollViewer Style="{DynamicResource ScrollViewerStyle}" Margin="234,144,0,0" VerticalAlignment="Top">
+            <RichTextBox HorizontalAlignment="Left"  Foreground="White" FontFamily="Verdana" FontSize="14" Background="#FF646464" IsReadOnly="True" IsDocumentEnabled="True">
+                <FlowDocument>
+                    <Paragraph>
+                        <Run Text="Libraries:"/>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run Text="Newtonsoft.Json"/>
+                        <LineBreak/>
+                        <Run Text="Copyright (c) 2007 James Newton-King"/>
+                        <LineBreak/>
+                        <Run Text="Licensed under MIT licence"/>
+                        <Hyperlink ToolTip="http://www.newtonsoft.com/json" Foreground="White">http://www.newtonsoft.com/json</Hyperlink>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run Text="Infragistics WPF MetroDark theme"/>
+                        <LineBreak/>
+                        <Run Text="Copyright (c) Brian Lagunas"/>
+                        <LineBreak/>
+                        <Run Text="Unknown license"/>
+                        <Hyperlink ToolTip="https://www.nuget.org/packages/Infragistics.Themes.MetroDark.Wpf/" Foreground="White">https://www.nuget.org/packages/Infragistics.Themes.MetroDark.Wpf/</Hyperlink>
+                    </Paragraph>
+                    <Paragraph>
+                        <Run Text="RecursiveChangeNotifier"/>
+                        <LineBreak/>
+                        <Run Text="Copyright (c) 2016 Recursive Change Notifier developers"/>
+                        <LineBreak/>
+                        <Run Text="Licensed under MIT licence"/>
+                        <Hyperlink ToolTip="https://github.com/lostmsu/RecursiveChangeNotifier" Foreground="White">https://github.com/lostmsu/RecursiveChangeNotifier</Hyperlink>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+        </ScrollViewer>
+
+    </Grid>
+</Window>

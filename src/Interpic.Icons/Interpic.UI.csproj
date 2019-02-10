@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{656BBAF2-BB4D-4674-9D64-FC8C25D7237B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Interpic.UI</RootNamespace>
+    <AssemblyName>Interpic.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\WPFToolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CheckmarkGreen.png" />
+    <Resource Include="Icons\FailRed.png" />
+    <Resource Include="Icons\Wait.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\AddOutline.png" />
+    <Resource Include="Icons\Build.png" />
+    <Resource Include="Icons\Confirm.png" />
+    <Resource Include="Icons\Control.png" />
+    <Resource Include="Icons\Done.png" />
+    <Resource Include="Icons\Error.png" />
+    <Resource Include="Icons\Exit.png" />
+    <Resource Include="Icons\Export.png" />
+    <Resource Include="Icons\Extension.png" />
+    <Resource Include="Icons\ExtensionWhite.png" />
+    <Resource Include="Icons\Help.png" />
+    <Resource Include="Icons\Icon.png" />
+    <Resource Include="Icons\Info.png" />
+    <Resource Include="Icons\Logo.png" />
+    <Resource Include="Icons\New.png" />
+    <Resource Include="Icons\Open.png" />
+    <Resource Include="Icons\Page.png" />
+    <Resource Include="Icons\PageWhite.png" />
+    <Resource Include="Icons\Project.png" />
+    <Resource Include="Icons\Save.png" />
+    <Resource Include="Icons\SaveAs.png" />
+    <Resource Include="Icons\Section.png" />
+    <Resource Include="Icons\Settings.png" />
+    <Resource Include="Icons\Warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\SettingsWhite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\WaitWhite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ArrowRightBold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\InfoWhite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\MetroDark\MetroDark.MSControls.Core.Implicit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MetroDark\MetroDark.MSControls.Toolkit.Implicit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MetroDark\Styles.Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MetroDark\Styles.WPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MetroDark\Theme.Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ArrowThickLeft.png" />
+    <Resource Include="Icons\ArrowThickRight.png" />
+    <Resource Include="Icons\ControlWhite.png" />
+    <Resource Include="Icons\BuildWhite.png" />
+    <Resource Include="Icons\Array.png" />
+    <Content Include="Icons\HelpWhite.png" />
+    <Resource Include="Icons\ProjectWhite.png" />
+    <Resource Include="Icons\SectionWhite.png" />
+    <Resource Include="Icons\Search.png" />
+    <Resource Include="Icons\XmlWhite.png" />
+    <Resource Include="Icons\SaveWhite.png" />
+    <Resource Include="Icons\ObjectWhite.png" />
+    <Resource Include="Icons\Object.png" />
+    <Content Include="Themes\MetroDark\HowToApplyTheme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

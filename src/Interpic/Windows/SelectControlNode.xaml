@@ -1,0 +1,20 @@
+﻿<Window x:Class="Interpic.Studio.Windows.SelectControlNode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Studio.Windows"
+        mc:Ignorable="d"
+        Title="Select Control Node" Height="328.859" Width="554.7" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/Control.png" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="63,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana" Grid.RowSpan="2"><Run Text="Select "/><Run Text="Control Node"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="10,63,0,0" TextWrapping="Wrap" Text="Discovered Controls" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <ListBox x:Name="lsbDiscoveredControls" HorizontalAlignment="Left" Height="155" Margin="10,85,0,0"  VerticalAlignment="Top" Width="522" Style="{DynamicResource ListBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" SelectionChanged="lsbDiscoveredControls_SelectionChanged"/>
+        <Button x:Name="btnSelect" Content="Select" HorizontalAlignment="Left" Margin="419,245,0,0" VerticalAlignment="Top" Width="113" Style="{DynamicResource ButtonStyle}" Click="btnSelect_Click"/>
+        <Button x:Name="btnSelectCustomNode" Content="Select custom node" HorizontalAlignment="Left" Margin="200,245,0,0" VerticalAlignment="Top" Width="214" Style="{DynamicResource ButtonStyle}" Click="btnSelectCustomNode_Click"/>
+        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="56,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}" Grid.Row="1"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/XmlWhite.png" Width="48" Height="48"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="113" Style="{DynamicResource ButtonStyle}" Click="btnCancel_Click"/>
+
+    </Grid>
+</Window>

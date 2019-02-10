@@ -1,0 +1,18 @@
+﻿<Window x:Name="window" x:Class="Interpic.Alerts.ChooseOptionAlert"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Alerts"
+        mc:Ignorable="d"
+        Title="Done" Height="200" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" BorderBrush="{DynamicResource Brush05}" Icon="/Interpic.UI;component/Icons/Done.png">
+    <Grid>
+        <ScrollViewer Style="{DynamicResource ScrollViewerStyle}">
+            <TextBlock x:Name="lbMessage" HorizontalAlignment="Left" Margin="10,53,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" FontSize="16" Height="102" Width="380" FontFamily="Verdana"/>
+        </ScrollViewer>
+        <Image Margin="0,5,352,147" Source="/Interpic.UI;component/Icons/HelpWhite.png" Stretch="Fill"/>
+        <TextBlock HorizontalAlignment="Left" Margin="59.5,14,0,0" TextWrapping="Wrap" Text="Choose an option" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Button x:Name="btnOption1" Content="OK" HorizontalAlignment="Right" Margin="0,160,10,0" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="btnOption1_Click"/>
+        <Button x:Name="btnOption2" Content="OK" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="btnOption2_Click"/>
+    </Grid>
+</Window>

@@ -1,0 +1,20 @@
+﻿<Window x:Name="window" x:Class="Interpic.Alerts.ErrorAlert"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Alerts"
+        mc:Ignorable="d"
+        Title="Error" Height="200" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" BorderBrush="Black" Icon="/Interpic.UI;component/Icons/Error.png">
+    <Grid>
+        <Button x:Name="btnClose" Content="X" HorizontalAlignment="Left" Margin="375,0,0,0" VerticalAlignment="Top" Width="25" Height="25" Background="#FFEB2F2F" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" Click="btnClose_Click"/>
+        <ScrollViewer Style="{DynamicResource ScrollViewerStyle}">
+            <TextBlock x:Name="lbMessage" HorizontalAlignment="Left" Margin="10,53,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" FontSize="16" Height="102" Width="380" FontFamily="Verdana"/>
+        </ScrollViewer>
+        <Image Margin="0,5,352,147" Source="/Interpic.UI;component/Icons/Error.png" Stretch="Fill"/>
+        <TextBlock HorizontalAlignment="Left" Margin="59.5,14,0,0" TextWrapping="Wrap" Text="Error" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Button x:Name="btnOk" Content="OK" HorizontalAlignment="Left" Margin="315,160,0,0" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnOk_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Width="87" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click" />
+
+    </Grid>
+</Window>
