@@ -1,7 +1,9 @@
 # Interpic
-Semi-automatic interactive reference documentation generator.
+Semi-automatic interactive reference documentation generator.  
 
-Interpic (short for INteractive PICture) is a Semi-automatic interactive reference documentation generator primarily focussed towards web applications. (allthough with the right extensions it should be possible to generate documentation for any kind of project)
+Interpic (short for INteractive PICture) is a Semi-automatic interactive reference documentation generator primarily focussed towards web applications. (allthough with the right extensions it should be possible to generate documentation for any kind of project)  
+
+The concept of interpic comes from html image maps: the ablilty for a user to click on a control on an image to find more information about that control.
 
 ## Project status
 This project is still a proof of concept. there is a lot to be done before v1.0  
