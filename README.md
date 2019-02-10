@@ -1,3 +1,6 @@
+<img src="https://github.com/lsieben97/Interpic/blob/master/src/Interpic.Icons/Icons/Logo.png" width="400" height="325"/>
+
+
 # Interpic
 Semi-automatic interactive reference documentation generator.  
 
