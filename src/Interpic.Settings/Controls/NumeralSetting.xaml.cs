@@ -30,6 +30,22 @@ namespace Interpic.Settings.Controls
             this.Tag = setting.Description;
             tbValue.Text = setting.Value.ToString();
             tbValue.PreviewTextInput += NumberValidationTextBox;
+            if (setting.Helper != null)
+            {
+                tbValue.Visibility = Visibility.Collapsed;
+                btnHelp.Visibility = Visibility.Visible;
+                btnHelp.Content = setting.Helper.HelpButtonText;
+                btnHelp.Click += BtnHelp_Click;
+            }
+        }
+
+        private void BtnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            HelpResult<int> result = setting.Helper.Help(setting.Value);
+            if (!result.Canceled)
+            {
+                tbValue.Text = result.Result.ToString();
+            }
         }
 
         public bool Validate()

@@ -77,6 +77,8 @@
       <DependentUpon>TextSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="DefaultSettingsValidator.cs" />
+    <Compile Include="HelpResult.cs" />
+    <Compile Include="ISettingHelper.cs" />
     <Compile Include="ISettingValidator.cs" />
     <Compile Include="MultipleChoiceSetting.cs" />
     <Compile Include="PathSetting.cs" />

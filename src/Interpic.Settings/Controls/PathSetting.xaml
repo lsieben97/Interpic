@@ -11,14 +11,15 @@
             <TextBlock x:Name="lbTitle" Margin="6,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="White" FontSize="14" FontFamily="Verdana" Text="Title"/>
             <TextBlock x:Name="lbError" Margin="6,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="#FFB00020" FontSize="9" FontFamily="Verdana" Text=""/>
         </StackPanel>
-        <Grid>
+        <Grid x:Name="grdManual">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70*"/>
                 <ColumnDefinition Width="30*"/>
             </Grid.ColumnDefinitions>
-        <TextBox x:Name="tbValue" Margin="6,0,3,0" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{DynamicResource TextBoxStyle}" Grid.Column="0"/>
+            <TextBox x:Name="tbValue" Margin="6,0,3,0" MaxLines="1" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{DynamicResource TextBoxStyle}" Grid.Column="0"/>
             <Button x:Name="btnSelect" Content="Select" Margin="3,0,3,0" Style="{DynamicResource ButtonStyle}" Grid.Column="1" FontFamily="Verdana" FontSize="14"/>
         </Grid>
+        <Button x:Name="btnHelp" Visibility="Collapsed" Margin="6,0,6,0" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14"/>
         <Separator Margin="6,2,6,2" HorizontalAlignment="Stretch" Width="Auto" Height="Auto"/>
     </StackPanel>
 </UserControl>

@@ -28,6 +28,22 @@ namespace Interpic.Settings.Controls
             lbTitle.Text = setting.Name;
             this.Tag = setting.Description;
             cbValue.IsChecked = setting.Value;
+            if (setting.Helper != null)
+            {
+                cbValue.Visibility = Visibility.Collapsed;
+                btnHelp.Visibility = Visibility.Visible;
+                btnHelp.Content = setting.Helper.HelpButtonText;
+                btnHelp.Click += BtnHelp_Click;
+            }
+        }
+
+        private void BtnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            HelpResult<bool> result = setting.Helper.Help(setting.Value);
+            if (!result.Canceled)
+            {
+                cbValue.IsChecked = result.Result;
+            }
         }
 
         public bool Validate()

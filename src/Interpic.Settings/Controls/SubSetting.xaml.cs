@@ -29,6 +29,22 @@ namespace Interpic.Settings.Controls
             this.Tag = setting.Description;
             btnOpenSubSettings.Content = "Open " + setting.Name;
             btnOpenSubSettings.Click += BtnOpenSubSettings_Click;
+            if (setting.Helper != null)
+            {
+                btnOpenSubSettings.Visibility = Visibility.Collapsed;
+                btnHelp.Visibility = Visibility.Visible;
+                btnHelp.Content = setting.Helper.HelpButtonText;
+                btnHelp.Click += BtnHelp_Click;
+            }
+        }
+
+        private void BtnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            HelpResult<SettingsCollection> result = setting.Helper.Help(setting.Value);
+            if (!result.Canceled)
+            {
+                setting.Value = result.Result;
+            }
         }
 
         private void BtnOpenSubSettings_Click(object sender, RoutedEventArgs e)

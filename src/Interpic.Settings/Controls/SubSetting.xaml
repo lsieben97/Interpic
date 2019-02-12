@@ -13,6 +13,7 @@
         </StackPanel>
 
         <Button x:Name="btnOpenSubSettings" Margin="6,0,6,0" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14"/>
+        <Button x:Name="btnHelp" Visibility="Collapsed" Margin="6,0,6,0" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14"/>
         <Separator Margin="6,2,6,2" HorizontalAlignment="Stretch" Width="Auto" Height="Auto"/>
     </StackPanel>
 </UserControl>

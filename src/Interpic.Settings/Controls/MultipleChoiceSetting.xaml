@@ -12,6 +12,7 @@
             <TextBlock x:Name="lbError" Margin="6,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="#FFB00020" FontSize="9" FontFamily="Verdana" Text=""/>
         </StackPanel>
         <ComboBox x:Name="cbbValue" Margin="6,0,6,3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{DynamicResource ComboBoxStyle}" />
+        <Button x:Name="btnHelp" Visibility="Collapsed" Margin="6,0,6,0" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14"/>
         <Separator Margin="6,2,6,2" HorizontalAlignment="Stretch" Width="Auto" Height="Auto"/>
     </StackPanel>
 </UserControl>

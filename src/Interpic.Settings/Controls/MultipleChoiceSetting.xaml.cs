@@ -35,6 +35,22 @@ namespace Interpic.Settings.Controls
                 cbbValue.Items.Add(item);
             }
             cbbValue.SelectedItem = GetComboBoxItemForValue(setting.Value);
+            if (setting.Helper != null)
+            {
+                cbbValue.Visibility = Visibility.Collapsed;
+                btnHelp.Visibility = Visibility.Visible;
+                btnHelp.Content = setting.Helper.HelpButtonText;
+                btnHelp.Click += BtnHelp_Click;
+            }
+        }
+
+        private void BtnHelp_Click(object sender, RoutedEventArgs e)
+        {
+            HelpResult<string> result = setting.Helper.Help(setting.Value);
+            if (!result.Canceled)
+            {
+                cbbValue.SelectedItem = GetComboBoxItemForValue(result.Result);
+            }
         }
 
         public bool Validate()

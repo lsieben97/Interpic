@@ -8,7 +8,6 @@ namespace Interpic.Settings
 {
     public class Setting<T> : INotifyPropertyChanged
     {
-        private ISettingValidator<T> _validator = new DefaultSettingsValidator<T>();
         private string _key;
         private string _name;
         private string _description;
@@ -21,7 +20,9 @@ namespace Interpic.Settings
         public bool Hidden { get => _hidden; set { _hidden = value; RaisePropertyChanged("Hidden"); } }
         public T Value { get => _value; set { _value = value; RaisePropertyChanged("Value"); } }
         [JsonIgnore]
-        public ISettingValidator<T> Validator { get => _validator; set => _validator = value; }
+        public ISettingValidator<T> Validator { get; set; } = new DefaultSettingsValidator<T>();
+        [JsonIgnore]
+        public ISettingHelper<T> Helper { get; set; }
         [JsonIgnore]
         internal TextBlock InvalidLabel { get; set; }
         [JsonIgnore]
