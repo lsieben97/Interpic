@@ -58,6 +58,24 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\BooleanSetting.xaml.cs">
+      <DependentUpon>BooleanSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MultipleChoiceSetting.xaml.cs">
+      <DependentUpon>MultipleChoiceSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NumeralSetting.xaml.cs">
+      <DependentUpon>NumeralSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PathSetting.xaml.cs">
+      <DependentUpon>PathSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SubSetting.xaml.cs">
+      <DependentUpon>SubSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TextSetting.xaml.cs">
+      <DependentUpon>TextSetting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DefaultSettingsValidator.cs" />
     <Compile Include="ISettingValidator.cs" />
     <Compile Include="MultipleChoiceSetting.cs" />
@@ -80,7 +98,6 @@
     <Compile Include="SettingsEditor.xaml.cs">
       <DependentUpon>SettingsEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TextBlock.cs" />
     <Compile Include="ValidationResult.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -96,6 +113,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\BooleanSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MultipleChoiceSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NumeralSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PathSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SubSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TextSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace Interpic.Settings.Controls
+{
+    /// <summary>
+    /// Interaction logic for NumeralSetting.xaml
+    /// </summary>
+    public partial class NumeralSetting : UserControl
+    {
+        private Setting<int> setting;
+        public NumeralSetting(Setting<int> setting)
+        {
+            InitializeComponent();
+            this.setting = setting;
+            lbTitle.Text = setting.Name;
+            this.Tag = setting.Description;
+            tbValue.Text = setting.Value.ToString();
+            tbValue.PreviewTextInput += NumberValidationTextBox;
+        }
+
+        public bool Validate()
+        {
+            if (tbValue.Text.Length > 0)
+            {
+                if (setting.Validator != null)
+                {
+                    SettingValidationResult result = setting.Validator.Validate(Convert.ToInt32(tbValue.Text));
+                    if (result.IsValid == false)
+                    {
+                        lbError.Text = result.ErrorMessage;
+                    }
+                    return result.IsValid;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                lbError.Text = "Enter a value";
+                return false;
+            }
+        }
+
+        public int GetValue()
+        {
+            return Convert.ToInt32(tbValue.Text);
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+    }
+}

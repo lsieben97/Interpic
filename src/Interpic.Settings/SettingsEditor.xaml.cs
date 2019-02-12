@@ -107,259 +107,34 @@ namespace Interpic.Settings
 
         private void RenderSubSetting(Setting<SettingsCollection> setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 18;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(7, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(3, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            Button openSubSettingsButton = new Button();
-            openSubSettingsButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-            openSubSettingsButton.Content = "Open " + setting.Name;
-            openSubSettingsButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            openSubSettingsButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            openSubSettingsButton.Margin = new Thickness(3, 0, 3, 0);
-            openSubSettingsButton.Width = double.NaN;
-            openSubSettingsButton.VerticalAlignment = VerticalAlignment.Top;
-
-
-            openSubSettingsButton.Click += SubSettingsButton_Click;
-            openSubSettingsButton.Tag = setting;
-
-            spControls.Children.Add(openSubSettingsButton);
-            RenderSeperator();
+            Controls.SubSetting settingControl = new Controls.SubSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
         private void RenderMultipleChoiceSetting(MultipleChoiceSetting setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 14;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(3, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            // text box
-            ComboBox comboBox = new ComboBox();
-            comboBox.Style = Application.Current.Resources["ComboBoxStyle"] as Style;
-            comboBox.VerticalAlignment = VerticalAlignment.Top;
-            comboBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            comboBox.Margin = new Thickness(6, 0, 6, 3);
-            comboBox.Width = double.NaN;
-            comboBox.Tag = setting.Description;
-            comboBox.MouseEnter += SettingTitleTextBlock_MouseEnter;
-
-            foreach (KeyValuePair<string, string> choice in setting.Choices)
-            {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = choice.Key;
-                item.Tag = choice.Value;
-                comboBox.Items.Add(item);
-            }
-            comboBox.SelectedItem = GetComboBoxItemForValue(comboBox, setting.Value);
-            spControls.Children.Add(comboBox);
-            setting.Control = comboBox;
-            RenderSeperator();
+            Controls.MultipleChoiceSetting settingControl = new Controls.MultipleChoiceSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
         private void RenderBooleanSetting(Setting<bool> setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 14;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            // text box
-            CheckBox checkBox = new CheckBox();
-            checkBox.Style = Application.Current.Resources["CheckBoxStyle"] as Style;
-            checkBox.VerticalAlignment = VerticalAlignment.Top;
-            checkBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            checkBox.Width = double.NaN;
-            checkBox.Margin = new Thickness(6, 0, 6, 3);
-            checkBox.Tag = setting.Description;
-            checkBox.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            spControls.Children.Add(checkBox);
-
-            checkBox.IsChecked = setting.Value;
-            setting.Control = checkBox;
-
-            RenderSeperator();
+            Controls.BooleanSetting settingControl = new Controls.BooleanSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
         private void RenderPathSetting(PathSetting setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 14;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            // sizes
-            double containerWidthMinusDefaultPadding = spControls.ActualWidth - 15; // 6 on sides + 3 between button and textbox
-            double buttonWidth = (containerWidthMinusDefaultPadding / 10) * 3;
-            double textboxWidth = (containerWidthMinusDefaultPadding / 10) * 7;
-
-            StackPanel controlPanel = new StackPanel();
-            controlPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            controlPanel.Margin = new Thickness(6, 0, 6, 3);
-            controlPanel.Orientation = Orientation.Horizontal;
-            controlPanel.Height = double.NaN;
-            controlPanel.Width = double.NaN;
-            spControls.Children.Add(controlPanel);
-
-            // text box
-            TextBox textBox = new TextBox();
-            textBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            textBox.VerticalAlignment = VerticalAlignment.Top;
-            textBox.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            textBox.HorizontalAlignment = HorizontalAlignment.Left;
-            textBox.Width = textboxWidth;
-            textBox.IsReadOnly = true;
-            textBox.Margin = new Thickness(0, 0, 3, 0);
-            textBox.Tag = setting.Description;
-            controlPanel.Children.Add(textBox);
-
-            // select path button
-            Button selectButton = new Button();
-            selectButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-            selectButton.Content = "Select";
-            selectButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            selectButton.HorizontalAlignment = HorizontalAlignment.Left;
-            selectButton.VerticalAlignment = VerticalAlignment.Top;
-            selectButton.Width = buttonWidth;
-            selectButton.Click += PathButton_Click;
-            selectButton.Tag = setting;
-            controlPanel.Children.Add(selectButton);
-
-            textBox.Text = setting.Value.ToString();
-
-            setting.Control = textBox;
-
-            RenderSeperator();
+            Controls.PathSetting settingControl = new Controls.PathSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
         private void SubSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -373,204 +148,23 @@ namespace Interpic.Settings
             }
         }
 
-        private void PathButton_Click(object sender, RoutedEventArgs e)
-        {
-            PathSetting setting = (PathSetting)(e.Source as System.Windows.Controls.Button).Tag;
-            if (setting.Type == PathSetting.PathType.Folder)
-            {
-                System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-                if (setting.StartPath != null)
-                {
-                    dialog.SelectedPath = setting.StartPath;
-                }
-                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    TextBox control = setting.Control as TextBox;
-                    control.Text = dialog.SelectedPath;
-                }
-            }
-            else if (setting.Type == PathSetting.PathType.File)
-            {
-                if (setting.Operation == PathSetting.PathOperation.Save)
-                {
-                    SaveFileDialog dialog = new SaveFileDialog();
-                    dialog.Title = setting.DialogTitle;
-                    dialog.FileName = setting.StartFileName;
-                    dialog.DefaultExt = setting.Extension;
-                    dialog.Filter = setting.Filter;
-                    bool? result = dialog.ShowDialog();
-                    if (result.HasValue)
-                    {
-                        if (result.Value == true)
-                        {
-                            TextBox control = setting.Control as TextBox;
-                            control.Text = dialog.FileName;
-                        }
-                    }
-                }
-                else if (setting.Operation == PathSetting.PathOperation.Load)
-                {
-                    OpenFileDialog dialog = new OpenFileDialog();
-                    dialog.Title = setting.DialogTitle;
-                    dialog.FileName = setting.StartFileName;
-                    dialog.DefaultExt = setting.Extension;
-                    dialog.Filter = setting.Filter;
-                    bool? result = dialog.ShowDialog();
-                    if (result.HasValue)
-                    {
-                        if (result.Value == true)
-                        {
-                            TextBox control = setting.Control as TextBox;
-                            control.Text = dialog.FileName;
-                        }
-                    }
-                }
-            }
-        }
-
         private void RenderTextSetting(Setting<string> setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 14;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            // text box
-            TextBox textBox = new TextBox();
-            textBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            textBox.VerticalAlignment = VerticalAlignment.Top;
-            textBox.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            textBox.Width = double.NaN;
-            textBox.Margin = new Thickness(6, 0, 6, 3);
-            textBox.Tag = setting.Description;
-            textBox.Text = setting.Value.ToString();
-            spControls.Children.Add(textBox);
-
-            setting.Control = textBox;
-
-            RenderSeperator();
+            Controls.TextSetting settingControl = new Controls.TextSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
         private void RenderNumeralSetting(Setting<int> setting)
         {
-            // title / error message stack panel
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 3);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Height = double.NaN;
-            titlePanel.Width = double.NaN;
-
-            // title
-            TextBlock settingTitleTextBlock = new TextBlock();
-            settingTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingTitleTextBlock.FontSize = 14;
-            settingTitleTextBlock.Width = double.NaN;
-            settingTitleTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingTitleTextBlock.VerticalAlignment = VerticalAlignment.Center;
-            settingTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            settingTitleTextBlock.Text = setting.Name;
-            settingTitleTextBlock.Tag = setting.Description;
-            settingTitleTextBlock.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            titlePanel.Children.Add(settingTitleTextBlock);
-
-            // error message
-            TextBlock settingErrorTextBlock = new TextBlock();
-            settingErrorTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            settingErrorTextBlock.FontSize = 9;
-            settingErrorTextBlock.Width = double.NaN;
-            settingErrorTextBlock.Margin = new Thickness(6, 0, 0, 0);
-            settingErrorTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            settingErrorTextBlock.VerticalAlignment = VerticalAlignment.Bottom;
-            settingErrorTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(176, 0, 32));
-            settingErrorTextBlock.Text = String.Empty;
-            setting.InvalidLabel = settingErrorTextBlock;
-            titlePanel.Children.Add(settingErrorTextBlock);
-
-            spControls.Children.Add(titlePanel);
-
-            // number picker
-            TextBox numberBox = new TextBox();
-            numberBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            numberBox.VerticalAlignment = VerticalAlignment.Top;
-            numberBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            numberBox.Width = double.NaN;
-            numberBox.Margin = new Thickness(6, 0, 6, 3);
-            numberBox.Tag = setting.Description;
-            numberBox.MouseEnter += SettingTitleTextBlock_MouseEnter;
-            numberBox.PreviewTextInput += NumberValidationTextBox;
-
-            numberBox.Text = setting.Value.ToString();
-
-            spControls.Children.Add(numberBox);
-
-            setting.Control = numberBox;
-            RenderSeperator();
+            Controls.NumeralSetting settingControl = new Controls.NumeralSetting(setting);
+            settingControl.MouseEnter += ShowDescription;
+            setting.Control = settingControl;
+            spControls.Children.Add(settingControl);
         }
 
-        private ComboBoxItem GetComboBoxItemForValue(ComboBox comboBox, string value)
-        {
-            foreach (ComboBoxItem item in comboBox.Items)
-            {
-                if (item.Tag.ToString() == value)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-        private void RenderSeperator()
-        {
-            // line between controls
-            Separator numberSeperator = new Separator();
-            numberSeperator.HorizontalAlignment = HorizontalAlignment.Stretch;
-            numberSeperator.Width = double.NaN;
-            numberSeperator.Height = double.NaN;
-            numberSeperator.Margin = new Thickness(6, 2, 6, 2);
-            spControls.Children.Add(numberSeperator);
-        }
-
-        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void SettingTitleTextBlock_MouseEnter(object sender, MouseEventArgs e)
+        private void ShowDescription(object sender, MouseEventArgs e)
         {
             tbDescription.Text = (e.Source as FrameworkElement).Tag.ToString();
         }
@@ -613,6 +207,11 @@ namespace Interpic.Settings
                 SavePathSetting(setting);
             }
 
+            foreach (Setting<SettingsCollection> setting in SettingsCollection.SubSettings)
+            {
+                SaveSubSetting(setting);
+            }
+
             if (valid)
             {
                 DialogResult = true;
@@ -620,74 +219,82 @@ namespace Interpic.Settings
             }
         }
 
+        private void SaveSubSetting(Setting<SettingsCollection> setting)
+        {
+            Controls.SubSetting settingControl = setting.Control as Controls.SubSetting;
+            if (!settingControl.Validate())
+            {
+                valid = false;
+            }
+            else
+            {
+                setting.Value = settingControl.GetValue();
+            }
+        }
+
         private void SavePathSetting(PathSetting setting)
         {
-            string value = (setting.Control as TextBox).Text;
-            SettingValidationResult result = setting.Validator.Validate(value);
-            if (!result.IsValid)
+            Controls.PathSetting settingControl = setting.Control as Controls.PathSetting;
+            if (!settingControl.Validate())
             {
-                setting.InvalidLabel.Text = result.ErrorMessage;
                 valid = false;
-                return;
             }
-            setting.Value = value;
+            else
+            {
+                setting.Value = settingControl.GetValue();
+            }
         }
 
         private void SaveMultipleChoiceSetting(MultipleChoiceSetting setting)
         {
-            string value = ((ComboBoxItem)(setting.Control as ComboBox).SelectedItem).Tag.ToString();
-            SettingValidationResult result = setting.Validator.Validate(value);
-            if (!result.IsValid)
+            Controls.MultipleChoiceSetting settingControl = setting.Control as Controls.MultipleChoiceSetting;
+            if (!settingControl.Validate())
             {
-                setting.InvalidLabel.Text = result.ErrorMessage;
                 valid = false;
-                return;
             }
-            setting.Value = value;
+            else
+            {
+                setting.Value = settingControl.GetValue();
+            }
         }
 
         private void SaveBooleanSetting(Setting<bool> setting)
         {
-            bool? value = (setting.Control as CheckBox).IsChecked;
-            if (!value.HasValue)
+            Controls.BooleanSetting settingControl = setting.Control as Controls.BooleanSetting;
+            if (!settingControl.Validate())
             {
                 valid = false;
-                return;
             }
-            SettingValidationResult result = setting.Validator.Validate(value.Value);
-            if (!result.IsValid)
+            else
             {
-                setting.InvalidLabel.Text = result.ErrorMessage;
-                valid = false;
-                return;
+                setting.Value = settingControl.GetValue();
             }
-            setting.Value = value.Value;
         }
 
         private void SaveTextSetting(Setting<string> setting)
         {
-            string value = (setting.Control as TextBox).Text;
-            SettingValidationResult result = setting.Validator.Validate(value);
-            if (!result.IsValid)
+            Controls.TextSetting settingControl = setting.Control as Controls.TextSetting;
+            if (!settingControl.Validate())
             {
-                setting.InvalidLabel.Text = result.ErrorMessage;
                 valid = false;
-                return;
             }
-            setting.Value = value;
+            else
+            {
+                setting.Value = settingControl.GetValue();
+            }
         }
 
         private void SaveNumeralSetting(Setting<int> setting)
         {
-            int value = Convert.ToInt32((setting.Control as TextBox).Text);
-            SettingValidationResult result = setting.Validator.Validate(value);
-            if (!result.IsValid)
+            Controls.NumeralSetting settingControl = setting.Control as Controls.NumeralSetting;
+            if (!settingControl.Validate())
             {
-                setting.InvalidLabel.Text = result.ErrorMessage;
                 valid = false;
-                return;
             }
-            setting.Value = value;
+            else
+            {
+                setting.Value = settingControl.GetValue();
+            }
         }
     }
 }
