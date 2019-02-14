@@ -139,6 +139,7 @@ namespace Interpic.Studio
             dialog.ShowDialog();
             if (task.Project != null && startStudioTask.Studio != null)
             {
+                RecentProjects.AddToRecents(task.Project.Name, task.Project.Path);
                 startStudioTask.Studio.Show();
                 Close();
             }
