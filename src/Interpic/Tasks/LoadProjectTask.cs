@@ -16,7 +16,7 @@ namespace Interpic.Studio.Tasks
         public LoadProjectTask(string path)
         {
             this.path = path;
-            TaskName = "Loading project.";
+            TaskName = "Loading project...";
             TaskDescription = path;
             ActionName = "Load project";
             IsIndeterminate = true;
@@ -24,12 +24,17 @@ namespace Interpic.Studio.Tasks
 
         public override Task Execute()
         {
-            return Task.Run(() => Run());
+            TaskScheduler scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            return new TaskFactory(scheduler).StartNew(() => { Run(); });
         }
 
         private void Run()
         {
             Project = Projects.LoadProject(path);
+            if (Project == null)
+            {
+                Dialog.CancelAllTasks();
+            }
         }
     }
 }

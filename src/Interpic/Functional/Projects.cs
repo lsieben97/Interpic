@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -19,6 +20,43 @@ namespace Interpic.Studio.Functional
         {
             try
             {
+                Project project = JsonConvert.DeserializeObject<Project>(File.ReadAllText(path));
+                // when the project has been moved
+                if (project.Path != path)
+                {
+                    project.Path = path;
+                }
+
+                if (! Directory.Exists(project.OutputFolder)) {
+                    WarningAlert.Show("Output folder not found.\nPlease specify an output folder.");
+                    System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+                    DialogResult result = dialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        project.OutputFolder = dialog.SelectedPath;
+                        SaveProject(project);
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid path.");
+                    }
+                }
+
+
+                if (!Directory.Exists(project.OutputFolder)) {
+                    WarningAlert.Show("Project folder not found.\nPlease specify an output folder.");
+                    System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+                    DialogResult result = dialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        project.ProjectFolder = dialog.SelectedPath;
+                        SaveProject(project);
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid path.");
+                    }
+                }
                 return JsonConvert.DeserializeObject<Project>(File.ReadAllText(path));
             }
             catch (Exception ex)

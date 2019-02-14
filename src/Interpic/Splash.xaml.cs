@@ -137,7 +137,7 @@ namespace Interpic.Studio
 
             ProcessTasksDialog dialog = new ProcessTasksDialog(tasks, "Loading Interpic Studio...");
             dialog.ShowDialog();
-            if (task.Project != null && startStudioTask.Studio != null)
+            if (! dialog.AllTasksCanceled)
             {
                 RecentProjects.AddToRecents(task.Project.Name, task.Project.Path);
                 startStudioTask.Studio.Show();
