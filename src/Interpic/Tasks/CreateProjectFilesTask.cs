@@ -35,10 +35,9 @@ namespace Interpic.Studio.Tasks
             {
                 Directory.CreateDirectory(Project.ProjectFolder);
                 Directory.CreateDirectory(Project.OutputFolder);
-                if (!Projects.SaveProject(Project))
+                if (! Projects.SaveProject(Project))
                 {
-                    // Throw exception to let the task fail.
-                    throw new Exception();
+                    Dialog.CancelAllTasks();
                 }
             }
             catch(Exception ex)

@@ -37,6 +37,8 @@ namespace Interpic.Models
         [JsonIgnore]
         public bool Changed { get; set; }
 
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         [JsonIgnore]
         public bool IsNew { get; set; }
 
@@ -46,8 +48,11 @@ namespace Interpic.Models
         public bool HasSettingsAvailable { get => Settings != null; }
 
         [JsonIgnore]
-        public ExtensionObject Extensions { get => _extensions;
-            set {
+        public ExtensionObject Extensions
+        {
+            get => _extensions;
+            set
+            {
                 bool raiseChangedEvent = false;
                 _extensions = value;
                 if (_extensions != null)

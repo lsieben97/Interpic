@@ -18,7 +18,8 @@ namespace Interpic.Web
         public ObservableCollection<DiscoveredControl> FindControls(Section section)
         {
             FindWebControlsTask task = new FindWebControlsTask(section.Parent.GetWebPageExtensions().Document.DocumentNode);
-            new ProcessTaskDialog(task).ShowDialog();
+            ProcessTaskDialog taskDialog = new ProcessTaskDialog(task);
+            taskDialog.ShowDialog();
             ObservableCollection<DiscoveredControl> results = new ObservableCollection<DiscoveredControl>();
             foreach (HtmlNode node in task.SearchResults)
             {

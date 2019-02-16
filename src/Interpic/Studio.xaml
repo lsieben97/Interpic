@@ -23,7 +23,7 @@
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/New.png"/>
                     </MenuItem.Icon>
-                    <MenuItem x:Name="miNewProject" Header="Project" MouseEnter="DisplayControlHint" Tag="Create a new Project." Click="miNewProject_Click">
+                    <MenuItem x:Name="miNewProject" Header="Manual" MouseEnter="DisplayControlHint" Tag="Create a new Project." Click="miNewProject_Click">
                         <MenuItem.Icon>
                             <Image Source="/Interpic.UI;component/Icons/Project.png"/>
                         </MenuItem.Icon>
@@ -36,6 +36,11 @@
                     <MenuItem x:Name="miNewSection" Header="Section" MouseEnter="DisplayControlHint" Tag="Create a new Section." Click="miNewSection_Click">
                         <MenuItem.Icon>
                             <Image Source="/Interpic.UI;component/Icons/Section.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="miNewControl" Header="Control" MouseEnter="DisplayControlHint" Tag="Create a new Control." Click="MiNewControl_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Interpic.UI;component/Icons/Control.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -54,10 +59,15 @@
                         <Image Source="/Interpic.UI;component/Icons/SaveAs.png" MouseEnter="DisplayControlHint"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Export" MouseEnter="DisplayControlHint" Tag="Export project.">
+                <MenuItem Header="Export" MouseEnter="DisplayControlHint" Tag="Export project...">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Export.png" MouseEnter="DisplayControlHint"/>
                     </MenuItem.Icon>
+                    <MenuItem x:Name="miExportJson" Header="JSON" MouseEnter="DisplayControlHint" Tag="Export project as JSON." Click="MiExportJson_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Interpic.UI;component/Icons/Object.png" MouseEnter="DisplayControlHint" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem x:Name="miExit" Header="Exit" MouseEnter="DisplayControlHint" Tag="Close Interpic Studio." Click="miExit_Click">
                     <MenuItem.Icon>
@@ -65,7 +75,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Project">
+            <MenuItem Header="Manual">
                 <MenuItem x:Name="miProjectSettings" Header="Settings" Click="miProjectSettings_Click" MouseEnter="DisplayControlHint" Tag="Project settings.">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Settings.png"/>
@@ -97,7 +107,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem x:Name="miHelp" Header="Help">
-                <MenuItem Header="Help" MouseEnter="DisplayControlHint" Tag="Show user manual.">
+                <MenuItem Header="Help" MouseEnter="DisplayControlHint" Tag="Show user manual." Click="MenuItem_Click">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Help.png" MouseEnter="DisplayControlHint"/>
                     </MenuItem.Icon>

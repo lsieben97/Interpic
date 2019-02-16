@@ -1,5 +1,4 @@
-﻿using Interpic.AsyncTasks;
-using Interpic.Models;
+﻿using Interpic.Models;
 using Interpic.Studio.Functional;
 using System;
 using System.Collections.Generic;
@@ -9,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace Interpic.Studio.Tasks
 {
-    public class LoadProjectTask : AsyncTask
+    public class SaveProjectTask : AsyncTasks.AsyncTask
     {
         public Project Project { get; set; }
-        private string path;
-        public LoadProjectTask(string path)
+        public SaveProjectTask(Project project)
         {
-            this.path = path;
-            TaskName = "Loading project...";
-            TaskDescription = path;
-            ActionName = "Load project";
+            Project = project;
+            TaskName = "Saving project...";
+            TaskDescription = project.Path;
+            ActionName = "Save project";
             IsIndeterminate = true;
         }
 
@@ -30,8 +28,8 @@ namespace Interpic.Studio.Tasks
 
         private void Run()
         {
-            Project = Projects.LoadProject(path);
-            if (Project == null)
+            bool result = Projects.SaveProject(Project);
+            if (result == false)
             {
                 Dialog.CancelAllTasks();
             }

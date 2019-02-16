@@ -1,6 +1,7 @@
 ﻿using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Controls;
@@ -51,6 +52,8 @@ namespace Interpic.Models
         public bool HasSettingsAvailable { get => Settings != null; }
 
         public string Description { get => _description; set { _description = value; RaisePropertyChanged("Description"); } }
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Occurs before the control settings window is shown for this control.

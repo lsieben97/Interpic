@@ -73,17 +73,7 @@ namespace Interpic.Studio
             dialog.ShowDialog();
             if (dialog.Project != null)
             {
-                Projects.SaveProject(dialog.Project);
-                RecentProjects.AddToRecents(dialog.Project.Name, dialog.Project.Path);
-
-                List<AsyncTask> tasks = new List<AsyncTask>();
-                tasks.Add(new LoadGlobalSettingsTask());
-                tasks.Add(new LoadGlobalExtensionsTask());
-                ProcessTasksDialog taskDialog = new ProcessTasksDialog(tasks, "Loading Interpic Studio...");
-                taskDialog.ShowDialog();
-
-                new Studio(dialog.Project).Show();
-                Close();
+                LoadProject(dialog.Project.Path, true);
             }
         }
 
@@ -121,11 +111,10 @@ namespace Interpic.Studio
             }
         }
 
-        private void LoadProject(string path)
+        private void LoadProject(string path, bool isNew = false)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             tasks.Add(new LoadGlobalSettingsTask());
-            tasks.Add(new LoadGlobalExtensionsTask());
             LoadProjectTask task = new LoadProjectTask(path);
             task.PassThrough = true;
             task.PassThroughSource = "Project";
@@ -135,10 +124,11 @@ namespace Interpic.Studio
             StartStudioTask startStudioTask = new StartStudioTask();
             tasks.Add(startStudioTask);
 
-            ProcessTasksDialog dialog = new ProcessTasksDialog(tasks, "Loading Interpic Studio...");
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks, "Loading Interpic Studio...");
             dialog.ShowDialog();
-            if (! dialog.AllTasksCanceled)
+            if (!dialog.AllTasksCanceled)
             {
+                task.Project.IsNew = isNew;
                 RecentProjects.AddToRecents(task.Project.Name, task.Project.Path);
                 startStudioTask.Studio.Show();
                 Close();

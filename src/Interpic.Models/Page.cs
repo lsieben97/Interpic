@@ -1,6 +1,7 @@
 ﻿using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -65,6 +66,8 @@ namespace Interpic.Models
         /// The settings of the page.
         /// </summary>
         public SettingsCollection Settings { get => _settings; set { _settings = value; RaisePropertyChanged("Settings"); } }
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Occurs before the page settings window is shown for this page.

@@ -1,11 +1,14 @@
 ﻿using Interpic.Alerts;
+using Interpic.AsyncTasks;
 using Interpic.Extensions;
 using Interpic.Models;
 using Interpic.Models.EventArgs;
 using Interpic.Settings;
 using Interpic.Studio.Functional;
+using Interpic.Studio.Tasks;
 using Interpic.Studio.Windows;
 using Interpic.Studio.Windows.Developer;
+using Interpic.Studio.Windows.Selectors;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,6 +35,7 @@ namespace Interpic.Studio
         private DispatcherTimer checkTimer = new DispatcherTimer();
         private Models.Page currentPage;
         private Models.Section currentSection;
+        private bool openingNewProject;
 
         #region Events
         public event OnStudioStartup StudioStartup;
@@ -60,6 +64,7 @@ namespace Interpic.Studio
 
         public Studio(Models.Project project)
         {
+            openingNewProject = false;
             InitializeComponent();
             if (AvailableProjectTypes == null)
             {
@@ -75,10 +80,7 @@ namespace Interpic.Studio
             App.InitializeLogger(App.GlobalSettings.GetPathSetting("logDirectory") + "\\last.log", this);
 
             StudioStartup?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
-            if (project.IsNew)
-            {
-                InitializeNewProject(project);
-            }
+            
 
             InitializeUI();
             InitializeObjectModel(project);
@@ -118,18 +120,22 @@ namespace Interpic.Studio
             }
         }
 
-        private void InitializeNewProject(Project project)
+        private void InitializeNewProject()
         {
-            if (project.HasSettingsAvailable)
+            if (CurrentProject.HasSettingsAvailable)
             {
-                InfoAlert.Show("The project settings dialog will now be shown to further configure the project.");
-                SettingsEditor editor = new SettingsEditor(project.Settings);
+                if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                {
+                    InfoAlert.Show("The manual settings dialog will now be shown to further configure the project.");
+                }
+                
+                SettingsEditor editor = new SettingsEditor(CurrentProject.Settings);
                 editor.ShowDialog();
                 if (editor.DialogResult.HasValue)
                 {
                     if (editor.DialogResult.Value == true)
                     {
-                        project.Settings = editor.SettingsCollection;
+                        CurrentProject.Settings = editor.SettingsCollection;
                     }
                     ProjectCreated?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
                 }
@@ -139,6 +145,7 @@ namespace Interpic.Studio
         private void InitializeUI()
         {
             SetStatusBar("Project loaded.");
+            Title = CurrentProject.Name + " - Interpic Studio";
             lbLastSaved.Text = "Last saved: " + CurrentProject.LastSaved.ToShortDateString() + " " + CurrentProject.LastSaved.ToLongTimeString();
 
             checkTimer.Interval = new TimeSpan(0, 0, 1);
@@ -219,6 +226,10 @@ namespace Interpic.Studio
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (CurrentProject.IsNew)
+            {
+                InitializeNewProject();
+            }
             RedrawTreeView();
             (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
         }
@@ -269,7 +280,10 @@ namespace Interpic.Studio
                 if (ProjectTypeProvider.GetDefaultPageSettings() != null)
                 {
                     dialog.Page.Settings = ProjectTypeProvider.GetDefaultPageSettings();
-                    InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
+                    if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                    {
+                        InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
+                    }
                     SettingsEditor editor = new SettingsEditor(dialog.Page.Settings);
                     editor.ShowDialog();
                     if (editor.DialogResult.HasValue)
@@ -290,11 +304,21 @@ namespace Interpic.Studio
                 {
                     dialog.Page.Source = document;
                     dialog.Page.Parent = CurrentProject;
-                    CurrentProject.Pages.Add(dialog.Page);
-                    RedrawTreeView();
-                    dialog.Page.TreeViewItem.IsSelected = true;
-
-                    dialog.Page = ProjectTypeProvider.RefreshPage(dialog.Page, CurrentProject);
+                    
+                    (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, CurrentProject);
+                    if (result.succes)
+                    {
+                        if (result.page.Screenshot != null)
+                        {
+                            CurrentProject.Pages.Add(dialog.Page);
+                            RedrawTreeView();
+                            dialog.Page.TreeViewItem.IsSelected = true;
+                        }
+                        else
+                        {
+                            SetStatusBar("page not added because refreshing failed.");
+                        }
+                    }
                 }
 
             }
@@ -878,6 +902,7 @@ namespace Interpic.Studio
             (Models.Page page, TextBox textbox) controls = ((Models.Page page, TextBox textbox))(e.Source as Button).Tag;
             CurrentProject.Pages[CurrentProject.Pages.IndexOf(controls.page)].Description = controls.textbox.Text;
             RenderTOCForPage(controls.page);
+            SetStatusBar("Page description saved.");
         }
 
         private void SectionSaveButton_Click(object sender, RoutedEventArgs e)
@@ -885,6 +910,7 @@ namespace Interpic.Studio
             (Models.Section section, TextBox textbox) controls = ((Models.Section section, TextBox textbox))(e.Source as Button).Tag;
             currentPage.Sections[currentPage.Sections.IndexOf(controls.section)].Description = controls.textbox.Text;
             RenderSection(controls.section);
+            SetStatusBar("Section description saved.");
         }
 
         private void ControlSaveButton_Click(object sender, RoutedEventArgs e)
@@ -892,6 +918,7 @@ namespace Interpic.Studio
             (Models.Control control, TextBox textbox) controls = ((Models.Control section, TextBox textbox))(e.Source as Button).Tag;
             currentSection.Controls[currentSection.Controls.IndexOf(controls.control)].Description = controls.textbox.Text;
             RenderControlPage(controls.control);
+            SetStatusBar("Control description saved.");
         }
 
         private void PageDescriptionTextAreaChanged(object sender, TextChangedEventArgs e)
@@ -958,7 +985,10 @@ namespace Interpic.Studio
 
         private void miSave_Click(object sender, RoutedEventArgs e)
         {
-            if (Projects.SaveProject(CurrentProject))
+            SaveProjectTask task = new SaveProjectTask(CurrentProject);
+            ProcessTaskDialog dialog = new ProcessTaskDialog(task, "Saving...");
+            dialog.ShowDialog();
+            if (! dialog.TaskToExecute.IsCanceled)
             {
                 SetStatusBar("Project saved.");
                 lbLastSaved.Text = "Last saved: " + CurrentProject.LastSaved.ToShortDateString() + " " + CurrentProject.LastSaved.ToLongTimeString();
@@ -1036,11 +1066,48 @@ namespace Interpic.Studio
 
         private void miOpen_Click(object sender, RoutedEventArgs e)
         {
+            if (CurrentProject.Changed)
+            {
+                if (ConfirmProjectClose())
+                {
+                    LoadNewProject();
+                }
+            }
+            else
+            {
+                LoadNewProject();
+            }
+        }
 
+        private void LoadNewProject()
+        {
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Title = "Select a location";
+            dialog.Filter = "Interpic Project files (.ipp)|*.ipp";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.Value == true)
+            {
+
+                LoadProjectTask loadTask = new LoadProjectTask(dialog.FileName);
+                ProcessTaskDialog taskDialog = new ProcessTaskDialog(loadTask, "Loading...");
+                taskDialog.ShowDialog();
+                if (! taskDialog.TaskToExecute.IsCanceled)
+                {
+                    ProjectUnloaded?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
+                    UnloadCurrentProject();
+                    openingNewProject = true;
+                    checkTimer.Stop();
+                    new Studio(loadTask.Project).Show();
+                    Close();
+                }
+            }
         }
 
         private void miProjectSettings_Click(object sender, RoutedEventArgs e)
         {
+            ProjectSettingsOpening?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
             SettingsEditor editor = new SettingsEditor(CurrentProject.Settings);
             editor.ShowDialog();
             if (editor.DialogResult.Value == true)
@@ -1052,9 +1119,10 @@ namespace Interpic.Studio
             {
                 SetStatusBar("Changes in project settings canceled.");
             }
+            ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
         }
 
-        private void DisplayControlHint(object sender, MouseEventArgs e)
+        private void DisplayControlHint(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (((FrameworkElement)sender).Tag != null)
             {
@@ -1073,15 +1141,32 @@ namespace Interpic.Studio
             {
                 if (ConfirmProjectClose())
                 {
-
                     NewProject dialog = new NewProject();
                     dialog.ShowDialog();
                     if (dialog.Project != null)
                     {
                         ProjectUnloaded?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
                         UnloadCurrentProject();
-                        // todo: load project.
+                        openingNewProject = true;
+                        checkTimer.Stop();
+                        new Studio(dialog.Project).Show();
+                        Close();
+
                     }
+                }
+            }
+            else
+            {
+                NewProject dialog = new NewProject();
+                dialog.ShowDialog();
+                if (dialog.Project != null)
+                {
+                    ProjectUnloaded?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
+                    UnloadCurrentProject();
+                    openingNewProject = true;
+                    checkTimer.Stop();
+                    new Studio(dialog.Project).Show();
+                    Close();
                 }
             }
         }
@@ -1089,6 +1174,8 @@ namespace Interpic.Studio
         private void UnloadCurrentProject()
         {
             CurrentProject = null;
+            currentPage = null;
+            currentSection = null;
         }
 
         private bool ConfirmProjectClose()
@@ -1105,12 +1192,29 @@ namespace Interpic.Studio
 
         private void miNewSection_Click(object sender, RoutedEventArgs e)
         {
-            // Todo page selector.
+            SelectPage selector = new SelectPage(CurrentProject);
+            if (selector.ShowDialog().Value)
+            {
+                Models.Page selectedpage = CurrentProject.Pages.Single(Page => Page.Id == selector.SelectedPageId);
+                AddSection(ref selectedpage);
+            }
         }
 
         private void miSaveAs_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+            dialog.Description = "Select a new project folder.";
 
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                SaveAsNewProjectTask task = new SaveAsNewProjectTask(CurrentProject, dialog.SelectedPath);
+                ProcessTaskDialog saveDialog = new ProcessTaskDialog(task, "Saving...");
+                saveDialog.ShowDialog();
+                if (! saveDialog.TaskToExecute.IsCanceled)
+                {
+                    SetStatusBar("Project saved.");
+                }
+            }
         }
 
         private void miExit_Click(object sender, RoutedEventArgs e)
@@ -1150,33 +1254,7 @@ namespace Interpic.Studio
         {
             if (currentPage != null)
             {
-                NewSection dialog = new NewSection(currentPage);
-                dialog.sectionIdentifierSelector = ProjectTypeProvider.GetSectionSelector();
-                dialog.ShowDialog();
-                if (dialog.Section != null)
-                {
-                    dialog.Section.Parent = currentPage;
-                    currentPage.Sections.Add(dialog.Section);
-                    dialog.Section.TreeViewItem.IsSelected = true;
-                    dialog.Section.TreeViewItem.BringIntoView();
-                    if (ProjectTypeProvider.GetControlFinder() != null)
-                    {
-                        ObservableCollection<DiscoveredControl> foundControls = ProjectTypeProvider.GetControlFinder().FindControls(dialog.Section);
-                        if (foundControls == null)
-                        {
-                            foundControls = new ObservableCollection<DiscoveredControl>();
-                        }
-
-                        dialog.Section.DiscoveredControls = foundControls;
-                        SetStatusBar("Found " + foundControls.Count.ToString() + " controls.");
-                        dialog.Section = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
-                    }
-                    else
-                    {
-                        SetStatusBar("No control finder found for this project type, skipping control discovery.");
-                        dialog.Section = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
-                    }
-                }
+                AddSection(ref currentPage);
             }
             else
             {
@@ -1184,24 +1262,95 @@ namespace Interpic.Studio
             }
         }
 
+        private void AddSection(ref Models.Page page)
+        {
+            NewSection dialog = new NewSection(page);
+            dialog.sectionIdentifierSelector = ProjectTypeProvider.GetSectionSelector();
+            dialog.ShowDialog();
+            if (dialog.Section != null)
+            {
+                dialog.Section.Parent = page;
+                
+                
+                if (ProjectTypeProvider.GetControlFinder() != null)
+                {
+                    ObservableCollection<DiscoveredControl> foundControls = ProjectTypeProvider.GetControlFinder().FindControls(dialog.Section);
+                    if (foundControls == null)
+                    {
+                        foundControls = new ObservableCollection<DiscoveredControl>();
+                    }
+
+                    dialog.Section.DiscoveredControls = foundControls;
+                    SetStatusBar("Found " + foundControls.Count.ToString() + " controls.");
+                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
+                    if (result.succes)
+                    {
+                        if (result.section.ElementBounds != null)
+                        {
+                            page.Sections.Add(dialog.Section);
+                            RedrawTreeView();
+                            dialog.Section.TreeViewItem.IsSelected = true;
+                            dialog.Section.TreeViewItem.BringIntoView();
+                        }
+                        else
+                        {
+                            SetStatusBar("Section not added because refreshing failed.");
+                        }
+                    }
+                }
+                else
+                {
+                    SetStatusBar("No control finder found for this project type, skipping control discovery.");
+                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
+                    if (result.succes)
+                    {
+                        page.Sections.Add(dialog.Section);
+                    }
+                    else
+                    {
+                        SetStatusBar("Section not added because refreshing failed.");
+                    }
+                }
+            }
+        }
+
         private void miAddControl_Click(object sender, RoutedEventArgs e)
         {
             if (currentSection != null)
             {
-                IControlIdentifierSelector selector = ProjectTypeProvider.GetControlSelector();
-                selector.Section = currentSection;
-                AddControl dialog = new AddControl(currentSection.DiscoveredControls, selector);
-                dialog.ShowDialog();
-                if (dialog.Control != null)
-                {
-                    dialog.Control.Parent = currentSection;
-                    currentSection.Controls.Add(dialog.Control);
-                    ProjectTypeProvider.RefreshControl(dialog.Control, currentSection, currentSection.Parent, CurrentProject);
-                }
+                AddControl(ref currentSection);
             }
             else
             {
                 ErrorAlert.Show("No page selected.\nSelect a page from the manual tree on the left.");
+            }
+        }
+
+        private void AddControl(ref Models.Section section)
+        {
+            IControlIdentifierSelector selector = ProjectTypeProvider.GetControlSelector();
+            selector.Section = section;
+            AddControl dialog = new AddControl(section.DiscoveredControls, selector);
+            dialog.ShowDialog();
+            if (dialog.Control != null)
+            {
+                dialog.Control.Parent = section;
+
+                (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, CurrentProject);
+                if (result.succes)
+                {
+                    if (result.control.ElementBounds != null)
+                    {
+                        section.Controls.Add(dialog.Control);
+                        RedrawTreeView();
+                        dialog.Control.TreeViewItem.IsSelected = true;
+                    }
+                    else
+                    {
+                        SetStatusBar("Control not added because refreshing failed.");
+                    }
+                }
+                
             }
         }
 
@@ -1212,7 +1361,49 @@ namespace Interpic.Studio
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            Application.Current.Shutdown();
+            if (!openingNewProject)
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void MiNewControl_Click(object sender, RoutedEventArgs e)
+        {
+            SelectPage selector = new SelectPage(CurrentProject);
+            if (selector.ShowDialog().Value)
+            {
+                Models.Page selectedpage = CurrentProject.Pages.Single(Page => Page.Id == selector.SelectedPageId);
+                SelectSection sectionSelector = new SelectSection(selectedpage);
+                if (sectionSelector.ShowDialog().Value)
+                {
+                    Models.Section selectedSection = selectedpage.Sections.Single(section => section.Id == sectionSelector.SelectedSectionId);
+                    AddControl(ref selectedSection);
+                }
+            }
+        }
+
+        private void MiExportJson_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "Select a location";
+            dialog.Filter = "JSON files (.json)|*.json";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.Value == true)
+            {
+                SaveProjectAsJsonTask task = new SaveProjectAsJsonTask(CurrentProject, dialog.FileName);
+                ProcessTaskDialog taskDialog = new ProcessTaskDialog(task, "Exporting...");
+                if (!taskDialog.TaskToExecute.IsCanceled)
+                {
+                    SetStatusBar("Manual exported.");
+                }
+            }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            InfoAlert.Show("No user manual available now.");
         }
     }
 }

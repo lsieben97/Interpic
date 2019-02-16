@@ -42,12 +42,27 @@ namespace Interpic.Web.Providers
             tasks.Add(getHtmlTask);
             tasks.Add(closeSeleniumTask);
 
-            new AsyncTasks.ProcessTasksDialog(tasks).ShowDialog();
-
-            HtmlDocument document = new HtmlDocument();
-            document.LoadHtml(getHtmlTask.Html);
-            page.Extensions = new WebPageExtensions(document);
-            return getHtmlTask.Html;
+            AsyncTasks.ProcessTasksDialog dialog = new AsyncTasks.ProcessTasksDialog(ref tasks);
+            try
+            {
+                dialog.ShowDialog();
+                if (!dialog.AllTasksCanceled)
+                {
+                    HtmlDocument document = new HtmlDocument();
+                    document.LoadHtml(getHtmlTask.Html);
+                    page.Extensions = new WebPageExtensions(document);
+                    return getHtmlTask.Html;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+            
         }
     }
 }

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="New Project" Height="581" Width="345.744" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/Interpic.UI;component/Icons/Project.png">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Project" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <TextBlock HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Manual" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
         <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,125,0,0" TextWrapping="Wrap" Text="Application Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
@@ -21,11 +21,11 @@
         <Button x:Name="btnFromExtension" Content="From extension" HorizontalAlignment="Left" Margin="10,504,0,0" VerticalAlignment="Top" Width="122" Style="{DynamicResource ButtonStyle}" Click="btnFromExtension_Click" ToolTip="Click here if you want to create a new project using a project type from an extension"/>
         <TextBox x:Name="tbProjectTypeDescription" HorizontalAlignment="Left" Height="65" Margin="10,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="314" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,183,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Application Type"/><Run Text=" description"/></TextBlock>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/Project.png" Width="48" Height="48"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ProjectWhite.png" Width="48" Height="48"/>
         <TextBox x:Name="tbOutputTypeDescription" HorizontalAlignment="Left" Height="65" Margin="10,361,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="314" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,339,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Output Type"/><Run Text=" description"/></TextBlock>
         <TextBlock x:Name="lbProjectFolderError" HorizontalAlignment="Left" Margin="122,440,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="15,436,0,0" TextWrapping="Wrap" Text="Project Folder" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <TextBlock HorizontalAlignment="Left" Margin="15,436,0,0" TextWrapping="Wrap" Text="Manual Folder" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
         <TextBox x:Name="tbProjectFolder" HorizontalAlignment="Left" Height="23" Margin="10,458,0,0" VerticalAlignment="Top" Width="239" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Location" IsReadOnly="True" MaxLines="1"/>
         <Button x:Name="btnBrowseProjectFolder" Content="Browse" HorizontalAlignment="Left" Margin="254,458,0,0" VerticalAlignment="Top" Width="70" Style="{DynamicResource ButtonStyle}" Click="btnBrowseProjectFolder_Click"/>
     </Grid>

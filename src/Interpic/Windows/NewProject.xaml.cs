@@ -102,7 +102,7 @@ namespace Interpic.Studio.Windows
             if (tbProjectFolder.Text == string.Empty)
             {
                 valid = false;
-                lbProjectFolderError.Text = "Enter a project folder";
+                lbProjectFolderError.Text = "Enter a manual folder";
             }
             else
             {
@@ -125,7 +125,7 @@ namespace Interpic.Studio.Windows
                 project.ProjectFolder = tbProjectFolder.Text;
                 ProcessTaskDialog dialog = new ProcessTaskDialog(new CreateProjectFilesTask(project));
                 dialog.ShowDialog();
-                if (!dialog.TaskToExecute.IsCanceled)
+                if (! dialog.TaskToExecute.IsCanceled)
                 {
                     Close();
                 }
@@ -183,7 +183,7 @@ namespace Interpic.Studio.Windows
         private void btnBrowseProjectFolder_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-            dialog.Description = "Select a project folder";
+            dialog.Description = "Select a folder to create the new manual in.";
 
 
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)

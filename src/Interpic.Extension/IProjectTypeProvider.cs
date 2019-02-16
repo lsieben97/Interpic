@@ -94,8 +94,8 @@ namespace Interpic.Extensions
         /// <param name="section">The section the control is part of.</param>
         /// <param name="page">The page the section of the control is part of.</param>
         /// <param name="project">The parent project.</param>
-        /// /// <returns>The control with it's <see cref="Control.ElementBounds"/> property filled with the bounds of the control.</returns>
-        Control RefreshControl(Control control, Section section, Page page, Project project);
+        /// /// <returns>The control with it's <see cref="Control.ElementBounds"/> property filled with the bounds of the control and a bool indicating whether refreshing suceeded.</returns>
+        (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Project project);
 
         /// <summary>
         /// Get the bounds of the given section.
@@ -103,15 +103,15 @@ namespace Interpic.Extensions
         /// <param name="section">The section to refresh.</param>
         /// <param name="page">The page the section is part of.</param>
         /// <param name="project">The parent project.</param>
-        /// <returns>The section with it's <see cref="Section.ElementBounds"/> property filled with the bounds of the section.</returns>
-        Section RefreshSection(Section section, Page page, Project project);
+        /// <returns>The section with it's <see cref="Section.ElementBounds"/> property filled with the bounds of the section and a bool indicating whether refreshing suceeded.</returns>
+        (Section section, bool succes) RefreshSection(Section section, Page page, Project project);
 
         /// <summary>
         /// Get a screenshot for the given page.
         /// </summary>
         /// <param name="page">The page to make a screenshot for.</param>
         /// <param name="project">The parent project.</param>
-        /// <returns>The page with it's <see cref="Page.Screenshot"/> property filled with data.</returns>
-        Page RefreshPage(Page page, Project project);
+        /// <returns>The page with it's <see cref="Page.Screenshot"/> property filled with data and a bool indicating whether refreshing suceeded.</returns>
+        (Page page, bool succes) RefreshPage(Page page, Project project);
     }
 }

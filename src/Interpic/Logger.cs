@@ -26,6 +26,11 @@ namespace Interpic
                 ErrorAlert.Show("Could not create/open log file. Details:\n" + ex.Message);
             }
         }
+        
+        public bool IsOpen()
+        {
+            return logWriter != null ? logWriter.BaseStream.CanWrite : false;
+        }
         public string GetLog()
         {
             try

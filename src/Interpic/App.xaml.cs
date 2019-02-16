@@ -104,7 +104,10 @@ namespace Interpic
 
         internal static void InitializeLogger(string logfile, IStudioEnvironment environment)
         {
-            ApplicationLogger.OpenLog(logfile, environment);
+            if (!ApplicationLogger.IsOpen())
+            {
+                ApplicationLogger.OpenLog(logfile, environment);
+            }
         }
     }
 }

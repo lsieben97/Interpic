@@ -63,7 +63,7 @@ namespace Interpic.Web.Tasks
                 {
                     foreach (string attributeToCheck in AttributesToCheck)
                     {
-                        HtmlAttribute attribute = node.Attributes.ToList().Find((attr) => attr.Name == attributeToCheck);
+                        HtmlAttribute attribute = node.Attributes.ToList().Find((attr) => attr.Name.Contains(attributeToCheck));
                         if (attribute != null)
                         {
                             if (attribute.Value == SearchQuery)

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic"
         mc:Ignorable="d"
-        Title="New Page" Height="279.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/PageWhite.png" WindowStartupLocation="CenterScreen">
+        Title="New Section" Height="279.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/PageWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"><Run Text="New "/><Run Text="Section"/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>

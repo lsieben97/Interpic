@@ -127,7 +127,8 @@ namespace Interpic.Web.Windows
             if (String.IsNullOrWhiteSpace(tbSearchQuery.Text) == false && String.IsNullOrEmpty(tbSearchQuery.Text) == false)
             {
                 SearchXmlNodeTask task = new SearchXmlNodeTask(tbSearchQuery.Text, baseNode, new string[] { "id", "class" });
-                new ProcessTaskDialog(task).ShowDialog();
+                ProcessTaskDialog dialog = new ProcessTaskDialog(task);
+                dialog.ShowDialog();
                 SearchResults = task.SearchResults;
                 if (SearchResults.Count > 0)
                 {

@@ -10,8 +10,6 @@ namespace Interpic.AsyncTasks
 {
     public abstract class AsyncTask
     {
-        private string _cancelationConfirmationMessage = "Are you sure you want to cancel the task?";
-
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public string ActionName { get; set; }
@@ -24,7 +22,7 @@ namespace Interpic.AsyncTasks
         public bool IsIndeterminate { get; set; }
         public bool IsCancelable { get; set; }
         public bool IsCanceled { get; set; }
-        public string CancelationConfirmationMessage { get => _cancelationConfirmationMessage; set => _cancelationConfirmationMessage = value; }
+        public string CancelationConfirmationMessage { get; set; } = "Are you sure you want to cancel the task?";
 
         public virtual void BeforeExecution()
         {

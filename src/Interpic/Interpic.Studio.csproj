@@ -76,9 +76,11 @@
     <Compile Include="RecursiveChangeListener\CollectionChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ReflectionHelper.cs" />
     <Compile Include="Tasks\CreateProjectFilesTask.cs" />
-    <Compile Include="Tasks\LoadGlobalExtensionsTask.cs" />
     <Compile Include="Tasks\LoadGlobalSettingsTask.cs" />
     <Compile Include="Tasks\LoadProjectTask.cs" />
+    <Compile Include="Tasks\SaveAsNewProjectTask.cs" />
+    <Compile Include="Tasks\SaveProjectAsJson.cs" />
+    <Compile Include="Tasks\SaveProjectTask.cs" />
     <Compile Include="Tasks\StartStudioTask.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
@@ -117,6 +119,15 @@
     </Compile>
     <Compile Include="Windows\SelectControlNode.xaml.cs">
       <DependentUpon>SelectControlNode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Selectors\SelectControl.xaml.cs">
+      <DependentUpon>SelectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Selectors\SelectPage.xaml.cs">
+      <DependentUpon>SelectPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Selectors\SelectSection.xaml.cs">
+      <DependentUpon>SelectSection.xaml</DependentUpon>
     </Compile>
     <Page Include="Themes\MetroDark\MetroDark.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -195,6 +206,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\SelectControlNode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Selectors\SelectControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Selectors\SelectPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Selectors\SelectSection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

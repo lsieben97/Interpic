@@ -1,6 +1,7 @@
 ﻿using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -58,6 +59,8 @@ namespace Interpic.Models
         [IgnoreChangeListener]
         [JsonIgnore]
         public Page Parent { get; set; }
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// The list of automatically dicovered controls for this page.

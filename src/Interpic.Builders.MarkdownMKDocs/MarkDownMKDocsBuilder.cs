@@ -42,7 +42,7 @@ namespace Interpic.Builders.MarkdownMKDocs
                 counter++;
             }
 
-            ProcessTasksDialog dialog = new ProcessTasksDialog(tasksToExecute);
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasksToExecute);
             dialog.ShowDialog();
 
             return !dialog.AllTasksCanceled;

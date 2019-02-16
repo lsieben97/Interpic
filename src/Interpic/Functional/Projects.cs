@@ -1,7 +1,9 @@
 ﻿using Interpic.Alerts;
+using Interpic.AsyncTasks;
 using Interpic.Extensions;
 using Interpic.Models;
 using Interpic.Settings;
+using Interpic.Studio.Tasks;
 using Interpic.Utils;
 using Newtonsoft.Json;
 using System;
@@ -34,7 +36,13 @@ namespace Interpic.Studio.Functional
                     if (result == DialogResult.OK)
                     {
                         project.OutputFolder = dialog.SelectedPath;
-                        SaveProject(project);
+                        SaveProjectTask task = new SaveProjectTask(project);
+                        ProcessTaskDialog saveDialog = new ProcessTaskDialog(task, "Saving...");
+                        saveDialog.ShowDialog();
+                        if (saveDialog.TaskToExecute.IsCanceled)
+                        {
+                            throw new Exception("Could not save the project.");
+                        }
                     }
                     else
                     {
@@ -50,7 +58,13 @@ namespace Interpic.Studio.Functional
                     if (result == DialogResult.OK)
                     {
                         project.ProjectFolder = dialog.SelectedPath;
-                        SaveProject(project);
+                        SaveProjectTask task = new SaveProjectTask(project);
+                        ProcessTaskDialog saveDialog = new ProcessTaskDialog(task, "Saving...");
+                        saveDialog.ShowDialog();
+                        if (saveDialog.TaskToExecute.IsCanceled)
+                        {
+                            throw new Exception("Could not save the project.");
+                        }
                     }
                     else
                     {
@@ -108,6 +122,49 @@ namespace Interpic.Studio.Functional
             catch(Exception ex)
             {
                 ErrorAlert.Show("Could not save project:\n" + ex.Message);
+            }
+            return false;
+        }
+
+        public static bool SaveAsNewProject(Project project, string path)
+        {
+            string projectPath = path + Path.GetFileName(project.Path);
+            string oldPath = new string(project.Path.ToCharArray());
+            string oldProjectPath = new string(project.ProjectFolder.ToCharArray());
+            string oldOutputFolder = new string(project.OutputFolder.ToCharArray());
+            project.Path = projectPath;
+            project.ProjectFolder = path;
+            project.OutputFolder = path + "\\Output\\";
+            project.LastSaved = DateTime.Now;
+            project.Changed = false;
+            try
+            {
+                File.WriteAllText(project.Path, JsonConvert.SerializeObject(project));
+                project.Path = oldPath;
+                project.ProjectFolder = oldProjectPath;
+                project.OutputFolder = oldOutputFolder;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorAlert.Show("Could not save project:\n" + ex.Message);
+            }
+            project.Path = oldPath;
+            project.ProjectFolder = oldProjectPath;
+            project.OutputFolder = oldOutputFolder;
+            return false;
+        }
+
+        public static bool SaveAsJson(Project project, string path)
+        {
+            try
+            {
+                File.WriteAllText(path, JsonConvert.SerializeObject(project));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorAlert.Show("Could not export project:\n" + ex.Message);
             }
             return false;
         }

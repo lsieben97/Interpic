@@ -31,7 +31,7 @@ namespace Interpic.AsyncTasks
 
         public bool AllTasksCanceled { get { return TasksToExecute.All((task) => task.IsCanceled == true); }}
 
-        public ProcessTasksDialog(List<AsyncTask> tasks, string dialogTitle = "Processing...")
+        public ProcessTasksDialog(ref List<AsyncTask> tasks, string dialogTitle = "Processing...")
         {
             Title = dialogTitle;
             TasksToExecute = tasks;

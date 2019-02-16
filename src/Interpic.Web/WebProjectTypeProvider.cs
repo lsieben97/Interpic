@@ -32,7 +32,7 @@ namespace Interpic.Web
             Setting<string> baseUrl = new Setting<string>();
             baseUrl.Key = "PageUrl";
             baseUrl.Name = "Page URL";
-            baseUrl.Description = "URL of this page.\nThe base URL of the project will be prepended to this value.";
+            baseUrl.Description = "URL of this page.\nThe base URL of the manual will be prepended to this value.";
             baseUrl.Value = "";
 
             collection.TextSettings.Add(baseUrl);
@@ -111,7 +111,7 @@ namespace Interpic.Web
             return new NodeSelector();
         }
 
-        public Control RefreshControl(Control control, Section section, Page page, Project project)
+        public (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -136,12 +136,23 @@ namespace Interpic.Web
             tasks.Add(getElementBoundsTask);
             tasks.Add(closeSeleniumTask);
 
-            new ProcessTasksDialog(tasks).ShowDialog();
-            control.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
-            return control;
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+            try
+            {
+                dialog.ShowDialog();
+                if (!dialog.AllTasksCanceled)
+                {
+                    control.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (control, false);
+            }
+            return (control, true);
         }
 
-        public Section RefreshSection(Section section, Page page, Project project)
+        public (Section section, bool succes) RefreshSection(Section section, Page page, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -166,13 +177,23 @@ namespace Interpic.Web
             tasks.Add(getElementBoundsTask);
             tasks.Add(closeSeleniumTask);
 
-            new ProcessTasksDialog(tasks).ShowDialog();
-
-            section.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
-            return section;
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+            try
+            {
+                dialog.ShowDialog();
+                if (!dialog.AllTasksCanceled)
+                {
+                    section.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (section, false);
+            }
+            return (section, true);
         }
 
-        public Page RefreshPage(Page page, Project project)
+        public (Page page, bool succes) RefreshPage(Page page, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -197,10 +218,20 @@ namespace Interpic.Web
             tasks.Add(makeScreenshotTask);
             tasks.Add(closeSeleniumTask);
 
-            new ProcessTasksDialog(tasks).ShowDialog();
-
-            page.Screenshot = makeScreenshotTask.Screenshot;
-            return page;
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+            try
+            {
+                dialog.ShowDialog();
+                if (!dialog.AllTasksCanceled)
+                {
+                    page.Screenshot = makeScreenshotTask.Screenshot;
+                }
+            }
+            catch (Exception ex)
+            {
+                return (page, false);
+            }
+            return (page, true);
         }
     }
 }
