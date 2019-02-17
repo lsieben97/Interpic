@@ -1416,5 +1416,16 @@ namespace Interpic.Studio
             CurrentProject.TreeViewItem.IsSelected = true;
             Title = CurrentProject.Name + " - " + currentVersion.Name + " - Interpic Studio";
         }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (CurrentProject.Changed)
+            {
+                if (! ConfirmProjectClose())
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
     }
 }

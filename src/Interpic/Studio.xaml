@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Interpic"
         xmlns:models="clr-namespace:Interpic.Models;assembly=Interpic.Models"
         mc:Ignorable="d"
-        Title="Interpic Studio" Height="450" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowState="Maximized" Loaded="Window_Loaded" Icon="/Interpic.UI;component/Icons/Icon.png" Closed="Window_Closed">
+        Title="Interpic Studio" Height="450" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowState="Maximized" Loaded="Window_Loaded" Icon="/Interpic.UI;component/Icons/Icon.png" Closed="Window_Closed" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>

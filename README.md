@@ -24,6 +24,7 @@ what follows is a non-exhaustive list of things to be done.
 - [ ] Custom menu items for extensions.
 - [ ] Better logging usage.
 - [ ] Logger access in developer menu.
+- [ ] Offline mode where actions that require network access are forbidden.
 
 
 ## Project structure
