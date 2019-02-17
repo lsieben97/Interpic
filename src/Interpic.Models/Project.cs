@@ -1,4 +1,5 @@
 ﻿using Interpic.Settings;
+using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,11 @@ namespace Interpic.Models
         private ObservableCollection<Extension> _projectExtensions;
         private string _typeProviderId;
         private DateTime _lastSaved;
-        private ObservableCollection<Page> _pages;
+
         private string _outputFolder;
         private string _projectFolder;
         private ExtensionObject _extensions;
+        private ObservableCollection<Version> _versions;
 
         public string Name { get => _name; set { _name = value; RaisePropertyChanged("Name"); } }
         public string Path { get => _path; set { _path = value; RaisePropertyChanged("Path"); } }
@@ -31,11 +33,14 @@ namespace Interpic.Models
         public ObservableCollection<Extension> ProjectExtensions { get => _projectExtensions; set { _projectExtensions = value; RaisePropertyChanged("ProjectSettings"); } }
         public string TypeProviderId { get => _typeProviderId; set { _typeProviderId = value; RaisePropertyChanged("TypeProviderId"); } }
         public DateTime LastSaved { get => _lastSaved; set { _lastSaved = value; RaisePropertyChanged("LastSaved"); } }
-        public ObservableCollection<Page> Pages { get => _pages; set { _pages = value; RaisePropertyChanged("Pages"); } }
+        public ObservableCollection<Version> Versions { get => _versions; set { _versions = value; RaisePropertyChanged("Versions"); } }
         public string OutputFolder { get => _outputFolder; set { _outputFolder = value; RaisePropertyChanged("OutputFolder"); } }
         public string ProjectFolder { get => _projectFolder; set { _projectFolder = value; RaisePropertyChanged("ProjectFolder"); } }
         [JsonIgnore]
         public bool Changed { get; set; }
+
+        [IgnoreChangeListener]
+        public string LastViewedVersionId { get; set; }
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 

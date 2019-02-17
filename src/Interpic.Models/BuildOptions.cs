@@ -14,10 +14,7 @@ namespace Interpic.Models
         /// </summary>
         public BuildType Type { get; set; }
 
-        /// <summary>
-        /// List of pages to build. Will be <code>null</code> if <see cref="Type"/> = <see cref="BuildType.EntireManual"/>
-        /// </summary>
-        public List<Page> PagesToBuild { get; set; }
+        public List<Version> VersionsToBuild { get; set; }
 
         /// <summary>
         /// Whether to clean the output directory existing files.
@@ -31,8 +28,8 @@ namespace Interpic.Models
 
         public enum BuildType
         {
-            EntireManual,
-            SpecificPages
+            EntireManualSpecificVersions,
+            EntireManualAllVersions,
         }
     }
 }

@@ -40,7 +40,9 @@ namespace Interpic.Extensions
         /// <param name="options">Options for building the project.</param>
         /// <param name="project">The project to build.</param>
         /// <returns></returns>
-        bool Build(BuildOptions options, Project project);
+        bool Build(BuildOptions options, Project project, Models.Version version);
+
+        bool CleanOutputDirectory(Project project);
 
         /// <summary>
         /// Get a list of compatible project types. <code>null</code> indicates all project types are accepted.

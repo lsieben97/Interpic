@@ -14,7 +14,8 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
     {
         public Project Project { get; set; }
         public BuildOptions Options { get; set; }
-        public GenerateMKDocsConfigurationTask(BuildOptions options, Project project)
+        public Interpic.Models.Version Version { get; set; }
+        public GenerateMKDocsConfigurationTask(BuildOptions options, Project project, Interpic.Models.Version version)
         {
             TaskName = "Generating MKDocs configuration file...";
             TaskDescription = project.OutputFolder + "mkdocs.yml";
@@ -22,6 +23,7 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
             IsIndeterminate = true;
             Project = project;
             Options = options;
+            Version = version;
         }
         public override Task Execute()
         {
@@ -45,12 +47,8 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
             configuration.site_url = Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.SITE_URL);
 
             List<KeyValuePair<string, string>> navigationConfiguration = new List<KeyValuePair<string, string>>();
-            List<Page> pagesToBuild = Project.Pages.ToList();
-            if (Options.Type == BuildOptions.BuildType.SpecificPages)
-            {
-                pagesToBuild = Options.PagesToBuild;
-            }
-            foreach (Page page in pagesToBuild)
+            
+            foreach (Page page in Version.Pages)
             {
                 string folder = Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetSubSettings(Settings.ConfigurationSettings.NAVIGATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.NavigationSettings.FOLDER_SETTING_START + page.Name);
                 if (folder == "\\")
@@ -145,9 +143,10 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
                 configurationFile.Append("  - '" + navigation.Key + "': '" + navigation.Value + "'");
                 configurationFile.AppendLine();
             }
+
             try
             {
-                File.WriteAllText(Project.OutputFolder + "mkdocs.yml", configurationFile.ToString());
+                File.WriteAllText(Project.OutputFolder + Path.DirectorySeparatorChar + Version.Name + Path.DirectorySeparatorChar + "mkdocs.yml", configurationFile.ToString());
             }
             catch (Exception ex)
             {

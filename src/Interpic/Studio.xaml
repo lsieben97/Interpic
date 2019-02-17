@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic"
+        xmlns:models="clr-namespace:Interpic.Models;assembly=Interpic.Models"
         mc:Ignorable="d"
         Title="Interpic Studio" Height="450" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowState="Maximized" Loaded="Window_Loaded" Icon="/Interpic.UI;component/Icons/Icon.png" Closed="Window_Closed">
     <Grid>
@@ -11,6 +12,7 @@
             <RowDefinition Height="32"/>
             <RowDefinition Height="55"/>
             <RowDefinition Height="79*"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -94,7 +96,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Tools">
+            <MenuItem Header="Tools" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False">
                 <MenuItem x:Name="miGlobalSettings" Header="Global settings" Click="miGlobalSettings_Click" MouseEnter="DisplayControlHint" Tag="Global Application settings.">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Settings.png"/>
@@ -142,16 +144,16 @@
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>
-        <TreeView x:Name="tvManualTree" Margin="0" Grid.Row="1" Grid.RowSpan="2" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0" Foreground="White" SelectedItemChanged="tvManualTree_SelectedItemChanged" Padding="0">
+        <TreeView x:Name="tvManualTree" Margin="0" Grid.Row="1" Grid.RowSpan="3" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0" Foreground="White" SelectedItemChanged="tvManualTree_SelectedItemChanged" Padding="0">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
                       Color="#FF00AADE" />
             </TreeView.Resources>
         </TreeView>
         <StackPanel x:Name="spWorkspace" Grid.Column="1" Margin="0" Grid.Row="1" Grid.RowSpan="2"/>
-        <Grid Margin="0,0,1,0" Grid.Row="3" Grid.ColumnSpan="2" Background="{DynamicResource Brush05}">
+        <Grid Margin="0,0,1,0" Grid.Row="4" Grid.ColumnSpan="2" Background="{DynamicResource Brush05}">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock x:Name="lbStatusBar" TextWrapping="Wrap" Text="Ready" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lbStatusBar" TextWrapping="Wrap" Text="Ready" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center" FontFamily="Verdana"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <Image ToolTip="There are unsaved project changes" x:Name="imgChangeIndicator" Visibility="Hidden" Margin="0,3,0,0" Source="/Interpic.UI;component/Icons/SaveWhite.png" Width="20" Height="20"/>
@@ -159,6 +161,23 @@
             </StackPanel>
         </Grid>
 
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="6,-17,555,0" Text="Versions" FontSize="14" FontFamily="Verdana" Foreground="White"/>
+        <ScrollViewer Grid.Row="3" Grid.Column="1" Margin="0,0,0,0" Style="{DynamicResource ScrollViewerStyle}" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="spVersions">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:Version}">
+                        <Button x:Name="btnVersion" Content="{Binding Name}" Tag="{Binding Id}" Margin="6,3,0,0" Style="{DynamicResource ButtonStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="20,0,20,2" Click="BtnVersion_Click"/>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{ Binding Path=IsCurrent}" Value="False">
+                                <Setter TargetName="btnVersion" Property="Background" Value="Yellow"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{ Binding Path=IsCurrent}" Value="True">
+                                <Setter TargetName="btnVersion" Property="Background" Value="Red"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
-
 </Window>

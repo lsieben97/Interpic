@@ -118,16 +118,23 @@ namespace Interpic.Studio.Windows
                 IProjectBuilder builder = ((ComboBoxItem)cbbOutputType.SelectedValue).Tag as IProjectBuilder;
                 project.OutputType = builder.GetBuilderId();
                 project.Path = projectPath;
-                project.Pages = new ObservableCollection<Models.Page>();
+                
                 project.LastSaved = DateTime.Now;
                 project.IsNew = true;
                 project.OutputFolder = projectOutputFolder;
                 project.ProjectFolder = tbProjectFolder.Text;
-                ProcessTaskDialog dialog = new ProcessTaskDialog(new CreateProjectFilesTask(project));
-                dialog.ShowDialog();
-                if (! dialog.TaskToExecute.IsCanceled)
+                NewVersion newVersionDialog = new NewVersion(provider.GetDefaultVersionSettings());
+                newVersionDialog.ShowDialog();
+                if (newVersionDialog.DialogResult.Value)
                 {
-                    Close();
+                    project.Versions = new ObservableCollection<Models.Version>();
+                    project.Versions.Add(newVersionDialog.Version);
+                    ProcessTaskDialog dialog = new ProcessTaskDialog(new CreateProjectFilesTask(project));
+                    dialog.ShowDialog();
+                    if (!dialog.TaskToExecute.IsCanceled)
+                    {
+                        Close();
+                    }
                 }
             }
         }

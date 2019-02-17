@@ -1,0 +1,22 @@
+﻿<Window x:Class="Interpic.Studio.Windows.NewVersion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Studio.Windows"
+        mc:Ignorable="d"
+        Title="New Version" Height="338.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/VersionWhite.png" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"><Run Text="New "/><Run Text="Version"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" MaxLines="1"/>
+        <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ButtonStyle}" Click="BtnCreate_Click"/>
+        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="55.836,70.076,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Locale"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/VersionWhite.png" Width="48"/>
+        <ComboBox x:Name="cbLocales" HorizontalAlignment="Left" Height="23" Margin="10,143,0,0"  VerticalAlignment="Top" Width="314" Style="{DynamicResource ComboBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True" />
+        <TextBlock HorizontalAlignment="Left" Margin="10,181,0,0" TextWrapping="Wrap" Text="Options" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <Button x:Name="btnShowOptions" HorizontalAlignment="Left" Content="Open Options" Height="23" Margin="10,203,0,0"  VerticalAlignment="Top" Width="152" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" />
+
+    </Grid>
+</Window>

@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 namespace Interpic.Studio.Functional
 {
     public static class Projects
-    { 
+    {
         public static Project LoadProject(string path)
         {
             try
@@ -29,7 +29,8 @@ namespace Interpic.Studio.Functional
                     project.Path = path;
                 }
 
-                if (! Directory.Exists(project.OutputFolder)) {
+                if (!Directory.Exists(project.OutputFolder))
+                {
                     WarningAlert.Show("Output folder not found.\nPlease specify an output folder.");
                     System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
                     DialogResult result = dialog.ShowDialog();
@@ -51,7 +52,8 @@ namespace Interpic.Studio.Functional
                 }
 
 
-                if (!Directory.Exists(project.OutputFolder)) {
+                if (!Directory.Exists(project.OutputFolder))
+                {
                     WarningAlert.Show("Project folder not found.\nPlease specify an output folder.");
                     System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
                     DialogResult result = dialog.ShowDialog();
@@ -80,12 +82,12 @@ namespace Interpic.Studio.Functional
             return null;
         }
 
-        public static TreeViewItem GetTreeViewForProject(Project project)
+        public static TreeViewItem GetTreeViewForProject(Project project, Models.Version currentVersion)
         {
             TreeViewItem root = UiUtils.GetTreeViewItem(project.Name, "ProjectWhite.png");
             root.Tag = project;
             project.TreeViewItem = root;
-            foreach (Models.Page page in project.Pages)
+            foreach (Models.Page page in currentVersion.Pages)
             {
                 TreeViewItem pageItem = UiUtils.GetTreeViewItem(page.Name, "PageWhite.png");
                 pageItem.Tag = page;
@@ -108,7 +110,7 @@ namespace Interpic.Studio.Functional
             }
             return root;
         }
-        
+
 
         public static bool SaveProject(Project project)
         {
@@ -119,7 +121,7 @@ namespace Interpic.Studio.Functional
                 project.Changed = false;
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorAlert.Show("Could not save project:\n" + ex.Message);
             }

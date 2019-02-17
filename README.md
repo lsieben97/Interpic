@@ -12,15 +12,15 @@ The concept of interpic comes from html image maps: the ablilty for a user to cl
 This project is still a proof of concept. there is a lot to be done before v1.0  
 
 what follows is a non-exhaustive list of things to be done.
-- [ ] More complete settings system (sections, helper settings, events(?))
-- [ ] Multi-language documentation support
+- [x] More complete settings system (helper settings, user controls) 
+- [x] Multi-language documentation support
 - [ ] Multiple web drivers support (eg. firefox, IE, Edge, Safari)
 - [ ] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
 - [ ] Working extension system (loading unloading, importing)
 - [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
 - [ ] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
 - [ ] Maximum amount of 1 selenium instance per session per driver.
-- [ ] Implement all menu bar items.
+- [x] Implement all menu bar items.
 - [ ] Custom menu items for extensions.
 - [ ] Better logging usage.
 - [ ] Logger access in developer menu.

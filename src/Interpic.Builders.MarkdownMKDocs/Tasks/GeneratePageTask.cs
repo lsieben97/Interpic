@@ -15,8 +15,9 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
     {
         public Project Project { get; set; }
         public Page Page { get; set; }
+        public Interpic.Models.Version Version { get; set; }
         public BuildOptions Options { get; set; }
-        public GeneratePageTask(BuildOptions options, Project project, Page page, int pageNumber)
+        public GeneratePageTask(BuildOptions options, Project project, Page page, Interpic.Models.Version version, int pageNumber)
         {
             TaskName = "Generating page " + pageNumber.ToString() + "...";
             TaskDescription = page.Name;
@@ -25,6 +26,7 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
             Project = project;
             Options = options;
             Page = page;
+            Version = version;
         }
         public override Task Execute()
         {
@@ -98,7 +100,7 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
             try
             {
                 string docsFolder = Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.DOCS_DIRECTORY);
-                File.WriteAllText(Project.OutputFolder + docsFolder + Path.DirectorySeparatorChar + Page.Name + ".md", page.ToString());
+                File.WriteAllText(Project.OutputFolder + Path.DirectorySeparatorChar + Version.Name + Path.DirectorySeparatorChar + docsFolder + Path.DirectorySeparatorChar + Page.Name + ".md", page.ToString());
             }
             catch (Exception ex)
             {

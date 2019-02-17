@@ -134,6 +134,8 @@
     <Resource Include="Icons\SaveWhite.png" />
     <Resource Include="Icons\ObjectWhite.png" />
     <Resource Include="Icons\Object.png" />
+    <Resource Include="Icons\Version.png" />
+    <Resource Include="Icons\VersionWhite.png" />
     <Content Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -35,6 +35,7 @@ namespace Interpic.Studio
         private DispatcherTimer checkTimer = new DispatcherTimer();
         private Models.Page currentPage;
         private Models.Section currentSection;
+        private Models.Version currentVersion;
         private bool openingNewProject;
 
         #region Events
@@ -80,9 +81,7 @@ namespace Interpic.Studio
             App.InitializeLogger(App.GlobalSettings.GetPathSetting("logDirectory") + "\\last.log", this);
 
             StudioStartup?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
-            
 
-            InitializeUI();
             InitializeObjectModel(project);
 
             CheckDeveloperMode();
@@ -122,13 +121,15 @@ namespace Interpic.Studio
 
         private void InitializeNewProject()
         {
+            currentVersion = CurrentProject.Versions[0];
+            CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
             if (CurrentProject.HasSettingsAvailable)
             {
                 if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
                 {
                     InfoAlert.Show("The manual settings dialog will now be shown to further configure the project.");
                 }
-                
+
                 SettingsEditor editor = new SettingsEditor(CurrentProject.Settings);
                 editor.ShowDialog();
                 if (editor.DialogResult.HasValue)
@@ -145,7 +146,6 @@ namespace Interpic.Studio
         private void InitializeUI()
         {
             SetStatusBar("Project loaded.");
-            Title = CurrentProject.Name + " - Interpic Studio";
             lbLastSaved.Text = "Last saved: " + CurrentProject.LastSaved.ToShortDateString() + " " + CurrentProject.LastSaved.ToLongTimeString();
 
             checkTimer.Interval = new TimeSpan(0, 0, 1);
@@ -166,15 +166,19 @@ namespace Interpic.Studio
 
         private void InitializeObjectModel(Project project)
         {
-            foreach (Models.Page page in CurrentProject.Pages)
+            foreach (Models.Version version in CurrentProject.Versions)
             {
-                page.Parent = CurrentProject;
-                foreach (Models.Section section in page.Sections)
+                version.Parent = CurrentProject;
+                foreach (Models.Page page in version.Pages)
                 {
-                    section.Parent = page;
-                    foreach (Models.Control control in section.Controls)
+                    page.Parent = version;
+                    foreach (Models.Section section in page.Sections)
                     {
-                        control.Parent = section;
+                        section.Parent = page;
+                        foreach (Models.Control control in section.Controls)
+                        {
+                            control.Parent = section;
+                        }
                     }
                 }
             }
@@ -230,8 +234,12 @@ namespace Interpic.Studio
             {
                 InitializeNewProject();
             }
+            currentVersion = CurrentProject.Versions.Single(version => version.Id == CurrentProject.LastViewedVersionId);
+            currentVersion.IsCurrent = true;
+            spVersions.ItemsSource = CurrentProject.Versions;
             RedrawTreeView();
             (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
+            InitializeUI();
         }
 
         public void RedrawTreeView()
@@ -241,7 +249,7 @@ namespace Interpic.Studio
             {
                 tvManualTree.Items.RemoveAt(0);
             }
-            tvManualTree.Items.Add(Projects.GetTreeViewForProject(CurrentProject));
+            tvManualTree.Items.Add(Projects.GetTreeViewForProject(CurrentProject, currentVersion));
             foreach (object item in tvManualTree.Items)
             {
                 TreeViewItem treeItem = tvManualTree.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
@@ -303,14 +311,14 @@ namespace Interpic.Studio
                 if (document != null)
                 {
                     dialog.Page.Source = document;
-                    dialog.Page.Parent = CurrentProject;
-                    
-                    (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, CurrentProject);
+                    dialog.Page.Parent = currentVersion;
+
+                    (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, currentVersion, CurrentProject);
                     if (result.succes)
                     {
                         if (result.page.Screenshot != null)
                         {
-                            CurrentProject.Pages.Add(dialog.Page);
+                            currentVersion.Pages.Add(dialog.Page);
                             RedrawTreeView();
                             dialog.Page.TreeViewItem.IsSelected = true;
                         }
@@ -546,7 +554,7 @@ namespace Interpic.Studio
 
         internal void RemovePage(Models.Page page)
         {
-            CurrentProject.Pages.Remove(page);
+            currentVersion.Pages.Remove(page);
             page.TreeViewItem.IsSelected = false;
             tvManualTree.Items.Remove(page.TreeViewItem);
             RedrawTreeView();
@@ -585,7 +593,7 @@ namespace Interpic.Studio
             titlePanel.Children.Add(titleTextBlock);
 
             spWorkspace.Children.Add(titlePanel);
-            foreach (Models.Page page in project.Pages)
+            foreach (Models.Page page in currentVersion.Pages)
             {
 
 
@@ -900,7 +908,7 @@ namespace Interpic.Studio
         private void PageSaveButton_Click(object sender, RoutedEventArgs e)
         {
             (Models.Page page, TextBox textbox) controls = ((Models.Page page, TextBox textbox))(e.Source as Button).Tag;
-            CurrentProject.Pages[CurrentProject.Pages.IndexOf(controls.page)].Description = controls.textbox.Text;
+            currentVersion.Pages[currentVersion.Pages.IndexOf(controls.page)].Description = controls.textbox.Text;
             RenderTOCForPage(controls.page);
             SetStatusBar("Page description saved.");
         }
@@ -988,7 +996,7 @@ namespace Interpic.Studio
             SaveProjectTask task = new SaveProjectTask(CurrentProject);
             ProcessTaskDialog dialog = new ProcessTaskDialog(task, "Saving...");
             dialog.ShowDialog();
-            if (! dialog.TaskToExecute.IsCanceled)
+            if (!dialog.TaskToExecute.IsCanceled)
             {
                 SetStatusBar("Project saved.");
                 lbLastSaved.Text = "Last saved: " + CurrentProject.LastSaved.ToShortDateString() + " " + CurrentProject.LastSaved.ToLongTimeString();
@@ -1093,7 +1101,7 @@ namespace Interpic.Studio
                 LoadProjectTask loadTask = new LoadProjectTask(dialog.FileName);
                 ProcessTaskDialog taskDialog = new ProcessTaskDialog(loadTask, "Loading...");
                 taskDialog.ShowDialog();
-                if (! taskDialog.TaskToExecute.IsCanceled)
+                if (!taskDialog.TaskToExecute.IsCanceled)
                 {
                     ProjectUnloaded?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
                     UnloadCurrentProject();
@@ -1192,10 +1200,10 @@ namespace Interpic.Studio
 
         private void miNewSection_Click(object sender, RoutedEventArgs e)
         {
-            SelectPage selector = new SelectPage(CurrentProject);
+            SelectPage selector = new SelectPage(currentVersion);
             if (selector.ShowDialog().Value)
             {
-                Models.Page selectedpage = CurrentProject.Pages.Single(Page => Page.Id == selector.SelectedPageId);
+                Models.Page selectedpage = currentVersion.Pages.Single(Page => Page.Id == selector.SelectedPageId);
                 AddSection(ref selectedpage);
             }
         }
@@ -1210,7 +1218,7 @@ namespace Interpic.Studio
                 SaveAsNewProjectTask task = new SaveAsNewProjectTask(CurrentProject, dialog.SelectedPath);
                 ProcessTaskDialog saveDialog = new ProcessTaskDialog(task, "Saving...");
                 saveDialog.ShowDialog();
-                if (! saveDialog.TaskToExecute.IsCanceled)
+                if (!saveDialog.TaskToExecute.IsCanceled)
                 {
                     SetStatusBar("Project saved.");
                 }
@@ -1240,14 +1248,7 @@ namespace Interpic.Studio
 
         private void miBuildPage_Click(object sender, RoutedEventArgs e)
         {
-            if (currentPage != null)
-            {
-                new Build(ProjectBuilder, CurrentProject, currentPage).ShowDialog();
-            }
-            else
-            {
-                ErrorAlert.Show("No page selected");
-            }
+            new Build(ProjectBuilder, CurrentProject, currentVersion).ShowDialog();
         }
 
         private void miAddSection_Click(object sender, RoutedEventArgs e)
@@ -1270,8 +1271,8 @@ namespace Interpic.Studio
             if (dialog.Section != null)
             {
                 dialog.Section.Parent = page;
-                
-                
+
+
                 if (ProjectTypeProvider.GetControlFinder() != null)
                 {
                     ObservableCollection<DiscoveredControl> foundControls = ProjectTypeProvider.GetControlFinder().FindControls(dialog.Section);
@@ -1282,7 +1283,7 @@ namespace Interpic.Studio
 
                     dialog.Section.DiscoveredControls = foundControls;
                     SetStatusBar("Found " + foundControls.Count.ToString() + " controls.");
-                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
+                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, currentVersion, CurrentProject);
                     if (result.succes)
                     {
                         if (result.section.ElementBounds != null)
@@ -1301,7 +1302,7 @@ namespace Interpic.Studio
                 else
                 {
                     SetStatusBar("No control finder found for this project type, skipping control discovery.");
-                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, CurrentProject);
+                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, currentVersion, CurrentProject);
                     if (result.succes)
                     {
                         page.Sections.Add(dialog.Section);
@@ -1336,7 +1337,7 @@ namespace Interpic.Studio
             {
                 dialog.Control.Parent = section;
 
-                (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, CurrentProject);
+                (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, currentVersion, CurrentProject);
                 if (result.succes)
                 {
                     if (result.control.ElementBounds != null)
@@ -1350,7 +1351,7 @@ namespace Interpic.Studio
                         SetStatusBar("Control not added because refreshing failed.");
                     }
                 }
-                
+
             }
         }
 
@@ -1369,10 +1370,10 @@ namespace Interpic.Studio
 
         private void MiNewControl_Click(object sender, RoutedEventArgs e)
         {
-            SelectPage selector = new SelectPage(CurrentProject);
+            SelectPage selector = new SelectPage(currentVersion);
             if (selector.ShowDialog().Value)
             {
-                Models.Page selectedpage = CurrentProject.Pages.Single(Page => Page.Id == selector.SelectedPageId);
+                Models.Page selectedpage = currentVersion.Pages.Single(Page => Page.Id == selector.SelectedPageId);
                 SelectSection sectionSelector = new SelectSection(selectedpage);
                 if (sectionSelector.ShowDialog().Value)
                 {
@@ -1404,6 +1405,16 @@ namespace Interpic.Studio
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             InfoAlert.Show("No user manual available now.");
+        }
+
+        private void BtnVersion_Click(object sender, RoutedEventArgs e)
+        {
+            currentVersion = CurrentProject.Versions.Single(version => version.Id == (e.Source as Button).Tag.ToString());
+            SetStatusBar("Switched to version '" + currentVersion.Name + "'.");
+            CurrentProject.LastViewedVersionId = currentVersion.Id;
+            RedrawTreeView();
+            CurrentProject.TreeViewItem.IsSelected = true;
+            Title = CurrentProject.Name + " - " + currentVersion.Name + " - Interpic Studio";
         }
     }
 }

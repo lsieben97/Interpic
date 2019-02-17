@@ -21,6 +21,7 @@ namespace Interpic.Models
         private ObservableCollection<Control> _controls = new ObservableCollection<Control>();
         private byte[] _screenshot;
         private ExtensionObject _extensions;
+        private List<string> _siblingPageIds;
 
         /// <summary>
         /// The name of the page.
@@ -60,7 +61,12 @@ namespace Interpic.Models
 
         [IgnoreChangeListener]
         [JsonIgnore]
-        public Project Parent { get; set; }
+        public Version Parent { get; set; }
+
+        /// <summary>
+        /// Get the id's from the pages that are siblings (the same page in other versions)
+        /// </summary>
+        public List<string> SiblingPageIds { get => _siblingPageIds; set { _siblingPageIds = value; RaisePropertyChanged("SiblingPageIds"); } }
 
         /// <summary>
         /// The settings of the page.

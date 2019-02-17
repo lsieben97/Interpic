@@ -73,6 +73,7 @@
     <Compile Include="Section.cs" />
     <Compile Include="delegates.cs" />
     <Compile Include="SectionIdentifier.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">

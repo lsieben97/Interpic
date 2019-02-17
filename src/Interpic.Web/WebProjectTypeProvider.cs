@@ -93,11 +93,14 @@ namespace Interpic.Web
 
         private void StudioEnvironment_ProjectLoaded(object sender, ProjectLoadedEventArgs e)
         {
-            foreach (Page page in Studio.CurrentProject.Pages)
+            foreach (Models.Version version in Studio.CurrentProject.Versions)
             {
-                HtmlDocument document = new HtmlDocument();
-                document.LoadHtml(page.Source);
-                page.Extensions = new WebPageExtensions(document);
+                foreach (Page page in version.Pages)
+                {
+                    HtmlDocument document = new HtmlDocument();
+                    document.LoadHtml(page.Source);
+                    page.Extensions = new WebPageExtensions(document);
+                }
             }
         }
 
@@ -111,7 +114,7 @@ namespace Interpic.Web
             return new NodeSelector();
         }
 
-        public (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Project project)
+        public (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Models.Version version, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -152,7 +155,7 @@ namespace Interpic.Web
             return (control, true);
         }
 
-        public (Section section, bool succes) RefreshSection(Section section, Page page, Project project)
+        public (Section section, bool succes) RefreshSection(Section section, Page page, Models.Version version, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -193,7 +196,7 @@ namespace Interpic.Web
             return (section, true);
         }
 
-        public (Page page, bool succes) RefreshPage(Page page, Project project)
+        public (Page page, bool succes) RefreshPage(Page page, Models.Version version, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             StartSeleniumTask startTask = new StartSeleniumTask();
@@ -232,6 +235,11 @@ namespace Interpic.Web
                 return (page, false);
             }
             return (page, true);
+        }
+
+        public SettingsCollection GetDefaultVersionSettings()
+        {
+            return null;
         }
     }
 }

@@ -12,8 +12,9 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
     public class GenerateFolderStructureTask : AsyncTasks.AsyncTask
     {
         public Project Project { get; set; }
+        public Interpic.Models.Version Version { get; set; }
         public BuildOptions Options { get; set; }
-        public GenerateFolderStructureTask(BuildOptions options, Project project)
+        public GenerateFolderStructureTask(BuildOptions options, Project project, Interpic.Models.Version version)
         {
             TaskName = "Generating directory structure...";
             TaskDescription = project.OutputFolder;
@@ -21,6 +22,7 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
             IsIndeterminate = true;
             Project = project;
             Options = options;
+            Version = version;
         }
         public override Task Execute()
         {
@@ -32,8 +34,8 @@ namespace Interpic.Builders.MarkdownMKDocs.Tasks
         {
             try
             {
-                Directory.CreateDirectory(Project.OutputFolder + Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.DOCS_DIRECTORY));
-                Directory.CreateDirectory(Project.OutputFolder + Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.SITE_DIRECTORY));
+                Directory.CreateDirectory(Project.OutputFolder + Path.DirectorySeparatorChar + Version.Name + Path.DirectorySeparatorChar + Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.DOCS_DIRECTORY));
+                Directory.CreateDirectory(Project.OutputFolder + Path.DirectorySeparatorChar + Version.Name + Path.DirectorySeparatorChar + Options.BuildSettings.GetSubSettings(Settings.CONFIGURATION_SETTINGS).GetTextSetting(Settings.ConfigurationSettings.SITE_DIRECTORY));
             }
             catch (Exception ex)
             {

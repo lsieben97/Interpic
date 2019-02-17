@@ -21,15 +21,15 @@ namespace Interpic.Studio.Windows.Selectors
     public partial class SelectPage : Window
     {
         public string SelectedPageId { get; set; }
-        public SelectPage(Project project)
+        public SelectPage(Models.Version version)
         {
             InitializeComponent();
-            LoadPages(project);
+            LoadPages(version);
         }
 
-        private void LoadPages(Project project)
+        private void LoadPages(Models.Version version)
         {
-            foreach(Models.Page page in project.Pages)
+            foreach(Models.Page page in version.Pages)
             {
                 ListBoxItem item = new ListBoxItem();
                 item.Content = page.Name;

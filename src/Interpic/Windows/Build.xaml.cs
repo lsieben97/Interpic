@@ -23,7 +23,7 @@ namespace Interpic.Studio.Windows
     /// </summary>
     public partial class Build : Window
     {
-        List<Models.Page> selectedPages = new List<Models.Page>();
+        List<Models.Version> selectedVersions = new List<Models.Version>();
         SettingsCollection buildSettings;
         Project project;
         IProjectBuilder builder;
@@ -33,7 +33,7 @@ namespace Interpic.Studio.Windows
 
             this.builder = builder;
 
-            LoadPages(project);
+            LoadVersions(project);
 
             buildSettings = builder.GetBuildSettings(project);
             btnBuildSettings.IsEnabled = buildSettings != null;
@@ -41,30 +41,30 @@ namespace Interpic.Studio.Windows
             this.project = project;
         }
 
-        private void LoadPages(Project project, Models.Page startPage = null)
+        private void LoadVersions(Project project, Models.Version startVersion = null)
         {
-            foreach (Models.Page page in project.Pages)
+            foreach (Models.Version version in project.Versions)
             {
                 ListBoxItem item = new ListBoxItem();
-                item.Content = page.Name;
-                item.Tag = page;
-                if (startPage != null && startPage == page)
+                item.Content = version.Name;
+                item.Tag = version;
+                if (startVersion != null && startVersion == version)
                 {
                     item.IsSelected = true;
                 }
-                lsbPages.Items.Add(item);
+                lsbVersions.Items.Add(item);
             }
         }
 
-        public Build(IProjectBuilder builder, Project project, Models.Page page)
+        public Build(IProjectBuilder builder, Project project, Models.Version version)
         {
             InitializeComponent();
 
             this.builder = builder;
 
-            LoadPages(project, page);
+            LoadVersions(project, version);
 
-            selectedPages.Add(page);
+            selectedVersions.Add(version);
             cbBuildSpecificPages.IsChecked = true;
 
             buildSettings = builder.GetBuildSettings(project);
@@ -83,22 +83,44 @@ namespace Interpic.Studio.Windows
             BuildOptions options = new BuildOptions();
             options.CleanOutputDirectory = cbCleanOutputDirectory.IsChecked.Value;
             options.BuildSettings = buildSettings;
-            options.Type = cbBuildEntireProject.IsChecked.Value ? BuildOptions.BuildType.EntireManual : BuildOptions.BuildType.SpecificPages;
+            options.Type = cbBuildEntireProject.IsChecked.Value ? BuildOptions.BuildType.EntireManualAllVersions : BuildOptions.BuildType.EntireManualSpecificVersions;
+            options.VersionsToBuild = new List<Models.Version>();
             if (cbBuildSpecificPages.IsChecked.Value)
             {
-                options.PagesToBuild = new List<Models.Page>();
-                foreach (ListBoxItem item in lsbPages.SelectedItems)
+                
+                foreach (ListBoxItem item in lsbVersions.SelectedItems)
                 {
-                    options.PagesToBuild.Add(item.Tag as Models.Page);
+                    options.VersionsToBuild.Add(item.Tag as Models.Version);
+                }
+            }
+            else
+            {
+                options.VersionsToBuild.AddRange(project.Versions);
+            }
+            if (cbCleanOutputDirectory.IsChecked.Value)
+            {
+                if (!builder.CleanOutputDirectory(project))
+                {
+                    return;
                 }
             }
             btnBuild.IsEnabled = false;
             btnCancel.IsEnabled = false;
             btnBuildSettings.IsEnabled = false;
-            lsbPages.IsEnabled = false;
+            lsbVersions.IsEnabled = false;
             cbBuildEntireProject.IsEnabled = false;
             cbBuildSpecificPages.IsEnabled = false;
-            if (builder.Build(options, project))
+            bool succes = true;
+           
+            foreach (Models.Version version in options.VersionsToBuild)
+            {
+                if (! builder.Build(options, project, version))
+                {
+                    succes = false;
+                }
+            }
+            
+            if (succes)
             {
                 Close();
                 new BuildCompleted(project.OutputFolder).ShowDialog();
@@ -108,7 +130,7 @@ namespace Interpic.Studio.Windows
                 btnBuild.IsEnabled = true;
                 btnCancel.IsEnabled = true;
                 btnBuildSettings.IsEnabled = true;
-                lsbPages.IsEnabled = true;
+                lsbVersions.IsEnabled = true;
                 cbBuildEntireProject.IsEnabled = true;
                 cbBuildSpecificPages.IsEnabled = true;
             }

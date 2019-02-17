@@ -15,30 +15,24 @@ namespace Interpic.Builders.MarkdownMKDocs
     {
         public IStudioEnvironment Studio { get; set; }
 
-        public bool Build(BuildOptions options, Project project)
+        public bool Build(BuildOptions options, Project project, Interpic.Models.Version version)
         {
             List<AsyncTasks.AsyncTask> tasksToExecute = new List<AsyncTasks.AsyncTask>();
 
             if (options.CleanOutputDirectory)
             {
-                tasksToExecute.Add(new CleanOutputDirectoryTask(project));
-                tasksToExecute.Add(new GenerateFolderStructureTask(options, project));
+                tasksToExecute.Add(new GenerateFolderStructureTask(options, project, version));
             }
 
             if (options.BuildSettings.GetBooleanSetting("generateConfiguration"))
             {
-                tasksToExecute.Add(new GenerateMKDocsConfigurationTask(options, project));
+                tasksToExecute.Add(new GenerateMKDocsConfigurationTask(options, project, version));
             }
 
-            List<Page> pagesToBuild = project.Pages.ToList();
-            if (options.Type == BuildOptions.BuildType.SpecificPages)
-            {
-                pagesToBuild = options.PagesToBuild;
-            }
             int counter = 1;
-            foreach (Page page in pagesToBuild)
+            foreach (Page page in version.Pages)
             {
-                tasksToExecute.Add(new GeneratePageTask(options, project , page, counter));
+                tasksToExecute.Add(new GeneratePageTask(options, project, page, version, counter));
                 counter++;
             }
 
@@ -46,6 +40,13 @@ namespace Interpic.Builders.MarkdownMKDocs
             dialog.ShowDialog();
 
             return !dialog.AllTasksCanceled;
+        }
+
+        public bool CleanOutputDirectory(Project project)
+        {
+            ProcessTaskDialog dialog = new ProcessTaskDialog(new CleanOutputDirectoryTask(project));
+            dialog.ShowDialog();
+            return !dialog.TaskToExecute.IsCanceled;
         }
 
         public string GetBuilderDescription()
@@ -215,20 +216,6 @@ namespace Interpic.Builders.MarkdownMKDocs
                     }
                 }
             };
-
-            foreach (Page page in project.Pages)
-            {
-                Setting<string> folderSetting = new Setting<string>
-                {
-                    Key = Settings.ConfigurationSettings.NavigationSettings.FOLDER_SETTING_START + page.Name,
-                    Name = "'" + page.Name + "' page folder",
-                    Value = "\\",
-                    Description = "folder to put the '" + page.Name + "' page."
-                };
-                SettingsCollection sub1settings = settings.GetSubSettings("mkdocsConfigurationSettings");
-                SettingsCollection sub2settings = sub1settings.GetSubSettings("navigationSettings");
-                sub2settings.TextSettings.Add(folderSetting);
-            }
 
             return settings;
         }
