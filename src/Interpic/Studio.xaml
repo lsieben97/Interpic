@@ -30,6 +30,11 @@
                             <Image Source="/Interpic.UI;component/Icons/Project.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem x:Name="miNewVersion" Header="Version" MouseEnter="DisplayControlHint" Tag="Create a new version." Click="MiNewVersion_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Interpic.UI;component/Icons/Version.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem x:Name="miNewPage" Header="Page" MouseEnter="DisplayControlHint" Tag="Create a new page." Click="miNewPage_Click">
                         <MenuItem.Icon>
                             <Image Source="/Interpic.UI;component/Icons/Page.png"/>
@@ -78,6 +83,11 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Manual">
+                <MenuItem x:Name="miManageVersions" Header="Manage Versions" MouseEnter="DisplayControlHint" Tag="manage versions of this manual." Click="MiManageVersions_Click">
+                    <MenuItem.Icon>
+                        <Image Source="/Interpic.UI;component/Icons/Version.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="miProjectSettings" Header="Settings" Click="miProjectSettings_Click" MouseEnter="DisplayControlHint" Tag="Project settings.">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Settings.png"/>
@@ -126,6 +136,11 @@
                         <Image Source="/Interpic.UI;component/Icons/Object.png" MouseEnter="DisplayControlHint"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem x:Name="miShowLog" Header="Show Log" MouseEnter="DisplayControlHint" Tag="Show the application log." Click="MiShowLog_Click">
+                    <MenuItem.Icon>
+                        <Image Source="/Interpic.UI;component/Icons/Log.png" MouseEnter="DisplayControlHint"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <Separator Style="{DynamicResource SimpleSeparator}"/>
             <MenuItem x:Name="miAddPage" Header="Add Page" Click="miAddPage_Click"  MouseEnter="DisplayControlHint" Tag="Add a new page.">
@@ -156,14 +171,20 @@
                 <TextBlock x:Name="lbStatusBar" TextWrapping="Wrap" Text="Ready" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center" FontFamily="Verdana"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="lbCurrentVersion" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="0,0,6,0" VerticalAlignment="Center"/>
                 <Image ToolTip="There are unsaved project changes" x:Name="imgChangeIndicator" Visibility="Hidden" Margin="0,3,0,0" Source="/Interpic.UI;component/Icons/SaveWhite.png" Width="20" Height="20"/>
                 <TextBlock x:Name="lbLastSaved" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="0,0,12,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
         <TextBlock Grid.Row="3" Grid.Column="1" Margin="6,-17,555,0" Text="Versions" FontSize="14" FontFamily="Verdana" Foreground="White"/>
-        <ScrollViewer Grid.Row="3" Grid.Column="1" Margin="0,0,0,0" Style="{DynamicResource ScrollViewerStyle}" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="3" Grid.Column="1" Margin="0,0,0,0" Style="{DynamicResource ScrollViewerStyle}" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
             <ItemsControl x:Name="spVersions">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:Version}">
                         <Button x:Name="btnVersion" Content="{Binding Name}" Tag="{Binding Id}" Margin="6,3,0,0" Style="{DynamicResource ButtonStyle}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="20,0,20,2" Click="BtnVersion_Click"/>

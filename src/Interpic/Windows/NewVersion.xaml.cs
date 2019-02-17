@@ -22,7 +22,7 @@ namespace Interpic.Studio.Windows
     public partial class NewVersion : Window
     {
         private SettingsCollection versionSettings;
-
+        private bool edit = false;
         public Models.Version Version { get; set; }
         public NewVersion(SettingsCollection versionSettings)
         {
@@ -34,6 +34,30 @@ namespace Interpic.Studio.Windows
                 btnShowOptions.IsEnabled = false;
             }
             LoadLocales();
+        }
+
+        public NewVersion(SettingsCollection versionSettings, Models.Version version)
+        {
+            this.versionSettings = versionSettings;
+            InitializeComponent();
+
+            if (versionSettings == null)
+            {
+                btnShowOptions.IsEnabled = false;
+            }
+
+            LoadLocales();
+
+            foreach(ComboBoxItem item in cbLocales.Items)
+            {
+                if (item.Tag.ToString() == version.Locale)
+                {
+                    item.IsSelected = true;
+                }
+            }
+            tbName.Text = version.Name;
+            lbTitle.Text = "Edit version";
+            btnCreate.Content = "Save";
         }
 
         private void LoadLocales()
@@ -49,9 +73,12 @@ namespace Interpic.Studio.Windows
         }
         private void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
-            if (tbName.Text.Length > 0)
+            if (! edit)
             {
                 Version = new Models.Version();
+            }
+            if (tbName.Text.Length > 0)
+            {
                 Version.Name = tbName.Text;
                 Version.Locale = (cbLocales.SelectedItem as ComboBoxItem).Tag.ToString();
                 Version.Settings = versionSettings;
@@ -62,6 +89,16 @@ namespace Interpic.Studio.Windows
             else
             {
                 lbNameError.Text = "Enter a name";
+            }
+        }
+
+        private void BtnShowOptions_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsEditor editor = new SettingsEditor(versionSettings);
+            editor.ShowDialog();
+            if (editor.DialogResult.Value)
+            {
+                versionSettings = editor.SettingsCollection;
             }
         }
     }

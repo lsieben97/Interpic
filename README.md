@@ -23,7 +23,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Implement all menu bar items.
 - [ ] Custom menu items for extensions.
 - [ ] Better logging usage.
-- [ ] Logger access in developer menu.
+- [x] Logger access in developer menu.
 - [ ] Offline mode where actions that require network access are forbidden.
 
 

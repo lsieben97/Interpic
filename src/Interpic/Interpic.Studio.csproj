@@ -94,6 +94,9 @@
     <Compile Include="Windows\BuildCompleted.xaml.cs">
       <DependentUpon>BuildCompleted.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Developer\Log.xaml.cs">
+      <DependentUpon>Log.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Developer\MethodToValueConverter.cs" />
     <Compile Include="Windows\Developer\ObjectModelViewer.xaml.cs">
       <DependentUpon>ObjectModelViewer.xaml</DependentUpon>
@@ -107,6 +110,9 @@
     <Compile Include="Functional\RecentProjects.cs" />
     <Compile Include="Functional\Sections.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Windows\ManageVersions.xaml.cs">
+      <DependentUpon>ManageVersions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\NewSection.xaml.cs">
       <DependentUpon>NewSection.xaml</DependentUpon>
     </Compile>
@@ -168,6 +174,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\Developer\Log.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\Developer\ObjectModelViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +198,10 @@
       <DependentUpon>Splash.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\ManageVersions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\NewSection.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

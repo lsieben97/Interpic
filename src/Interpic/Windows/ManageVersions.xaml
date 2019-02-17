@@ -1,0 +1,17 @@
+﻿<Window x:Class="Interpic.Studio.Windows.ManageVersions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Studio.Windows"
+        mc:Ignorable="d"
+        Title="Manage versions" Height="423" Width="610" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/VersionWhite.png" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Manage Versions" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/VersionWhite.png" Width="48"/>
+        <ListBox x:Name="lsbVersions" HorizontalAlignment="Left" Height="304" Margin="10,63,0,0" VerticalAlignment="Top" Width="446" SelectionChanged="LsbVersions_SelectionChanged" Style="{DynamicResource ListBoxStyle}"/>
+        <Button x:Name="btnNew" Content="New" HorizontalAlignment="Left" Margin="461,63,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnNew_Click"/>
+        <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Left" Margin="461,98,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnEdit_Click"/>
+        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="461,184,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click"/>
+    </Grid>
+</Window>

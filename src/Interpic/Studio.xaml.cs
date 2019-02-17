@@ -65,6 +65,7 @@ namespace Interpic.Studio
 
         public Studio(Models.Project project)
         {
+            
             openingNewProject = false;
             InitializeComponent();
             if (AvailableProjectTypes == null)
@@ -79,6 +80,7 @@ namespace Interpic.Studio
             InitializeProjectBuilder(project);
 
             App.InitializeLogger(App.GlobalSettings.GetPathSetting("logDirectory") + "\\last.log", this);
+            Logger.LogInfo("Launching studio window for project '" + project.Name + "'.", "Studio");
 
             StudioStartup?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
 
@@ -123,6 +125,7 @@ namespace Interpic.Studio
         {
             currentVersion = CurrentProject.Versions[0];
             CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
+            lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
             if (CurrentProject.HasSettingsAvailable)
             {
                 if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
@@ -236,6 +239,7 @@ namespace Interpic.Studio
             }
             currentVersion = CurrentProject.Versions.Single(version => version.Id == CurrentProject.LastViewedVersionId);
             currentVersion.IsCurrent = true;
+            lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
             spVersions.ItemsSource = CurrentProject.Versions;
             RedrawTreeView();
             (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
@@ -1409,12 +1413,18 @@ namespace Interpic.Studio
 
         private void BtnVersion_Click(object sender, RoutedEventArgs e)
         {
-            currentVersion = CurrentProject.Versions.Single(version => version.Id == (e.Source as Button).Tag.ToString());
+            SwitchVersion((e.Source as Button).Tag.ToString());
+        }
+
+        private void SwitchVersion(string id)
+        {
+            currentVersion = CurrentProject.Versions.Single(version => version.Id == id);
             SetStatusBar("Switched to version '" + currentVersion.Name + "'.");
             CurrentProject.LastViewedVersionId = currentVersion.Id;
             RedrawTreeView();
             CurrentProject.TreeViewItem.IsSelected = true;
             Title = CurrentProject.Name + " - " + currentVersion.Name + " - Interpic Studio";
+            lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -1426,6 +1436,35 @@ namespace Interpic.Studio
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void MiNewVersion_Click(object sender, RoutedEventArgs e)
+        {
+            NewVersion dialog = new NewVersion(ProjectTypeProvider.GetDefaultVersionSettings());
+            if (dialog.ShowDialog().Value)
+            {
+                dialog.Version.Parent = CurrentProject;
+                CurrentProject.Versions.Add(dialog.Version);
+                SwitchVersion(dialog.Version.Id);
+            }
+        }
+
+        private void MiManageVersions_Click(object sender, RoutedEventArgs e)
+        {
+            ManageVersions dialog = new ManageVersions(CurrentProject, ProjectTypeProvider);
+            dialog.ShowDialog();
+            CurrentProject = dialog.Project;
+            RedrawTreeView();
+            if (! CurrentProject.Versions.Any(version => version.Id == CurrentProject.LastViewedVersionId))
+            {
+                CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
+                SwitchVersion(CurrentProject.LastViewedVersionId);
+            }
+        }
+
+        private void MiShowLog_Click(object sender, RoutedEventArgs e)
+        {
+            new Log(Logger as Logger).Show();
         }
     }
 }

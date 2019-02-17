@@ -13,13 +13,14 @@ namespace Interpic
     public class Logger : ILogger
     {
         private StreamWriter logWriter;
+        internal List<string> InternalLog { get; set; } = new List<string>();
 
         public void OpenLog(string logfile, IStudioEnvironment environment)
         {
             try
             {
                 logWriter = new StreamWriter(logfile);
-                LogInfo("Opening log for interpic studio " + environment.GetStudioVersion());
+                LogInfo("Opening log for interpic studio " + environment.GetStudioVersion(),"Studio");
             }
             catch(Exception ex)
             {
@@ -35,8 +36,7 @@ namespace Interpic
         {
             try
             {
-                logWriter.Flush();
-                return new StreamReader(logWriter.BaseStream).ReadToEnd();
+                return string.Join("", InternalLog);
             }
             catch(Exception)
             {
@@ -52,21 +52,29 @@ namespace Interpic
         public void LogInfo(string message, string source = "Interpic Studio extension")
         {
             logWriter.WriteLine(GetLogHeader("Info", source) + message);
+            InternalLog.Add(GetLogHeader("Info", source) + message + "\n");
+            logWriter.Flush();
         }
 
         public void LogWarning(string message, string source = "Interpic Studio extension")
         {
             logWriter.WriteLine(GetLogHeader("Warning", source) + message);
+            InternalLog.Add(GetLogHeader("Warning", source) + message + "\n");
+            logWriter.Flush();
         }
 
         public void LogError(string message, string source = "Interpic Studio extension")
         {
             logWriter.WriteLine(GetLogHeader("Error", source) + message);
+            InternalLog.Add(GetLogHeader("Error", source) + message + "\n");
+            logWriter.Flush();
         }
 
         public void LogDebug(string message, string source = "Interpic Studio extension")
         {
             logWriter.WriteLine(GetLogHeader("Debug", source) + message);
+            InternalLog.Add(GetLogHeader("Debug", source) + message + "\n");
+            logWriter.Flush();
         }
     }
 }
