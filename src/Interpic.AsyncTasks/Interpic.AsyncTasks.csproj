@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncTask.cs" />
+    <Compile Include="delegates.cs" />
+    <Compile Include="EventArgs\AsyncTaskEventArgs.cs" />
     <Compile Include="IProcessTaskDialog.cs" />
     <Compile Include="ProcessTaskDialog.xaml.cs">
       <DependentUpon>ProcessTaskDialog.xaml</DependentUpon>
@@ -106,5 +108,6 @@
       <Name>Interpic.UI</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

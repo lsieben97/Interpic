@@ -35,5 +35,18 @@ namespace Interpic.AsyncTasks
         {
 
         }
+
+        public event OnTaskExecuted Executed;
+        public event OnTaskCanceled Canceled;
+
+        public void FireExecutedEvent(object source)
+        {
+            Executed?.Invoke(source, new EventArgs.AsyncTaskEventArgs(this));
+        }
+
+        public void FireCanceledEvent(object source)
+        {
+            Canceled?.Invoke(source, new EventArgs.AsyncTaskEventArgs(this));
+        }
     }
 }

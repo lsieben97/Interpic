@@ -96,11 +96,13 @@ namespace Interpic.AsyncTasks
                 {
                     TaskToExecute.IsCanceled = true;
                     complete = true;
+                    TaskToExecute.FireCanceledEvent(this);
                     Close();
                 }
                 if (!executingInnerTask.IsCanceled)
                 {
                     TaskToExecute.AfterExecution();
+                    TaskToExecute.FireExecutedEvent(this);
                 }
             }
             else

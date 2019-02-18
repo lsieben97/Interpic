@@ -150,6 +150,7 @@ namespace Interpic.AsyncTasks
                         catch (OperationCanceledException)
                         {
                             TaskToExecute.IsCanceled = true;
+                            TaskToExecute.FireCanceledEvent(this);
                             TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
                             if (taskCounter != TasksToExecute.Count - 1)
                             {
@@ -164,15 +165,24 @@ namespace Interpic.AsyncTasks
                         if (!executingInnerTask.IsCanceled)
                         {
                             TaskToExecute.AfterExecution();
-                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.FireExecutedEvent(this);
                         }
                     }
                     else
                     {
                         executingInnerTask = TaskToExecute.Execute();
                         await executingInnerTask;
+                        TaskToExecute.FireExecutedEvent(this);
                         PassThrough();
-                        TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                        if (!TaskToExecute.IsCanceled)
+                        {
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                        }
+                        else
+                        {
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                        }
                     }
 
                     if (taskCounter == TasksToExecute.Count - 1)
@@ -266,6 +276,7 @@ namespace Interpic.AsyncTasks
             {
                 task.IsCanceled = true;
                 task.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                task.FireCanceledEvent(this);
             }
         }
     }
