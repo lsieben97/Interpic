@@ -165,23 +165,32 @@ namespace Interpic.AsyncTasks
                         if (!executingInnerTask.IsCanceled)
                         {
                             TaskToExecute.AfterExecution();
-                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
                             TaskToExecute.FireExecutedEvent(this);
+                        }
+                        else
+                        {
+                            TaskToExecute.AfterExecution();
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.FireCanceledEvent(this);
                         }
                     }
                     else
                     {
                         executingInnerTask = TaskToExecute.Execute();
                         await executingInnerTask;
-                        TaskToExecute.FireExecutedEvent(this);
+                        
+                        TaskToExecute.AfterExecution();
                         PassThrough();
                         if (!TaskToExecute.IsCanceled)
                         {
                             TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.FireExecutedEvent(this);
                         }
                         else
                         {
-                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/CheckmarkGreen.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                            TaskToExecute.FireCanceledEvent(this);
                         }
                     }
 

@@ -10,6 +10,7 @@ namespace Interpic.AsyncTasks
 {
     public abstract class AsyncTask
     {
+        private bool canceledEventFired = false;
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }
         public string ActionName { get; set; }
@@ -46,7 +47,11 @@ namespace Interpic.AsyncTasks
 
         public void FireCanceledEvent(object source)
         {
-            Canceled?.Invoke(source, new EventArgs.AsyncTaskEventArgs(this));
+            if (!canceledEventFired)
+            {
+                Canceled?.Invoke(source, new EventArgs.AsyncTaskEventArgs(this));
+                canceledEventFired = true;
+            }
         }
     }
 }

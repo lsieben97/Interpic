@@ -104,11 +104,26 @@ namespace Interpic.AsyncTasks
                     TaskToExecute.AfterExecution();
                     TaskToExecute.FireExecutedEvent(this);
                 }
+                else
+                {
+                    TaskToExecute.AfterExecution();
+                    TaskToExecute.FireCanceledEvent(this);
+                }
             }
             else
             {
                 executingInnerTask = TaskToExecute.Execute();
                 await executingInnerTask;
+                if (!executingInnerTask.IsCanceled)
+                {
+                    TaskToExecute.AfterExecution();
+                    TaskToExecute.FireExecutedEvent(this);
+                }
+                else
+                {
+                    TaskToExecute.AfterExecution();
+                    TaskToExecute.FireCanceledEvent(this);
+                }
             }
             complete = true;
             Close();
