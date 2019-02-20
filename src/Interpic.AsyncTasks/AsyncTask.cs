@@ -10,6 +10,7 @@ namespace Interpic.AsyncTasks
 {
     public abstract class AsyncTask
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         private bool canceledEventFired = false;
         public string TaskName { get; set; }
         public string TaskDescription { get; set; }

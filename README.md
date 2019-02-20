@@ -18,13 +18,14 @@ what follows is a non-exhaustive list of things to be done.
 - [ ] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
 - [ ] Working extension system (loading unloading, importing)
 - [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
-- [ ] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
+- [x] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
 - [ ] Maximum amount of 1 selenium instance per session per driver.
 - [x] Implement all menu bar items.
 - [ ] Custom menu items for extensions.
 - [ ] Better logging usage.
 - [x] Logger access in developer menu.
 - [ ] Offline mode where actions that require network access are forbidden.
+- [ ] Screenshot viewer which shows the screen shot of the page and optionally overlays the sections / controls.
 
 
 ## Project structure

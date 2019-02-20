@@ -28,7 +28,7 @@ namespace Interpic.Studio
     /// <summary>
     /// Interaction logic for Studio.xaml
     /// </summary>
-    public partial class Studio : Window, IStudioEnvironment
+    public partial class Studio : Window, IStudioEnvironment, IProcessTaskDialog
     {
         internal static List<IProjectTypeProvider> AvailableProjectTypes = new List<IProjectTypeProvider>();
         internal static List<IProjectBuilder> AvailableBuilders = new List<IProjectBuilder>();
@@ -37,7 +37,11 @@ namespace Interpic.Studio
         private Models.Section currentSection;
         private Models.Version currentVersion;
         private bool openingNewProject;
+        private IProgress<int> progress;
 
+        private Stack<AsyncTask> backgroundTasks = new Stack<AsyncTask>();
+        private AsyncTask backgroundTask;
+        private SilentTaskProcessor taskProcessor;
         #region Events
         public event OnStudioStartup StudioStartup;
         public event OnProjectLoaded ProjectLoaded;
@@ -65,9 +69,12 @@ namespace Interpic.Studio
 
         public Studio(Models.Project project)
         {
-            
+
             openingNewProject = false;
             InitializeComponent();
+
+            progress = new Progress<int>(percent => { if (percent > 0) { pbBackgroundTask.Value = percent; pbBackgroundTask.IsIndeterminate = false; } else { pbBackgroundTask.IsIndeterminate = true; } });
+
             if (AvailableProjectTypes == null)
             {
                 AvailableProjectTypes = new List<IProjectTypeProvider>();
@@ -1431,7 +1438,7 @@ namespace Interpic.Studio
         {
             if (CurrentProject.Changed)
             {
-                if (! ConfirmProjectClose())
+                if (!ConfirmProjectClose())
                 {
                     e.Cancel = true;
                 }
@@ -1455,7 +1462,7 @@ namespace Interpic.Studio
             dialog.ShowDialog();
             CurrentProject = dialog.Project;
             RedrawTreeView();
-            if (! CurrentProject.Versions.Any(version => version.Id == CurrentProject.LastViewedVersionId))
+            if (!CurrentProject.Versions.Any(version => version.Id == CurrentProject.LastViewedVersionId))
             {
                 CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
                 SwitchVersion(CurrentProject.LastViewedVersionId);
@@ -1465,6 +1472,88 @@ namespace Interpic.Studio
         private void MiShowLog_Click(object sender, RoutedEventArgs e)
         {
             new Log(Logger as Logger).Show();
+        }
+
+        public void ScheduleBackgroundTask(AsyncTask task)
+        {
+            if (backgroundTask != null)
+            {
+                backgroundTasks.Push(task);
+            }
+            else
+            {
+                backgroundTask = task;
+                ExecuteBackgroundTask();
+            }
+        }
+
+        private void ExecuteBackgroundTask()
+        {
+            backgroundTask.BeforeExecution();
+            taskProcessor = new SilentTaskProcessor(backgroundTask, this);
+            pbBackgroundTask.IsIndeterminate = true;
+            pbBackgroundTask.Visibility = Visibility.Visible;
+            lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
+            backgroundTask.Executed += CheckForNewTasks;
+            backgroundTask.Canceled += CheckForNewTasks;
+            taskProcessor.ProcessTask();
+        }
+
+        private void CheckForNewTasks(object sender, AsyncTasks.EventArgs.AsyncTaskEventArgs eventArgs)
+        {
+            backgroundTask = null;
+            if (backgroundTasks.Count > 0)
+            {
+                backgroundTask = backgroundTasks.Pop();
+                ExecuteBackgroundTask();
+            }
+            else
+            {
+                lbCurrentBackgroundTask.Text = string.Empty;
+                pbBackgroundTask.Value = 0;
+                pbBackgroundTask.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public bool CancelScheduledBackgroundTask(string id)
+        {
+            if (backgroundTasks.Any(task => task.Id == id))
+            {
+                List<AsyncTask> list = backgroundTasks.ToList();
+                list.Remove(list.Find(task => task.Id == id));
+                backgroundTasks = new Stack<AsyncTask>(list);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void ReportProgress(int progress, bool indeterminate = false)
+        {
+            if (progress < 0)
+            {
+                progress = 0;
+            }
+            if (progress > 100)
+            {
+                progress = 100;
+            }
+            if (indeterminate)
+            {
+                this.progress.Report(-1);
+            }
+            else
+            {
+                this.progress.Report(progress);
+            }
+        }
+
+        public void CancelAllTasks()
+        {
+            backgroundTask.IsCanceled = true;
+            backgroundTask.FireCanceledEvent(this);
         }
     }
 }

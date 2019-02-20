@@ -1,4 +1,5 @@
-﻿using Interpic.Models;
+﻿using Interpic.AsyncTasks;
+using Interpic.Models;
 using Interpic.Settings;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,19 @@ namespace Interpic.Models
         /// Logger to write to the log for this session.
         /// </summary>
         ILogger Logger { get; }
+
+        /// <summary>
+        /// Schedule the given task to be executed in the background. Use the <see cref="AsyncTask.Executed"/> and <see cref="AsyncTask.Canceled"/> events to listen for when the task is executed.
+        /// </summary>
+        /// <param name="Task"></param>
+        void ScheduleBackgroundTask(AsyncTask task);
+
+        /// <summary>
+        /// Cancel the scheduled background task with the given id.
+        /// </summary>
+        /// <param name="id">The id of the background task to cancel.</param>
+        /// <returns>true when the task has been canceled. false when no task with the given id could be found or when the task is already executing.</returns>
+        bool CancelScheduledBackgroundTask(string id);
 
         #region Events
         /// <summary>

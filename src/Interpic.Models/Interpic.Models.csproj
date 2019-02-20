@@ -76,6 +76,10 @@
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interpic.AsyncTasks\Interpic.AsyncTasks.csproj">
+      <Project>{36D32067-9305-4F38-8159-B5F5CC2CFB9A}</Project>
+      <Name>Interpic.AsyncTasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">
       <Project>{90f34232-79a3-4904-b093-fcfb4dca3666}</Project>
       <Name>Interpic.Settings</Name>
