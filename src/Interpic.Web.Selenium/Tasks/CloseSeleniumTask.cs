@@ -18,6 +18,11 @@ namespace Interpic.Web.Selenium.Tasks
             IsIndeterminate = true;
         }
 
+        public CloseSeleniumTask(SeleniumWrapper selenium)
+        {
+            Selenium = selenium;
+        }
+
         public override Task Execute()
         {
             return Task.Run(() => Run());

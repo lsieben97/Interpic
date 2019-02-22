@@ -19,7 +19,7 @@ what follows is a non-exhaustive list of things to be done.
 - [ ] Working extension system (loading unloading, importing)
 - [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
 - [x] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
-- [ ] Maximum amount of 1 selenium instance per session per driver.
+- [x] Maximum amount of 1 selenium instance per session per driver.
 - [x] Implement all menu bar items.
 - [ ] Custom menu items for extensions.
 - [ ] Better logging usage.

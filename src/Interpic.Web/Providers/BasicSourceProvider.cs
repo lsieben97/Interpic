@@ -18,47 +18,48 @@ namespace Interpic.Web.Providers
     {
         public string GetSource(ref Project project, ref Page page)
         {
-            string url = project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
-            List<AsyncTasks.AsyncTask> tasks = new List<AsyncTasks.AsyncTask>();
-            StartSeleniumTask startTask = new StartSeleniumTask();
-            startTask.PassThrough = true;
-            startTask.PassThroughSource = "Selenium";
-            startTask.PassThroughTarget = "Selenium";
-
-            NavigateToPageTask navigateTask = new NavigateToPageTask(url);
-            navigateTask.PassThrough = true;
-            navigateTask.PassThroughSource = "Selenium";
-            navigateTask.PassThroughTarget = "Selenium";
-
-            GetHtmlTask getHtmlTask = new GetHtmlTask(url);
-            getHtmlTask.PassThrough = true;
-            getHtmlTask.PassThroughSource = "Selenium";
-            getHtmlTask.PassThroughTarget = "Selenium";
-
-            CloseSeleniumTask closeSeleniumTask = new CloseSeleniumTask();
-
-            tasks.Add(startTask);
-            tasks.Add(navigateTask);
-            tasks.Add(getHtmlTask);
-            tasks.Add(closeSeleniumTask);
-
-            AsyncTasks.ProcessTasksDialog dialog = new AsyncTasks.ProcessTasksDialog(ref tasks);
-            try
+            if (WebProjectTypeProvider.CheckSelenium())
             {
-                dialog.ShowDialog();
-                if (!dialog.AllTasksCanceled)
+                string url = project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
+                List<AsyncTasks.AsyncTask> tasks = new List<AsyncTasks.AsyncTask>();
+
+
+                NavigateToPageTask navigateTask = new NavigateToPageTask(url);
+                navigateTask.Selenium = WebProjectTypeProvider.Selenium;
+                navigateTask.PassThrough = true;
+                navigateTask.PassThroughSource = "Selenium";
+                navigateTask.PassThroughTarget = "Selenium";
+
+                GetHtmlTask getHtmlTask = new GetHtmlTask(url);
+                getHtmlTask.PassThrough = true;
+                getHtmlTask.PassThroughSource = "Selenium";
+                getHtmlTask.PassThroughTarget = "Selenium";
+
+                tasks.Add(navigateTask);
+                tasks.Add(getHtmlTask);
+
+                AsyncTasks.ProcessTasksDialog dialog = new AsyncTasks.ProcessTasksDialog(ref tasks);
+                try
                 {
-                    HtmlDocument document = new HtmlDocument();
-                    document.LoadHtml(getHtmlTask.Html);
-                    page.Extensions = new WebPageExtensions(document);
-                    return getHtmlTask.Html;
+                    dialog.ShowDialog();
+                    if (!dialog.AllTasksCanceled)
+                    {
+                        HtmlDocument document = new HtmlDocument();
+                        document.LoadHtml(getHtmlTask.Html);
+                        page.Extensions = new WebPageExtensions(document);
+                        return getHtmlTask.Html;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
                     return null;
                 }
             }
-            catch(Exception ex)
+            else
             {
                 return null;
             }

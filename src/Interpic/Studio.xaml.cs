@@ -1192,6 +1192,7 @@ namespace Interpic.Studio
 
         private void UnloadCurrentProject()
         {
+            ProjectUnloaded?.Invoke(this, new InterpicStudioEventArgs(this));
             CurrentProject = null;
             currentPage = null;
             currentSection = null;
@@ -1375,6 +1376,8 @@ namespace Interpic.Studio
         {
             if (!openingNewProject)
             {
+                UnloadCurrentProject();
+                StudioShutdown?.Invoke(this, new InterpicStudioEventArgs(this));
                 Application.Current.Shutdown();
             }
         }

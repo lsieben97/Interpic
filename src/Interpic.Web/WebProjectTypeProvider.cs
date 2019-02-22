@@ -19,6 +19,7 @@ namespace Interpic.Web
     public class WebProjectTypeProvider : IProjectTypeProvider
     {
         public IStudioEnvironment Studio { get; set; }
+        public static Selenium.SeleniumWrapper Selenium { get; set; }
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
@@ -89,6 +90,15 @@ namespace Interpic.Web
         public void TypeProviderConnected()
         {
             Studio.ProjectLoaded += StudioEnvironment_ProjectLoaded;
+            Studio.ProjectUnloaded += StudioProjectUnloaded;
+        }
+
+        private void StudioProjectUnloaded(object sender, InterpicStudioEventArgs e)
+        {
+            if (Selenium != null)
+            {
+                new ProcessTaskDialog(new CloseSeleniumTask(Selenium)).ShowDialog();
+            }
         }
 
         private void StudioEnvironment_ProjectLoaded(object sender, ProjectLoadedEventArgs e)
@@ -102,6 +112,15 @@ namespace Interpic.Web
                     page.Extensions = new WebPageExtensions(document);
                 }
             }
+            StartSeleniumTask task = new StartSeleniumTask();
+            task.Executed += SeleniumStarted;
+            Studio.ScheduleBackgroundTask(task);
+        }
+
+        private void SeleniumStarted(object sender, AsyncTasks.EventArgs.AsyncTaskEventArgs eventArgs)
+        {
+            StartSeleniumTask task = eventArgs.Task as StartSeleniumTask;
+            Selenium = task.Selenium;
         }
 
         public IControlFinder GetControlFinder()
@@ -116,130 +135,144 @@ namespace Interpic.Web
 
         public (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Models.Version version, Project project)
         {
-            List<AsyncTask> tasks = new List<AsyncTask>();
-            StartSeleniumTask startTask = new StartSeleniumTask();
-            startTask.PassThrough = true;
-            startTask.PassThroughSource = "Selenium";
-            startTask.PassThroughTarget = "Selenium";
-
-            NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-            navigateTask.PassThrough = true;
-            navigateTask.PassThroughSource = "Selenium";
-            navigateTask.PassThroughTarget = "Selenium";
-
-            GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(control.Identifier.Identifier);
-            getElementBoundsTask.PassThrough = true;
-            getElementBoundsTask.PassThroughSource = "Selenium";
-            getElementBoundsTask.PassThroughTarget = "Selenium";
-
-            CloseSeleniumTask closeSeleniumTask = new CloseSeleniumTask();
-
-            tasks.Add(startTask);
-            tasks.Add(navigateTask);
-            tasks.Add(getElementBoundsTask);
-            tasks.Add(closeSeleniumTask);
-
-            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
-            try
+            if (CheckSelenium())
             {
-                dialog.ShowDialog();
-                if (!dialog.AllTasksCanceled)
+                List<AsyncTask> tasks = new List<AsyncTask>();
+
+                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium;
+                navigateTask.PassThrough = true;
+                navigateTask.PassThroughSource = "Selenium";
+                navigateTask.PassThroughTarget = "Selenium";
+
+                GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(control.Identifier.Identifier);
+                getElementBoundsTask.PassThrough = true;
+                getElementBoundsTask.PassThroughSource = "Selenium";
+                getElementBoundsTask.PassThroughTarget = "Selenium";
+
+                tasks.Add(navigateTask);
+                tasks.Add(getElementBoundsTask);
+
+                ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+                try
                 {
-                    control.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                    dialog.ShowDialog();
+                    if (!dialog.AllTasksCanceled)
+                    {
+                        control.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    return (control, false);
+                }
+                return (control, true);
             }
-            catch (Exception ex)
+            else
             {
                 return (control, false);
             }
-            return (control, true);
         }
 
         public (Section section, bool succes) RefreshSection(Section section, Page page, Models.Version version, Project project)
         {
-            List<AsyncTask> tasks = new List<AsyncTask>();
-            StartSeleniumTask startTask = new StartSeleniumTask();
-            startTask.PassThrough = true;
-            startTask.PassThroughSource = "Selenium";
-            startTask.PassThroughTarget = "Selenium";
-
-            NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-            navigateTask.PassThrough = true;
-            navigateTask.PassThroughSource = "Selenium";
-            navigateTask.PassThroughTarget = "Selenium";
-
-            GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(section.SectionIdentifier.Identifier);
-            getElementBoundsTask.PassThrough = true;
-            getElementBoundsTask.PassThroughSource = "Selenium";
-            getElementBoundsTask.PassThroughTarget = "Selenium";
-
-            CloseSeleniumTask closeSeleniumTask = new CloseSeleniumTask();
-
-            tasks.Add(startTask);
-            tasks.Add(navigateTask);
-            tasks.Add(getElementBoundsTask);
-            tasks.Add(closeSeleniumTask);
-
-            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
-            try
+            if (CheckSelenium())
             {
-                dialog.ShowDialog();
-                if (!dialog.AllTasksCanceled)
+                List<AsyncTask> tasks = new List<AsyncTask>();
+
+                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium;
+                navigateTask.PassThrough = true;
+                navigateTask.PassThroughSource = "Selenium";
+                navigateTask.PassThroughTarget = "Selenium";
+
+                GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(section.SectionIdentifier.Identifier);
+                getElementBoundsTask.PassThrough = true;
+                getElementBoundsTask.PassThroughSource = "Selenium";
+                getElementBoundsTask.PassThroughTarget = "Selenium";
+
+                tasks.Add(navigateTask);
+                tasks.Add(getElementBoundsTask);
+
+                ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+                try
                 {
-                    section.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                    dialog.ShowDialog();
+                    if (!dialog.AllTasksCanceled)
+                    {
+                        section.ElementBounds = new ElementBounds(getElementBoundsTask.ElementBounds.point, getElementBoundsTask.ElementBounds.size);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    return (section, false);
+                }
+                return (section, true);
             }
-            catch (Exception ex)
+            else
             {
                 return (section, false);
             }
-            return (section, true);
         }
 
         public (Page page, bool succes) RefreshPage(Page page, Models.Version version, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
-            StartSeleniumTask startTask = new StartSeleniumTask();
-            startTask.PassThrough = true;
-            startTask.PassThroughSource = "Selenium";
-            startTask.PassThroughTarget = "Selenium";
 
-            NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-            navigateTask.PassThrough = true;
-            navigateTask.PassThroughSource = "Selenium";
-            navigateTask.PassThroughTarget = "Selenium";
-
-            MakeScreenshotTask makeScreenshotTask = new MakeScreenshotTask();
-            makeScreenshotTask.PassThrough = true;
-            makeScreenshotTask.PassThroughSource = "Selenium";
-            makeScreenshotTask.PassThroughTarget = "Selenium";
-
-            CloseSeleniumTask closeSeleniumTask = new CloseSeleniumTask();
-
-            tasks.Add(startTask);
-            tasks.Add(navigateTask);
-            tasks.Add(makeScreenshotTask);
-            tasks.Add(closeSeleniumTask);
-
-            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
-            try
+            if (CheckSelenium())
             {
-                dialog.ShowDialog();
-                if (!dialog.AllTasksCanceled)
+
+                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium;
+                navigateTask.PassThrough = true;
+                navigateTask.PassThroughSource = "Selenium";
+                navigateTask.PassThroughTarget = "Selenium";
+
+                MakeScreenshotTask makeScreenshotTask = new MakeScreenshotTask();
+                makeScreenshotTask.PassThrough = true;
+                makeScreenshotTask.PassThroughSource = "Selenium";
+                makeScreenshotTask.PassThroughTarget = "Selenium";
+
+                tasks.Add(navigateTask);
+                tasks.Add(makeScreenshotTask);
+
+                ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
+                try
                 {
-                    page.Screenshot = makeScreenshotTask.Screenshot;
+                    dialog.ShowDialog();
+                    if (!dialog.AllTasksCanceled)
+                    {
+                        page.Screenshot = makeScreenshotTask.Screenshot;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    return (page, false);
+                }
+                return (page, true);
             }
-            catch (Exception ex)
+            else
             {
                 return (page, false);
             }
-            return (page, true);
         }
 
         public SettingsCollection GetDefaultVersionSettings()
         {
             return null;
+        }
+
+        public static bool CheckSelenium()
+        {
+            if (Selenium != null)
+            {
+                return true;
+            }
+            else
+            {
+                ErrorAlert.Show("Please wait until selenium has started.");
+                return false;
+            }
         }
     }
 }
