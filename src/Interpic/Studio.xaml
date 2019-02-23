@@ -172,7 +172,7 @@
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock x:Name="lbCurrentBackgroundTask" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                <ProgressBar x:Name="pbBackgroundTask" Height="11" Width="100" Visibility="Collapsed" Margin="0,0,12,0"/>
+                <ProgressBar x:Name="pbBackgroundTask" Height="11" Width="100" Visibility="Collapsed" Margin="0,0,12,0" Background="{DynamicResource Brush05}" BorderBrush="{x:Null}" Foreground="White"/>
                 <TextBlock x:Name="lbCurrentVersion" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="0,0,6,0" VerticalAlignment="Center"/>
                 <Image ToolTip="There are unsaved project changes" x:Name="imgChangeIndicator" Visibility="Hidden" Margin="0,3,0,0" Source="/Interpic.UI;component/Icons/SaveWhite.png" Width="20" Height="20"/>
                 <TextBlock x:Name="lbLastSaved" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" Foreground="White" Margin="0,0,12,0" VerticalAlignment="Center"/>

@@ -11,21 +11,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using static Interpic.Web.Selenium.SeleniumWrapper;
 
 namespace Interpic.Web.Providers
 {
     public class BasicSourceProvider : ISourceProvider
     {
-        public string GetSource(ref Project project, ref Page page)
+        public string GetSource(ref Project project, ref Models.Version version, ref Page page)
         {
-            if (WebProjectTypeProvider.CheckSelenium())
+            BrowserType type = WebProjectTypeProvider.GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (WebProjectTypeProvider.CheckSelenium(type))
             {
-                string url = project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
+                string url = version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
                 List<AsyncTasks.AsyncTask> tasks = new List<AsyncTasks.AsyncTask>();
 
 
                 NavigateToPageTask navigateTask = new NavigateToPageTask(url);
-                navigateTask.Selenium = WebProjectTypeProvider.Selenium;
+                navigateTask.Selenium = WebProjectTypeProvider.Selenium[type];
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";

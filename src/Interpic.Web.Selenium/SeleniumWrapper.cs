@@ -7,14 +7,51 @@ using System.Threading.Tasks;
 using Interpic.Alerts;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Opera;
+using OpenQA.Selenium.Remote;
 
 namespace Interpic.Web.Selenium
 {
     public class SeleniumWrapper
     {
-        private ChromeDriver driver;
+        private RemoteWebDriver driver;
+        private BrowserType type;
 
+        public SeleniumWrapper(BrowserType type)
+        {
+            this.type = type;
+        }
+
+        public enum BrowserType
+        {
+            Chrome,
+            FireFox
+        }
         public void Start()
+        {
+            switch (type)
+            {
+                case BrowserType.Chrome:
+                    StartChrome();
+                    break;
+                case BrowserType.FireFox:
+                    StartFireFox();
+                    break;
+            }
+        }
+
+        private void StartFireFox()
+        {
+            FirefoxOptions options = new FirefoxOptions();
+            options.AddArgument("-headless");
+            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            driver = new FirefoxDriver(service, options);
+            driver.Manage().Window.Maximize();
+        }
+
+        private void StartChrome()
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--start-maximized");
@@ -23,7 +60,6 @@ namespace Interpic.Web.Selenium
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             driver = new ChromeDriver(service, options);
-
         }
 
         public void Navigate(string url)

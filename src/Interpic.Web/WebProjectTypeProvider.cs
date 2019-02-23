@@ -13,13 +13,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Interpic.Web.Selenium.SeleniumWrapper;
 
 namespace Interpic.Web
 {
     public class WebProjectTypeProvider : IProjectTypeProvider
     {
         public IStudioEnvironment Studio { get; set; }
-        public static Selenium.SeleniumWrapper Selenium { get; set; }
+        public static Dictionary<BrowserType, Selenium.SeleniumWrapper> Selenium { get; set; } = new Dictionary<BrowserType, Selenium.SeleniumWrapper>();
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
@@ -37,24 +38,13 @@ namespace Interpic.Web
             baseUrl.Value = "";
 
             collection.TextSettings.Add(baseUrl);
+            collection.Name = "page settings";
             return collection;
         }
 
         public Settings.SettingsCollection GetDefaultProjectSettings()
         {
-            SettingsCollection collection = new SettingsCollection();
-
-            Setting<string> baseUrl = new Setting<string>();
-            baseUrl.Key = "BaseUrl";
-            baseUrl.Name = "Base URL";
-            baseUrl.Description = "Base url of the website for the manual.\nPage urls will be appended to this value.";
-            baseUrl.Validator = new UrlValidator();
-            baseUrl.Value = "";
-
-            collection.TextSettings.Add(baseUrl);
-
-            collection.Name = GetProjectTypeName();
-            return collection;
+            return null;
         }
 
         public Settings.SettingsCollection GetDefaultSectionSettings()
@@ -91,13 +81,28 @@ namespace Interpic.Web
         {
             Studio.ProjectLoaded += StudioEnvironment_ProjectLoaded;
             Studio.ProjectUnloaded += StudioProjectUnloaded;
+            Studio.VersionAdded += StudioVersionAdded;
+        }
+
+        private void StudioVersionAdded(object sender, VersionEventArgs e)
+        {
+            BrowserType type = GetBrowserType(e.Version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (! Selenium.ContainsKey(type))
+            {
+                Studio.ScheduleBackgroundTask(new StartSeleniumTask(type));
+            }
         }
 
         private void StudioProjectUnloaded(object sender, InterpicStudioEventArgs e)
         {
             if (Selenium != null)
             {
-                new ProcessTaskDialog(new CloseSeleniumTask(Selenium)).ShowDialog();
+                List<AsyncTask> tasks = new List<AsyncTask>();
+                foreach(KeyValuePair<BrowserType, Selenium.SeleniumWrapper> browser in Selenium)
+                {
+                    tasks.Add(new CloseSeleniumTask(browser.Value));
+                }
+                new ProcessTasksDialog(ref tasks).ShowDialog();
             }
         }
 
@@ -112,15 +117,39 @@ namespace Interpic.Web
                     page.Extensions = new WebPageExtensions(document);
                 }
             }
-            StartSeleniumTask task = new StartSeleniumTask();
-            task.Executed += SeleniumStarted;
-            Studio.ScheduleBackgroundTask(task);
+            
+            List<BrowserType> typesToStart = new List<BrowserType>();
+            foreach(Models.Version version in Studio.CurrentProject.Versions)
+            {
+                if (! typesToStart.Contains(GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"))))
+                {
+                    typesToStart.Add(GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType")));
+                }
+            }
+            foreach (BrowserType type in typesToStart)
+            {
+                StartSeleniumTask task = new StartSeleniumTask(type);
+                task.Executed += SeleniumStarted;
+                Studio.ScheduleBackgroundTask(task);
+            }
+        }
+        public static BrowserType GetBrowserType(string name)
+        {
+            switch(name)
+            {
+                case "chrome":
+                    return BrowserType.Chrome;
+                case "firefox":
+                    return BrowserType.FireFox;
+                default:
+                    return BrowserType.Chrome;
+            }
         }
 
         private void SeleniumStarted(object sender, AsyncTasks.EventArgs.AsyncTaskEventArgs eventArgs)
         {
             StartSeleniumTask task = eventArgs.Task as StartSeleniumTask;
-            Selenium = task.Selenium;
+            Selenium.Add(task.Type,task.Selenium);
         }
 
         public IControlFinder GetControlFinder()
@@ -135,12 +164,13 @@ namespace Interpic.Web
 
         public (Control control, bool succes) RefreshControl(Control control, Section section, Page page, Models.Version version, Project project)
         {
-            if (CheckSelenium())
+            BrowserType type = GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (CheckSelenium(type))
             {
                 List<AsyncTask> tasks = new List<AsyncTask>();
 
-                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-                navigateTask.Selenium = Selenium;
+                NavigateToPageTask navigateTask = new NavigateToPageTask(version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium[type];
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
@@ -176,12 +206,13 @@ namespace Interpic.Web
 
         public (Section section, bool succes) RefreshSection(Section section, Page page, Models.Version version, Project project)
         {
-            if (CheckSelenium())
+            BrowserType type = GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (CheckSelenium(type))
             {
                 List<AsyncTask> tasks = new List<AsyncTask>();
 
-                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-                navigateTask.Selenium = Selenium;
+                NavigateToPageTask navigateTask = new NavigateToPageTask(version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium[type];
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
@@ -218,12 +249,11 @@ namespace Interpic.Web
         public (Page page, bool succes) RefreshPage(Page page, Models.Version version, Project project)
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
-
-            if (CheckSelenium())
-            {
-
-                NavigateToPageTask navigateTask = new NavigateToPageTask(project.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
-                navigateTask.Selenium = Selenium;
+            BrowserType type = GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (CheckSelenium(type))
+            { 
+                NavigateToPageTask navigateTask = new NavigateToPageTask(version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
+                navigateTask.Selenium = Selenium[type];
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
@@ -259,12 +289,36 @@ namespace Interpic.Web
 
         public SettingsCollection GetDefaultVersionSettings()
         {
-            return null;
+            SettingsCollection collection = new SettingsCollection();
+
+            Setting<string> baseUrl = new Setting<string>();
+            baseUrl.Key = "BaseUrl";
+            baseUrl.Name = "Base URL";
+            baseUrl.Description = "Base url of the website for the manual.\nPage urls will be appended to this value.";
+            baseUrl.Validator = new UrlValidator();
+            baseUrl.Value = "";
+
+            collection.TextSettings.Add(baseUrl);
+
+            MultipleChoiceSetting browserSetting = new MultipleChoiceSetting();
+            browserSetting.Key = "BrowserType";
+            browserSetting.Name = "Browser";
+            browserSetting.Description = "The browser to use for this version.\n\nNote that Opera does not have a headless mode and will display a browser window.\nNo interaction is needed with the window as Interpic fully controls the webdriver.\n\nFor all browsers:\nThe browser MUST be installed localy on the system.";
+            browserSetting.Choices = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("Chrome", "chrome"),
+                new KeyValuePair<string, string>("Firefox", "firefox"),
+                new KeyValuePair<string, string>("Opera", "opera")
+            };
+            browserSetting.Value = "chrome";
+            collection.Name = GetProjectTypeName();
+            collection.MultipleChoiceSettings.Add(browserSetting);
+            return collection;
         }
 
-        public static bool CheckSelenium()
+        public static bool CheckSelenium(BrowserType type)
         {
-            if (Selenium != null)
+            if (Selenium.ContainsKey(type))
             {
                 return true;
             }

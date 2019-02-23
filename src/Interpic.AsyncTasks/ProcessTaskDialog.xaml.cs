@@ -31,7 +31,7 @@ namespace Interpic.AsyncTasks
         {
             Title = dialogTitle;
             TaskToExecute = task;
-            
+
             InitializeComponent();
             progress = new Progress<int>(percent => { if (percent > 0) { pbProgress.Value = percent; pbProgress.IsIndeterminate = false; } else { pbProgress.IsIndeterminate = true; } });
         }
@@ -149,12 +149,26 @@ namespace Interpic.AsyncTasks
                     e.Cancel = true;
                 }
             }
-            
+
         }
 
-        public void CancelAllTasks()
+        public void CancelAllTasks(string errorMessage = null)
         {
             TaskToExecute.IsCanceled = true;
+            if (errorMessage != null)
+            {
+                if (!this.Dispatcher.CheckAccess())
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ErrorAlert.Show(errorMessage);
+                    });
+                }
+                else
+                {
+                    ErrorAlert.Show(errorMessage);
+                }
+            }
             WarningAlert.Show("The task has been canceled.");
             Close();
         }

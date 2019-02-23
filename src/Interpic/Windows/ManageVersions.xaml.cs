@@ -25,12 +25,14 @@ namespace Interpic.Studio.Windows
         public Project Project { get; set; }
         private string selectedVersionId;
         private IProjectTypeProvider provider;
-        public ManageVersions(Project project, IProjectTypeProvider provider)
+        private Studio studio;
+        public ManageVersions(Project project, IProjectTypeProvider provider, Studio studio)
         {
             InitializeComponent();
             LoadVersions(project);
             Project = project;
             this.provider = provider;
+            this.studio = studio;
         }
 
         private void LoadVersions(Project project)
@@ -69,6 +71,7 @@ namespace Interpic.Studio.Windows
                 dialog.Version.Parent = Project;
                 Project.Versions.Add(dialog.Version);
                 LoadVersions(Project);
+                studio.FireVersionAdded(dialog.Version);
             }
         }
 
@@ -91,6 +94,7 @@ namespace Interpic.Studio.Windows
                 Models.Version selectedVersion = Project.Versions.Single(version => version.Id == selectedVersionId);
                 if (ConfirmAlert.Show("Version '" + selectedVersion.Name + "' Will be permenently removed together with all containing pages!").Result)
                 {
+                    studio.FireVersionRemovedEvent(selectedVersion);
                     Project.Versions.Remove(selectedVersion);
                     LoadVersions(Project);
                 }

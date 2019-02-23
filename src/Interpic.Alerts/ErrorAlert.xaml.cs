@@ -43,7 +43,7 @@ namespace Interpic.Alerts
         {
             DialogResult = true;
             Close();
-            
+
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)

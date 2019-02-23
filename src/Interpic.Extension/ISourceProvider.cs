@@ -16,6 +16,6 @@ namespace Interpic.Extensions
         /// <param name="project">The current project.</param>
         /// <param name="page">The page to get the source from.</param>
         /// <returns>The page source.</returns>
-        string GetSource(ref Project project, ref Page page);
+        string GetSource(ref Project project, ref Models.Version version, ref Page page);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Interpic.AsyncTasks;
+﻿using Interpic.Alerts;
+using Interpic.AsyncTasks;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -24,12 +25,20 @@ namespace Interpic.Web.Selenium.Tasks
 
         public override Task Execute()
         {
-            return Task.Run(() => Run());
+            return Task.Run(() => { Run(); });
         }
 
         private void Run()
         {
-            ElementBounds = Selenium.GetElementBounds(Xpath);
+            try
+            {
+                ElementBounds = Selenium.GetElementBounds(Xpath);
+            }
+            catch(Exception ex)
+            {
+                ErrorAlert.Show("Could not get element bounds:\n" + ex.Message);
+                Dialog.CancelAllTasks();
+            }
         }
     }
 }

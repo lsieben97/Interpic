@@ -57,6 +57,8 @@ namespace Interpic.Studio
         public event OnProjectUnloaded ProjectUnloaded;
         public event OnProjectCreated ProjectCreated;
         public event OnGlobalSettingsSaved GlobalSettingsSaved;
+        public event OnNewVersionAdded VersionAdded;
+        public event OnVersionRemoved VersionRemoved;
         #endregion
 
         public Project CurrentProject { get; set; }
@@ -316,8 +318,10 @@ namespace Interpic.Studio
                 // TODO: this is ugly, find another way. before V1.0
                 Project currentProject = CurrentProject;
                 Models.Page currentPage = dialog.Page;
-                string document = ProjectTypeProvider.GetSourceProvider().GetSource(ref currentProject, ref currentPage);
+                Models.Version currentVersion = this.currentVersion;
+                string document = ProjectTypeProvider.GetSourceProvider().GetSource(ref currentProject, ref currentVersion, ref currentPage);
                 CurrentProject = currentProject;
+                this.currentVersion = currentVersion;
                 dialog.Page = currentPage;
                 if (document != null)
                 {
@@ -1461,7 +1465,7 @@ namespace Interpic.Studio
 
         private void MiManageVersions_Click(object sender, RoutedEventArgs e)
         {
-            ManageVersions dialog = new ManageVersions(CurrentProject, ProjectTypeProvider);
+            ManageVersions dialog = new ManageVersions(CurrentProject, ProjectTypeProvider, this);
             dialog.ShowDialog();
             CurrentProject = dialog.Project;
             RedrawTreeView();
@@ -1471,7 +1475,16 @@ namespace Interpic.Studio
                 SwitchVersion(CurrentProject.LastViewedVersionId);
             }
         }
+        
+        public void FireVersionRemovedEvent(Models.Version version)
+        {
+            VersionRemoved?.Invoke(this, new VersionEventArgs(this, version));
+        }
 
+        public void FireVersionAdded(Models.Version version)
+        {
+            VersionAdded?.Invoke(this, new VersionEventArgs(this, version));
+        }
         private void MiShowLog_Click(object sender, RoutedEventArgs e)
         {
             new Log(Logger as Logger).Show();
@@ -1494,9 +1507,22 @@ namespace Interpic.Studio
         {
             backgroundTask.BeforeExecution();
             taskProcessor = new SilentTaskProcessor(backgroundTask, this);
-            pbBackgroundTask.IsIndeterminate = true;
-            pbBackgroundTask.Visibility = Visibility.Visible;
-            lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
+            if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    pbBackgroundTask.IsIndeterminate = true;
+                    pbBackgroundTask.Visibility = Visibility.Visible;
+                    lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
+                });
+            }
+            else
+            {
+                pbBackgroundTask.IsIndeterminate = true;
+                pbBackgroundTask.Visibility = Visibility.Visible;
+                lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
+            }
+            
             backgroundTask.Executed += CheckForNewTasks;
             backgroundTask.Canceled += CheckForNewTasks;
             taskProcessor.ProcessTask();
@@ -1512,9 +1538,22 @@ namespace Interpic.Studio
             }
             else
             {
-                lbCurrentBackgroundTask.Text = string.Empty;
-                pbBackgroundTask.Value = 0;
-                pbBackgroundTask.Visibility = Visibility.Collapsed;
+                if (! this.Dispatcher.CheckAccess())
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        lbCurrentBackgroundTask.Text = string.Empty;
+                        pbBackgroundTask.Value = 0;
+                        pbBackgroundTask.Visibility = Visibility.Collapsed;
+                    });
+                }
+                else
+                {
+                    lbCurrentBackgroundTask.Text = string.Empty;
+                    pbBackgroundTask.Value = 0;
+                    pbBackgroundTask.Visibility = Visibility.Collapsed;
+                }
+                
             }
         }
 
@@ -1553,10 +1592,24 @@ namespace Interpic.Studio
             }
         }
 
-        public void CancelAllTasks()
+        public void CancelAllTasks(string errorMessage = null)
         {
             backgroundTask.IsCanceled = true;
             backgroundTask.FireCanceledEvent(this);
+            if (errorMessage != null)
+            {
+                if (!this.Dispatcher.CheckAccess())
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ErrorAlert.Show(errorMessage);
+                    });
+                }
+                else
+                {
+                    ErrorAlert.Show(errorMessage);
+                }
+            }
         }
     }
 }

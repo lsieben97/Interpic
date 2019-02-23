@@ -1,4 +1,5 @@
-﻿using Interpic.AsyncTasks;
+﻿using Interpic.Alerts;
+using Interpic.AsyncTasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +23,19 @@ namespace Interpic.Web.Selenium.Tasks
 
         public override Task Execute()
         {
-            return Task.Run(() => Run());
+            return Task.Run(() => { Run(); });
         }
 
         private void Run()
         {
-            Selenium.Navigate(Url);
+            try
+            {
+                Selenium.Navigate(Url);
+            }
+            catch(Exception ex)
+            {
+                Dialog.CancelAllTasks("Could not navigate to page:\n" + ex.Message);
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Interpic.AsyncTasks
         private bool canceling;
         private int taskCounter = -1;
 
-        public bool AllTasksCanceled { get { return TasksToExecute.All((task) => task.IsCanceled == true); }}
+        public bool AllTasksCanceled { get { return TasksToExecute.All((task) => task.IsCanceled == true); } }
 
         public ProcessTasksDialog(ref List<AsyncTask> tasks, string dialogTitle = "Processing...")
         {
@@ -179,7 +179,7 @@ namespace Interpic.AsyncTasks
                     {
                         executingInnerTask = TaskToExecute.Execute();
                         await executingInnerTask;
-                        
+
                         TaskToExecute.AfterExecution();
                         PassThrough();
                         if (!TaskToExecute.IsCanceled)
@@ -234,7 +234,7 @@ namespace Interpic.AsyncTasks
                             {
                                 nextTask.GetType().GetProperty(TaskToExecute.PassThroughTarget).SetValue(nextTask, TaskToExecute.GetType().GetProperty(TaskToExecute.PassThroughSource).GetValue(TaskToExecute));
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 ErrorAlert.Show("Unable to pass property through:\n" + ex.Message);
                             }
@@ -279,14 +279,39 @@ namespace Interpic.AsyncTasks
 
         }
 
-        public void CancelAllTasks()
+        public void CancelAllTasks(string errorMessage = null)
         {
-            foreach(AsyncTask task in TasksToExecute)
+            foreach (AsyncTask task in TasksToExecute)
             {
                 task.IsCanceled = true;
-                task.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                if (!this.Dispatcher.CheckAccess())
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        task.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                    });
+                }
+                else
+                {
+                    task.Icon.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/FailRed.png", UriKind.RelativeOrAbsolute));
+                }
                 task.FireCanceledEvent(this);
             }
+            if (errorMessage != null)
+            {
+                if (!this.Dispatcher.CheckAccess())
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ErrorAlert.Show(errorMessage);
+                    });
+                }
+                else
+                {
+                    ErrorAlert.Show(errorMessage);
+                }
+            }
+
         }
     }
 }

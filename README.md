@@ -14,7 +14,7 @@ This project is still a proof of concept. there is a lot to be done before v1.0
 what follows is a non-exhaustive list of things to be done.
 - [x] More complete settings system (helper settings, user controls) 
 - [x] Multi-language documentation support
-- [ ] Multiple web drivers support (eg. firefox, IE, Edge, Safari)
+- [x] Multiple web drivers support (firefox, Chrome)
 - [ ] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
 - [ ] Working extension system (loading unloading, importing)
 - [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
@@ -26,6 +26,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Logger access in developer menu.
 - [ ] Offline mode where actions that require network access are forbidden.
 - [ ] Screenshot viewer which shows the screen shot of the page and optionally overlays the sections / controls.
+- [ ] Workspace folder where all projects will be stored.
 
 
 ## Project structure

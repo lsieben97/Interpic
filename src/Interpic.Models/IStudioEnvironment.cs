@@ -162,6 +162,16 @@ namespace Interpic.Models
         /// Occurs after the global settings have been saved.
         /// </summary>
         event OnGlobalSettingsSaved GlobalSettingsSaved;
+
+        /// <summary>
+        /// Occurs after a new version has been added.
+        /// </summary>
+        event OnNewVersionAdded VersionAdded;
+
+        /// <summary>
+        /// Occurs when a version is about to be deleted. This is the last time the <see cref="Models.Version"/> object is available.
+        /// </summary>
+        event OnVersionRemoved VersionRemoved;
         #endregion
 
     }

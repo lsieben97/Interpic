@@ -58,6 +58,7 @@
     <Compile Include="EventArgs\ProjectLoadedEventArgs.cs" />
     <Compile Include="EventArgs\ProjectSettingsEventArgs.cs" />
     <Compile Include="EventArgs\SectionSettingsEventArgs.cs" />
+    <Compile Include="EventArgs\VersionEventArgs.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="ExtensionObject.cs" />
     <Compile Include="ExtensionType.cs" />
