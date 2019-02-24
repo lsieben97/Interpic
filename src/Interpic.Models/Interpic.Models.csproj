@@ -57,6 +57,7 @@
     <Compile Include="EventArgs\PageSettingsEventArgs.cs" />
     <Compile Include="EventArgs\ProjectLoadedEventArgs.cs" />
     <Compile Include="EventArgs\ProjectSettingsEventArgs.cs" />
+    <Compile Include="EventArgs\ProjectStateEventArgs.cs" />
     <Compile Include="EventArgs\SectionSettingsEventArgs.cs" />
     <Compile Include="EventArgs\VersionEventArgs.cs" />
     <Compile Include="Extension.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="EventArgs\InterpicStudioEventArgs.cs" />
     <Compile Include="IStudioEnvironment.cs" />
+    <Compile Include="MenuItem.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

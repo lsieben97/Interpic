@@ -36,8 +36,10 @@ namespace Interpic.Studio
         private Models.Page currentPage;
         private Models.Section currentSection;
         private Models.Version currentVersion;
+        private Models.Control currentControl;
         private bool openingNewProject;
         private IProgress<int> progress;
+        private Dictionary<string, System.Windows.Controls.MenuItem> ExtensionMenuItems = new Dictionary<string, System.Windows.Controls.MenuItem>();
 
         private Stack<AsyncTask> backgroundTasks = new Stack<AsyncTask>();
         private AsyncTask backgroundTask;
@@ -391,6 +393,7 @@ namespace Interpic.Studio
                 else if (selection.GetType() == typeof(Models.Control))
                 {
                     currentSection = ((Models.Control)selection).Parent;
+                    currentControl = ((Models.Control)selection);
                     RenderControlPage(selection as Models.Control);
                 }
                 else if (selection.GetType() == typeof(Project))
@@ -1149,7 +1152,15 @@ namespace Interpic.Studio
         {
             if (((FrameworkElement)sender).Tag != null)
             {
-                SetStatusBar(((FrameworkElement)sender).Tag.ToString());
+                if (((FrameworkElement)sender).Tag is string)
+                {
+                    SetStatusBar(((FrameworkElement)sender).Tag.ToString());
+                }
+                else
+                {
+                    Models.MenuItem item = ((FrameworkElement)sender).Tag as Models.MenuItem;
+                    SetStatusBar(item.Description);
+                }
             }
         }
 
@@ -1609,6 +1620,58 @@ namespace Interpic.Studio
                 {
                     ErrorAlert.Show(errorMessage);
                 }
+            }
+        }
+
+        public bool RegisterExtensionMenuItem(Models.MenuItem menuItem)
+        {
+            try
+            {
+                System.Windows.Controls.MenuItem menuItemControl = CreateMenuItem(menuItem);
+                menuItemControl.HorizontalAlignment = HorizontalAlignment.Right;
+                ExtensionMenuItems.Add(menuItem.Id, menuItemControl);
+                mStudio.Items.Add(menuItemControl);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private System.Windows.Controls.MenuItem CreateMenuItem(Models.MenuItem menuItem)
+        {
+            System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
+            item.Header = menuItem.Name;
+            if (menuItem.Icon != null)
+            {
+                Image image = new Image();
+                image.Source = menuItem.Icon;
+                item.Icon = image;
+            }
+            item.Click += ExtensionMenuItemClick;
+            item.MouseEnter += DisplayControlHint;
+            item.Tag = menuItem;
+            foreach(Models.MenuItem subItem in menuItem.SubItems)
+            {
+                item.Items.Add(CreateMenuItem(subItem));
+            }
+            return item;
+        }
+
+        private void ExtensionMenuItemClick(object sender, RoutedEventArgs e)
+        {
+                Models.MenuItem item = ((System.Windows.Controls.MenuItem)e.Source).Tag as Models.MenuItem;
+                item.FireClickedEvent(this, new ProjectStateEventArgs(this, CurrentProject, currentVersion, currentPage, currentSection, currentControl));
+                e.Handled = true;
+        }
+
+        public void RemoveExtensionMenuItem(string menuItemId)
+        {
+            if (ExtensionMenuItems.ContainsKey(menuItemId))
+            {
+                mStudio.Items.Remove(ExtensionMenuItems[menuItemId]);
+                ExtensionMenuItems.Remove(menuItemId);
             }
         }
     }

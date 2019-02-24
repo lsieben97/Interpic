@@ -22,7 +22,9 @@ namespace Interpic.Models
     public delegate void OnControlSettingsOpened(object sender, ControlSettingsEventArgs e);
 
     public delegate void OnGlobalSettingsSaved(object sender, GlobalSettingsEventArgs e);
+
     public delegate void OnNewVersionAdded(object sender, VersionEventArgs e);
     public delegate void OnVersionRemoved(object sender, VersionEventArgs e);
 
+    public delegate void OnMenuItemClicked(object sender, ProjectStateEventArgs e);
 }

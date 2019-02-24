@@ -21,7 +21,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
 - [x] Maximum amount of 1 selenium instance per session per driver.
 - [x] Implement all menu bar items.
-- [ ] Custom menu items for extensions.
+- [x] Custom menu items for extensions.
 - [ ] Better logging usage.
 - [x] Logger access in developer menu.
 - [ ] Offline mode where actions that require network access are forbidden.

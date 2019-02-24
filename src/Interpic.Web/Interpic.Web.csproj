@@ -130,6 +130,10 @@
       <Project>{c5137bae-8acf-42e5-8ff1-8dc33437fd7a}</Project>
       <Name>Interpic.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interpic.Web.Icons\Interpic.Web.Icons.csproj">
+      <Project>{891ec131-0141-41e0-9915-e1f1db9491fc}</Project>
+      <Name>Interpic.Web.Icons</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpic.Web.Selenium\Interpic.Web.Selenium.csproj">
       <Project>{9404fbb0-7bf9-4213-9b49-a9335bacc24d}</Project>
       <Name>Interpic.Web.Selenium</Name>

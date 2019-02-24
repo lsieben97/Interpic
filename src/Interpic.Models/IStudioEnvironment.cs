@@ -68,6 +68,16 @@ namespace Interpic.Models
         /// <returns>true when the task has been canceled. false when no task with the given id could be found or when the task is already executing.</returns>
         bool CancelScheduledBackgroundTask(string id);
 
+        /// <summary>
+        /// Register the given menu item as an extra extension menu item and show it in the studio.
+        /// </summary>
+        /// <param name="menuItem">The menu item to register.</param>
+        /// <returns>Whether registration was succesfull.</returns>
+        bool RegisterExtensionMenuItem(MenuItem menuItem);
+
+
+        void RemoveExtensionMenuItem(string menuItemId);
+
         #region Events
         /// <summary>
         /// Occurs when Interpic Studio has finished it's initalization but before a project is loaded.

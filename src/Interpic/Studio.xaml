@@ -19,7 +19,12 @@
             <ColumnDefinition Width="20*"/>
             <ColumnDefinition Width="79*"/>
         </Grid.ColumnDefinitions>
-        <Menu Height="21" Style="{DynamicResource SimpleMenu}" VerticalAlignment="Top" Grid.ColumnSpan="2" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" >
+        <Menu x:Name="mStudio" Height="21" Style="{DynamicResource SimpleMenu}" VerticalAlignment="Top" Grid.ColumnSpan="2" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" >
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
             <MenuItem Header="File" MouseEnter="DisplayControlHint">
                 <MenuItem x:Name="mi" Header="New">
                     <MenuItem.Icon>
@@ -158,6 +163,7 @@
                     <Image Source="/Interpic.UI;component/Icons/Control.png"/>
                 </MenuItem.Icon>
             </MenuItem>
+            <Separator/>
         </Menu>
         <TreeView x:Name="tvManualTree" Margin="0" Grid.Row="1" Grid.RowSpan="3" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0" Foreground="White" SelectedItemChanged="tvManualTree_SelectedItemChanged" Padding="0">
             <TreeView.Resources>

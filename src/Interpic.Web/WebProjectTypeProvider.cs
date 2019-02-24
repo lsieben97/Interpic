@@ -10,9 +10,11 @@ using Interpic.Web.Selenium.Tasks;
 using Interpic.Web.Windows;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using static Interpic.Web.Selenium.SeleniumWrapper;
 
 namespace Interpic.Web
@@ -108,20 +110,49 @@ namespace Interpic.Web
 
         private void StudioEnvironment_ProjectLoaded(object sender, ProjectLoadedEventArgs e)
         {
+            PrepareObjectModel();
+            StartSelenium();
+            RegisterMenuItems();
+        }
+
+        private void RegisterMenuItems()
+        {
+            MenuItem webToolsItem = new MenuItem("Web tools");
+            MenuItem openInWebBrowserItem = new MenuItem("Open current page in webbrowser");
+            openInWebBrowserItem.Description = "Open the current page in the default webbrowser.";
+            openInWebBrowserItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/OpenExternal.png", UriKind.RelativeOrAbsolute));
+            openInWebBrowserItem.Clicked += OpenInWebBrowserItemClicked;
+            webToolsItem.SubItems.Add(openInWebBrowserItem);
+            Studio.RegisterExtensionMenuItem(webToolsItem);
+        }
+
+        private void OpenInWebBrowserItemClicked(object sender, ProjectStateEventArgs e)
+        {
+            if (e.Page != null && e.Version != null)
+            {
+                string url = e.Version.Settings.GetTextSetting("BaseUrl") + e.Page.Settings.GetTextSetting("PageUrl");
+                try
+                {
+                    Process.Start(url);
+                }
+                catch (Exception ex)
+                {
+                    ErrorAlert.Show("Could not open page in browser:\n" + ex.Message);
+                }
+                
+            }
+            else
+            {
+                ErrorAlert.Show("No page selected.");
+            }
+        }
+
+        private void StartSelenium()
+        {
+            List<BrowserType> typesToStart = new List<BrowserType>();
             foreach (Models.Version version in Studio.CurrentProject.Versions)
             {
-                foreach (Page page in version.Pages)
-                {
-                    HtmlDocument document = new HtmlDocument();
-                    document.LoadHtml(page.Source);
-                    page.Extensions = new WebPageExtensions(document);
-                }
-            }
-            
-            List<BrowserType> typesToStart = new List<BrowserType>();
-            foreach(Models.Version version in Studio.CurrentProject.Versions)
-            {
-                if (! typesToStart.Contains(GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"))))
+                if (!typesToStart.Contains(GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"))))
                 {
                     typesToStart.Add(GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType")));
                 }
@@ -133,6 +164,20 @@ namespace Interpic.Web
                 Studio.ScheduleBackgroundTask(task);
             }
         }
+
+        private void PrepareObjectModel()
+        {
+            foreach (Models.Version version in Studio.CurrentProject.Versions)
+            {
+                foreach (Page page in version.Pages)
+                {
+                    HtmlDocument document = new HtmlDocument();
+                    document.LoadHtml(page.Source);
+                    page.Extensions = new WebPageExtensions(document);
+                }
+            }
+        }
+
         public static BrowserType GetBrowserType(string name)
         {
             switch(name)

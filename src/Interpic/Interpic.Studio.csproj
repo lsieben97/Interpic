@@ -319,4 +319,11 @@
     <Resource Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)Interpic.Web.Icons\bin\Debug\Interpic.Web.Icons.dll" "$(TargetDir)Interpic.Web.Icons.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
