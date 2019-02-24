@@ -33,7 +33,7 @@ namespace Interpic.Studio
         public Splash()
         {
             InitializeComponent();
-
+            
             // register base project types
             Studio.AvailableProjectTypes.Add(new WebProjectTypeProvider());
 
@@ -43,6 +43,27 @@ namespace Interpic.Studio
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadRecentProjects();
+            new ProcessTaskDialog(new LoadGlobalSettingsTask()).ShowDialog();
+            CheckWorkspace();
+        }
+
+        private void CheckWorkspace()
+        {
+            
+            if (App.GlobalSettings.GetPathSetting("workspaceDirectory") == string.Empty)
+            {
+                InfoAlert.Show("Welcome to Interpic studio!\nPlease select a folder to use as your workspace. The workspace will contain all Interpic projects you create.");
+                System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    App.GlobalSettings.PathSettings.Find(setting => setting.Key == "workspaceDirectory").Value = dialog.SelectedPath;
+                    App.SaveGlobalSettings();
+                }
+                else
+                {
+                    CheckWorkspace();
+                }
+            }
         }
 
         private void LoadRecentProjects()

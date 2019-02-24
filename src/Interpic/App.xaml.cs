@@ -96,10 +96,20 @@ namespace Interpic
             logDirectory.Description = "The directory where the log file is located.";
             logDirectory.Key = "logDirectory";
 
+            PathSetting workspaceDirectory = new PathSetting();
+            workspaceDirectory.Value = string.Empty;
+            workspaceDirectory.DialogTitle = "Set workspace directory";
+            workspaceDirectory.Operation = PathSetting.PathOperation.Load;
+            workspaceDirectory.Type = PathSetting.PathType.Folder;
+            workspaceDirectory.Name = "Workspace directory";
+            workspaceDirectory.Description = "The directory where all new projects are created.";
+            workspaceDirectory.Key = "workspaceDirectory";
+
             DefaultGlobalSettings.NumeralSettings.Add(autosaveWarning);
             DefaultGlobalSettings.BooleanSettings.Add(showInfoOnAutomaticSettingsDialog);
             DefaultGlobalSettings.BooleanSettings.Add(enableDeveloperMode);
             DefaultGlobalSettings.PathSettings.Add(logDirectory);
+            DefaultGlobalSettings.PathSettings.Add(workspaceDirectory);
         }
 
         internal static void InitializeLogger(string logfile, IStudioEnvironment environment)

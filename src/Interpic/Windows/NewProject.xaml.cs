@@ -99,18 +99,13 @@ namespace Interpic.Studio.Windows
                 lbOutputTypeError.Text = string.Empty;
             }
 
-            if (tbProjectFolder.Text == string.Empty)
-            {
-                valid = false;
-                lbProjectFolderError.Text = "Enter a manual folder";
-            }
-            else
-            {
-                lbProjectFolderError.Text = string.Empty;
-            }
-
             if (valid)
             {
+                string directoryName = tbName.Text;
+                foreach (var c in System.IO.Path.GetInvalidFileNameChars())
+                {
+                    directoryName = directoryName.Replace(c.ToString(), "");
+                }
                 project = new Project();
                 project.Name = tbName.Text;
                 IProjectTypeProvider provider = ((ComboBoxItem)cbbApplicationType.SelectedValue).Tag as IProjectTypeProvider;
@@ -121,8 +116,8 @@ namespace Interpic.Studio.Windows
                 
                 project.LastSaved = DateTime.Now;
                 project.IsNew = true;
-                project.OutputFolder = projectOutputFolder;
-                project.ProjectFolder = tbProjectFolder.Text;
+                project.OutputFolder = App.GlobalSettings.GetPathSetting("workspaceDirectory") + directoryName + "\\Output\\";
+                project.ProjectFolder = App.GlobalSettings.GetPathSetting("workspaceDirectory") + directoryName;
                 NewVersion newVersionDialog = new NewVersion(provider.GetDefaultVersionSettings());
                 newVersionDialog.ShowDialog();
                 if (newVersionDialog.DialogResult.Value)
@@ -185,27 +180,6 @@ namespace Interpic.Studio.Windows
             //        }
             //    }
             //}
-        }
-
-        private void btnBrowseProjectFolder_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
-            dialog.Description = "Select a folder to create the new manual in.";
-
-
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                tbProjectFolder.Text = dialog.SelectedPath;
-
-                projectOutputFolder = dialog.SelectedPath + "\\Output\\";
-                string filename = tbName.Text;
-                foreach (var c in System.IO.Path.GetInvalidFileNameChars())
-                {
-                    filename = filename.Replace(c.ToString(), "");
-                }
-                projectPath = dialog.SelectedPath + "\\" + filename + ".ipp";
-
-            }
         }
 
         private void CbbOutputType_SelectionChanged(object sender, SelectionChangedEventArgs e)

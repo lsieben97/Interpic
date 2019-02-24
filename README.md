@@ -26,7 +26,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Logger access in developer menu.
 - [ ] Offline mode where actions that require network access are forbidden.
 - [ ] Screenshot viewer which shows the screen shot of the page and optionally overlays the sections / controls.
-- [ ] Workspace folder where all projects will be stored.
+- [x] Workspace folder where all projects will be stored.
 
 
 ## Project structure
