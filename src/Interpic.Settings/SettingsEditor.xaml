@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="54,6,0,0" TextWrapping="Wrap" Text="Edit Settings" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana" Width="829" Grid.ColumnSpan="2"/>
 
-        <Image HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/SettingsWhite.png" Width="33" Height="33"/>
+        <Image x:Name="imIcon" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/SettingsWhite.png" Width="33" Height="33"/>
         <ScrollViewer Grid.Row="2" Style="{DynamicResource ScrollViewerStyle}">
             <StackPanel x:Name="spControls" Margin="0" />
         </ScrollViewer>
@@ -27,8 +27,8 @@
         <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnCancel_Click"/>
         <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Left" Margin="376,5,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Grid.Column="1" Click="btnSave_Click"/>
         <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="0,3,0,0" TextWrapping="Wrap" Text="Setting description" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="16" Grid.Row="1"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,3,0,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="16" Grid.Row="1"/>
-        <TextBlock HorizontalAlignment="Left" Margin="156,11,0,0" TextWrapping="Wrap" Text="Move the mouse over a setting to see it's desccription" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="9" Grid.Row="1" Grid.Column="1"/>
+        <TextBlock x:Name="lbCaption" HorizontalAlignment="Left" Margin="10,3,0,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="16" Grid.Row="1"/>
+        <TextBlock x:Name="lbDescriptionCaption" HorizontalAlignment="Left" Margin="156,11,0,0" TextWrapping="Wrap" Text="Move the mouse over a setting to see it's desccription" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="9" Grid.Row="1" Grid.Column="1"/>
 
     </Grid>
    

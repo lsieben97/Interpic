@@ -35,6 +35,32 @@ namespace Interpic.Settings
             InitializeComponent();
         }
 
+        public SettingsEditor(SettingsCollection settingsCollection, ImageSource icon)
+        {
+            SettingsCollection = settingsCollection;
+            InitializeComponent();
+            Icon = icon;
+            imIcon.Source = icon;
+        }
+
+        public SettingsEditor(SettingsCollection settingsCollection, ImageSource icon, string caption)
+        {
+            SettingsCollection = settingsCollection;
+            InitializeComponent();
+            Icon = icon;
+            imIcon.Source = icon;
+            lbCaption.Text = caption;
+        }
+
+        public SettingsEditor(SettingsCollection settingsCollection, ImageSource icon, string caption, string descriptionCaption)
+        {
+            SettingsCollection = settingsCollection;
+            InitializeComponent();
+            Icon = icon;
+            imIcon.Source = icon;
+            lbCaption.Text = caption;
+            lbDescriptionCaption.Text = descriptionCaption;
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var hwnd = new WindowInteropHelper(this).Handle;
