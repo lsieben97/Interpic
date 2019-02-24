@@ -115,5 +115,7 @@ namespace Interpic.Extensions
         /// <param name="project">The parent project.</param>
         /// <returns>The page with it's <see cref="Page.Screenshot"/> property filled with data and a bool indicating whether refreshing suceeded.</returns>
         (Page page, bool succes) RefreshPage(Page page, Models.Version version, Project project);
+
+        InternetUsage InternetUsage { get; set; }
     }
 }

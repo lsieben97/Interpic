@@ -38,6 +38,7 @@ namespace Interpic.Studio
         private Models.Version currentVersion;
         private Models.Control currentControl;
         private bool openingNewProject;
+        private bool offlineMode;
         private IProgress<int> progress;
         private Dictionary<string, System.Windows.Controls.MenuItem> ExtensionMenuItems = new Dictionary<string, System.Windows.Controls.MenuItem>();
 
@@ -70,6 +71,8 @@ namespace Interpic.Studio
 
         private ChangeListener projectChangeListener;
         public ILogger Logger => App.ApplicationLogger;
+
+        public bool OfflineMode => offlineMode;
 
         public Studio(Models.Project project)
         {
@@ -161,7 +164,7 @@ namespace Interpic.Studio
         {
             SetStatusBar("Project loaded.");
             lbLastSaved.Text = "Last saved: " + CurrentProject.LastSaved.ToShortDateString() + " " + CurrentProject.LastSaved.ToLongTimeString();
-
+            Title = CurrentProject.Name + " - " + currentVersion.Name + " - Interpic Studio";
             checkTimer.Interval = new TimeSpan(0, 0, 1);
             checkTimer.Tick += CheckTimer_Tick;
             checkTimer.Start();
@@ -296,6 +299,11 @@ namespace Interpic.Studio
 
         private void AddPage()
         {
+            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingPage)
+            {
+                ShowOfflineError();
+                return;
+            }
             NewPage dialog = new NewPage();
             dialog.ShowDialog();
             if (dialog.Page != null)
@@ -347,6 +355,11 @@ namespace Interpic.Studio
                 }
 
             }
+        }
+
+        private void ShowOfflineError()
+        {
+            ErrorAlert.Show("Action not allowed.\n\nOffline mode is enabled.");
         }
 
         private void ExpandAll(ItemsControl items, bool expand)
@@ -1227,6 +1240,11 @@ namespace Interpic.Studio
 
         private void miNewSection_Click(object sender, RoutedEventArgs e)
         {
+            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingSection)
+            {
+                ShowOfflineError();
+                return;
+            }
             SelectPage selector = new SelectPage(currentVersion);
             if (selector.ShowDialog().Value)
             {
@@ -1260,7 +1278,6 @@ namespace Interpic.Studio
                 {
                     ProjectUnloaded?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
                     UnloadCurrentProject();
-                    // todo: unload global extensions.
                     StudioShutdown?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
                     Close();
                 }
@@ -1356,6 +1373,11 @@ namespace Interpic.Studio
 
         private void AddControl(ref Models.Section section)
         {
+            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingControl)
+            {
+                ShowOfflineError();
+                return;
+            }
             IControlIdentifierSelector selector = ProjectTypeProvider.GetControlSelector();
             selector.Section = section;
             AddControl dialog = new AddControl(section.DiscoveredControls, selector);
@@ -1672,6 +1694,29 @@ namespace Interpic.Studio
             {
                 mStudio.Items.Remove(ExtensionMenuItems[menuItemId]);
                 ExtensionMenuItems.Remove(menuItemId);
+            }
+        }
+
+        private void ImOfflineModeIndicator_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            offlineMode = false;
+            imOfflineModeIndicator.Visibility = Visibility.Collapsed;
+            InfoAlert.Show("Offline mode disabled.");
+        }
+
+        private void MiOfflineMode_Click(object sender, RoutedEventArgs e)
+        {
+            if (offlineMode)
+            {
+                offlineMode = false;
+                imOfflineModeIndicator.Visibility = Visibility.Collapsed;
+                InfoAlert.Show("Offline mode disabled.");
+            }
+            else
+            {
+                offlineMode = true;
+                imOfflineModeIndicator.Visibility = Visibility.Visible;
+                WarningAlert.Show("Offline mode is now on. Actions that require internet access are not available.\n\nClick this button again to disable offline mode.");
             }
         }
     }

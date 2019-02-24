@@ -23,6 +23,7 @@ namespace Interpic.Web
     {
         public IStudioEnvironment Studio { get; set; }
         public static Dictionary<BrowserType, Selenium.SeleniumWrapper> Selenium { get; set; } = new Dictionary<BrowserType, Selenium.SeleniumWrapper>();
+        public InternetUsage InternetUsage { get; set; } = new InternetUsage();
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
@@ -128,6 +129,12 @@ namespace Interpic.Web
 
         private void OpenInWebBrowserItemClicked(object sender, ProjectStateEventArgs e)
         {
+            if(Studio.OfflineMode)
+            {
+                ErrorAlert.Show("Action not allowed.\n\nOffline mode is enabled.");
+                return;
+            }
+
             if (e.Page != null && e.Version != null)
             {
                 string url = e.Version.Settings.GetTextSetting("BaseUrl") + e.Page.Settings.GetTextSetting("PageUrl");

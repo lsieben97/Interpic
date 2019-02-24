@@ -24,7 +24,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Custom menu items for extensions.
 - [ ] Better logging usage.
 - [x] Logger access in developer menu.
-- [ ] Offline mode where actions that require network access are forbidden.
+- [x] Offline mode where actions that require network access are forbidden.
 - [ ] Screenshot viewer which shows the screen shot of the page and optionally overlays the sections / controls.
 - [x] Workspace folder where all projects will be stored.
 

@@ -78,6 +78,8 @@ namespace Interpic.Models
 
         void RemoveExtensionMenuItem(string menuItemId);
 
+        bool OfflineMode { get; }
+
         #region Events
         /// <summary>
         /// Occurs when Interpic Studio has finished it's initalization but before a project is loaded.
