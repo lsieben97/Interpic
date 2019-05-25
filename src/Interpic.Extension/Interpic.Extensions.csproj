@@ -41,16 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extension.cs" />
-    <Compile Include="ExtensionType.cs" />
-    <Compile Include="IControlFinder.cs" />
-    <Compile Include="IControlIdentifierSelector.cs" />
-    <Compile Include="IExtensionRegistry.cs" />
-    <Compile Include="IProjectBuilder.cs" />
-    <Compile Include="IProjectTypeProvider.cs" />
-    <Compile Include="ISectionIdentifierSelector.cs" />
-    <Compile Include="ISourceProvider.cs" />
-    <Compile Include="IXmlNodeSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +52,9 @@
       <Project>{90f34232-79a3-4904-b093-fcfb4dca3666}</Project>
       <Name>Interpic.Settings</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tasks\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

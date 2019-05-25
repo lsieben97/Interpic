@@ -1,6 +1,6 @@
 ﻿using Interpic.AsyncTasks;
 using Interpic.Builders.MarkdownMKDocs.Tasks;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Settings;
 using System;

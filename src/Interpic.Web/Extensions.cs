@@ -17,14 +17,5 @@ namespace Interpic.Web
             }
             return null;
         }
-
-        public static WebPageExtensions GetWebPageExtensions(this Section page)
-        {
-            if (page.Extensions != null)
-            {
-                return (WebPageExtensions)page.Extensions;
-            }
-            return null;
-        }
     }
 }

@@ -21,10 +21,11 @@ namespace Interpic.Alerts
     {
         public bool Result { get; set; }
 
-        public WarningAlert(string message)
+        public WarningAlert(string message, bool showCancelButton = false)
         {
             InitializeComponent();
             lbMessage.Text = message;
+            btnCancel.Visibility = showCancelButton ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -33,9 +34,9 @@ namespace Interpic.Alerts
             Close();
         }
 
-        public static WarningAlert Show(string message)
+        public static WarningAlert Show(string message, bool showCancelButton = false)
         {
-            WarningAlert alert = new WarningAlert(message);
+            WarningAlert alert = new WarningAlert(message, showCancelButton);
             alert.ShowDialog();
             return alert;
         }

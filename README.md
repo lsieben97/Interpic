@@ -15,7 +15,7 @@ what follows is a non-exhaustive list of things to be done.
 - [x] More complete settings system (helper settings, user controls) 
 - [x] Multi-language documentation support
 - [x] Multiple web drivers support (firefox, Chrome)
-- [ ] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
+- [x] Web Behaviours support ( list of actions before executing the intended action of the studio. (usefull for systems where a login is required to view specific pages))
 - [ ] Working extension system (loading unloading, importing)
 - [ ] Open source licenses system for extensions to specify. (will be shown on the about screen)
 - [x] Background tasks system (build on top of `Interpic.AsyncTasks.AsyncTask`)
@@ -27,6 +27,9 @@ what follows is a non-exhaustive list of things to be done.
 - [x] Offline mode where actions that require network access are forbidden.
 - [ ] Screenshot viewer which shows the screen shot of the page and optionally overlays the sections / controls.
 - [x] Workspace folder where all projects will be stored.
+- [ ] Page states system to capture different states a page can be in.
+- [ ] HTML generation project builder with Web Studio interface.
+- [ ] Allow extensions to be able to add menu items to menus form other extensions.
 
 
 ## Project structure
@@ -35,8 +38,6 @@ The codebase consists of the following assemblies:
 The main studio assembly containing the studio application.
 ### Interpic.UI
 Contains style files as well as all icons used by the studio.
-### Interpic.Extensions
-Contains the extension system. as well as the `IStudioEnvironment` class which the studio implements.
 ### Interpic.Models
 Contains the object model interpic uses.
 ### Interpic.Alerts

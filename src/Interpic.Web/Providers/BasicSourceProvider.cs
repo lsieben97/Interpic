@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Interpic.Alerts;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Web.Selenium.Tasks;
 using Interpic.Web.Tasks;

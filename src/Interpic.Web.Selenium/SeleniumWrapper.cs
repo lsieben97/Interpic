@@ -15,12 +15,12 @@ namespace Interpic.Web.Selenium
 {
     public class SeleniumWrapper
     {
-        private RemoteWebDriver driver;
-        private BrowserType type;
+        public RemoteWebDriver Driver { get; set; }
+        public BrowserType Browsertype { get; set; }
 
         public SeleniumWrapper(BrowserType type)
         {
-            this.type = type;
+            this.Browsertype = type;
         }
 
         public enum BrowserType
@@ -30,7 +30,7 @@ namespace Interpic.Web.Selenium
         }
         public void Start()
         {
-            switch (type)
+            switch (Browsertype)
             {
                 case BrowserType.Chrome:
                     StartChrome();
@@ -47,8 +47,8 @@ namespace Interpic.Web.Selenium
             options.AddArgument("-headless");
             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            driver = new FirefoxDriver(service, options);
-            driver.Manage().Window.Maximize();
+            Driver = new FirefoxDriver(service, options);
+            Driver.Manage().Window.Maximize();
         }
 
         private void StartChrome()
@@ -59,23 +59,23 @@ namespace Interpic.Web.Selenium
             options.AddArgument("headless");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
-            driver = new ChromeDriver(service, options);
+            Driver = new ChromeDriver(service, options);
         }
 
         public void Navigate(string url)
         {
-            driver.Navigate().GoToUrl(url);
+            Driver.Navigate().GoToUrl(url);
         }
 
         public byte[] MakeScreenShot()
         {
-            Screenshot screenshot = driver.GetScreenshot();
+            Screenshot screenshot = Driver.GetScreenshot();
             return screenshot.AsByteArray;
         }
 
         public (Size s, Point p) GetElementBounds(string xpath)
         {
-            IWebElement element = driver.FindElementByXPath(xpath);
+            IWebElement element = Driver.FindElementByXPath(xpath);
             if (element != null)
             {
                 return (element.Size, element.Location);
@@ -86,12 +86,12 @@ namespace Interpic.Web.Selenium
 
         public string GetHtml()
         {
-            return driver.PageSource;
+            return Driver.PageSource;
         }
 
         public void Close()
         {
-            driver.Quit();
+            Driver.Quit();
         }
     }
 }

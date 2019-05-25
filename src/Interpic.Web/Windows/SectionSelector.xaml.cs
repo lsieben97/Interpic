@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Interpic.Alerts;
 using Interpic.AsyncTasks;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Web.Tasks;
 using System;
@@ -30,7 +30,7 @@ namespace Interpic.Web.Windows
         private int currentSearchResult;
         private HtmlNode baseNode;
         private Dictionary<HtmlNode, TreeViewItem> SearchIndex = new Dictionary<HtmlNode, TreeViewItem>();
-        public NodeSelector()
+        public NodeSelector(bool isGeneralNodeSelector = false)
         {
             InitializeComponent();
         }

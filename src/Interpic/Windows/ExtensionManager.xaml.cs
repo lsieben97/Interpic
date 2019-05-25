@@ -35,28 +35,28 @@ namespace Interpic.Studio.Windows
 
         private void LoadExtensions()
         {
-            if (project.ProjectExtensions == null && Functional.Extensions.GlobalExtensionsAvailable() == false)
-            {
-                Extension empty = new Models.Extension();
-                empty.Name = "No active extensions";
-                lsbActiveExtensions.Items.Add(empty);
-                btnRemove.IsEnabled = false;
-            }
-            else
-            {
-                List<Extension> activeExtensions = new List<Extension>();
-                if (project.ProjectExtensions != null)
-                {
-                    activeExtensions.AddRange(project.ProjectExtensions);
-                }
+            //if (project.ProjectExtensions == null && Functional.Extensions.GlobalExtensionsAvailable() == false)
+            //{
+            //    ExtensionDeclaration empty = new Models.ExtensionDeclaration();
+            //    empty.Name = "No active extensions";
+            //    lsbActiveExtensions.Items.Add(empty);
+            //    btnRemove.IsEnabled = false;
+            //}
+            //else
+            //{
+            //    List<ExtensionDeclaration> activeExtensions = new List<ExtensionDeclaration>();
+            //    if (project.ProjectExtensions != null)
+            //    {
+            //        activeExtensions.AddRange(project.ProjectExtensions);
+            //    }
 
-                if (Functional.Extensions.GlobalExtensionsAvailable() == true)
-                {
-                    activeExtensions.AddRange(Functional.Extensions.GetGlobalExtensions());
-                }
+            //    if (Functional.Extensions.GlobalExtensionsAvailable() == true)
+            //    {
+            //        activeExtensions.AddRange(Functional.Extensions.GetGlobalExtensions());
+            //    }
 
-                lsbActiveExtensions.ItemsSource = activeExtensions;
-            }
+            //    lsbActiveExtensions.ItemsSource = activeExtensions;
+            //}
         }
 
         private void lsbActiveExtensions_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Interpic.Models.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,22 +7,29 @@ using System.Threading.Tasks;
 
 namespace Interpic.Models
 {
-    public class Extension
+    public abstract class Extension
     {
-        public string Name { get; set; }
-        public ExtensionType Type { get; set; }
-        public string Path { get; set; }
+        /// <summary>
+        /// Get the name of the extension.
+        /// </summary>
+        /// <returns>The name of the extension.</returns>
+        public abstract string GetName();
 
-        public override string ToString()
-        {
-            if (Name == "No active extensions")
-            {
-                return Name;
-            }
-            else
-            {
-                return Name + "(" + (Type == ExtensionType.Project ? "Global" : "Project") + ")";
-            }
-        }
+        /// <summary>
+        /// Get a description of the extension.
+        /// </summary>
+        /// <returns>A description of the extension.</returns>
+        public abstract string GetDescription();
+
+        /// <summary>
+        /// Get the type of extension.
+        /// </summary>
+        /// <returns>The type of extension.</returns>
+        public abstract ExtensionType GetExtensionType();
+
+        /// <summary>
+        /// Extension registry to register this extension.
+        /// </summary>
+        public IExtensionRegistry ExtensionRegistry { get; set; }
     }
 }

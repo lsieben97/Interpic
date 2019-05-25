@@ -1,5 +1,6 @@
 ﻿using Interpic.AsyncTasks;
 using Interpic.Models;
+using Interpic.Models.Extensions;
 using Interpic.Settings;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,8 @@ namespace Interpic.Models
         /// <param name="menuItem">The menu item to register.</param>
         /// <returns>Whether registration was succesfull.</returns>
         bool RegisterExtensionMenuItem(MenuItem menuItem);
+
+        IDLLManager GetDLLManager();
 
 
         void RemoveExtensionMenuItem(string menuItemId);

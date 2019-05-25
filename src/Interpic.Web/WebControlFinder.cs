@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Interpic.AsyncTasks;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Web.Tasks;
 using System;

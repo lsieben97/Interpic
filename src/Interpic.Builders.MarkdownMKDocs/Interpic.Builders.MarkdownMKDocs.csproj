@@ -64,10 +64,6 @@
       <Project>{36d32067-9305-4f38-8159-b5f5cc2cfb9a}</Project>
       <Name>Interpic.AsyncTasks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Interpic.Extension\Interpic.Extensions.csproj">
-      <Project>{e693fdf3-6871-4b6f-a8c0-15c70b527c75}</Project>
-      <Name>Interpic.Extensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Interpic.Models\Interpic.Models.csproj">
       <Project>{0c2b5f62-9f46-487e-a16e-090a2b8f5dbe}</Project>
       <Name>Interpic.Models</Name>

@@ -1,5 +1,5 @@
 ﻿using Interpic.Alerts;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Settings;
 using Interpic.Studio.Windows;
 using Newtonsoft.Json;

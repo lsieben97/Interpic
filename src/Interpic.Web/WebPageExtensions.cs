@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Interpic.Models;
+using Interpic.Web.Behaviours.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

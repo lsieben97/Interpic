@@ -1,6 +1,6 @@
 ﻿using Interpic.Alerts;
 using Interpic.AsyncTasks;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Models.EventArgs;
 using Interpic.Settings;
@@ -146,17 +146,44 @@ namespace Interpic.Studio
                 {
                     InfoAlert.Show("The manual settings dialog will now be shown to further configure the project.");
                 }
+                ProjectSettingsEventArgs eventArgs = new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings);
+                ProjectSettingsOpening?.Invoke(this, eventArgs);
+                ShowProjectSettings(eventArgs);
+                ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+            }
+        }
 
-                SettingsEditor editor = new SettingsEditor(CurrentProject.Settings);
-                editor.ShowDialog();
-                if (editor.DialogResult.HasValue)
+        private void ShowProjectSettings(ProjectSettingsEventArgs eventArgs)
+        {
+            
+            SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+            editor.ShowDialog();
+            if (editor.DialogResult.HasValue)
+            {
+                if (editor.DialogResult.Value == true)
                 {
-                    if (editor.DialogResult.Value == true)
+                    if (editor.SettingsCollection.Validate())
                     {
                         CurrentProject.Settings = editor.SettingsCollection;
                     }
-                    ProjectCreated?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
+                    else
+                    {
+                        ErrorAlert.Show("Invalid settings entered.");
+                        ShowProjectSettings(eventArgs);
+                    }
+
                 }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                    ShowProjectSettings(eventArgs);
+                }
+                ProjectCreated?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
+            }
+            else
+            {
+                ErrorAlert.Show("Invalid settings entered.");
+                ShowProjectSettings(eventArgs);
             }
         }
 
@@ -315,17 +342,11 @@ namespace Interpic.Studio
                     {
                         InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
                     }
-                    SettingsEditor editor = new SettingsEditor(dialog.Page.Settings);
-                    editor.ShowDialog();
-                    if (editor.DialogResult.HasValue)
-                    {
-                        if (editor.DialogResult.Value == true)
-                        {
-                            dialog.Page.Settings = editor.SettingsCollection;
-                        }
-                    }
+                    PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings);
+                    PageSettingsOpening?.Invoke(this, eventArgs);
+                    ShowPageSettings(dialog, eventArgs);
+                    PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings));
                 }
-                // TODO: this is ugly, find another way. before V1.0
                 Project currentProject = CurrentProject;
                 Models.Page currentPage = dialog.Page;
                 Models.Version currentVersion = this.currentVersion;
@@ -354,6 +375,38 @@ namespace Interpic.Studio
                     }
                 }
 
+            }
+        }
+
+        private void ShowPageSettings(NewPage dialog, PageSettingsEventArgs eventArgs)
+        {
+            
+            SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+            editor.ShowDialog();
+            if (editor.DialogResult.HasValue)
+            {
+                if (editor.DialogResult.Value == true)
+                {
+                    if (editor.SettingsCollection.Validate())
+                    {
+                        dialog.Page.Settings = editor.SettingsCollection;
+                    }
+                    else
+                    {
+                        ErrorAlert.Show("Invalid settings entered.");
+                        ShowPageSettings(dialog, eventArgs);
+                    }
+                }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                    ShowPageSettings(dialog, eventArgs);
+                }
+            }
+            else
+            {
+                ErrorAlert.Show("Invalid settings entered.");
+                ShowPageSettings(dialog, eventArgs);
             }
         }
 
@@ -855,9 +908,6 @@ namespace Interpic.Studio
                 viewButton.Tag = section;
                 viewButton.Click += TOCViewSectionButton_Click;
                 panel.Children.Add(viewButton);
-
-
-
             }
         }
 
@@ -1063,10 +1113,10 @@ namespace Interpic.Studio
         public List<string> GetLoadedExtensions()
         {
             List<string> extensionNames = new List<string>();
-            foreach (Extensions.Extension extension in Functional.Extensions.LoadedExtensions)
-            {
-                extensionNames.Add(extension.GetName());
-            }
+            //foreach (Extensions.Extension extension in Functional.Extensions.LoadedExtensions)
+            //{
+            //    extensionNames.Add(extension.GetName());
+            //}
             return extensionNames;
         }
 
@@ -1151,14 +1201,22 @@ namespace Interpic.Studio
             editor.ShowDialog();
             if (editor.DialogResult.Value == true)
             {
-                CurrentProject.Settings = editor.SettingsCollection;
-                SetStatusBar("Project settings saved.");
+                if (editor.SettingsCollection.Validate())
+                {
+                    CurrentProject.Settings = editor.SettingsCollection;
+                    SetStatusBar("Project settings saved.");
+                    ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+                }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                }
             }
             else
             {
                 SetStatusBar("Changes in project settings canceled.");
             }
-            ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+            
         }
 
         private void DisplayControlHint(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1315,7 +1373,13 @@ namespace Interpic.Studio
             if (dialog.Section != null)
             {
                 dialog.Section.Parent = page;
-
+                dialog.Section.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
+                if (dialog.Section.HasSettingsAvailable)
+                {
+                    SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings);
+                    SectionSettingsOpening?.Invoke(this, eventArgs);
+                    ShowSectionSettings(ref dialog, eventArgs);
+                }
 
                 if (ProjectTypeProvider.GetControlFinder() != null)
                 {
@@ -1359,6 +1423,37 @@ namespace Interpic.Studio
             }
         }
 
+        private void ShowSectionSettings(ref NewSection dialog, SectionSettingsEventArgs eventArgs)
+        {
+            SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+            editor.ShowDialog();
+            if (editor.DialogResult.HasValue)
+            {
+                if (editor.DialogResult.Value == true)
+                {
+                    if (editor.SettingsCollection.Validate())
+                    {
+                        dialog.Section.Settings = editor.SettingsCollection;
+                    }
+                    else
+                    {
+                        ErrorAlert.Show("Invalid settings entered.");
+                        ShowSectionSettings(ref dialog, eventArgs);
+                    }
+                }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                    ShowSectionSettings(ref dialog, eventArgs);
+                }
+            }
+            else
+            {
+                ErrorAlert.Show("Invalid settings entered.");
+                ShowSectionSettings(ref dialog, eventArgs);
+            }
+        }
+
         private void miAddControl_Click(object sender, RoutedEventArgs e)
         {
             if (currentSection != null)
@@ -1385,7 +1480,14 @@ namespace Interpic.Studio
             if (dialog.Control != null)
             {
                 dialog.Control.Parent = section;
-
+                dialog.Control.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
+                if (dialog.Control.HasSettingsAvailable)
+                {
+                    ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings);
+                    ControlSettingsOpening?.Invoke(this, eventArgs);
+                    ShowControlSettings(ref dialog, eventArgs);
+                    ControlSettingsOpened?.Invoke(this, new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings));
+                }
                 (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, currentVersion, CurrentProject);
                 if (result.succes)
                 {
@@ -1400,7 +1502,37 @@ namespace Interpic.Studio
                         SetStatusBar("Control not added because refreshing failed.");
                     }
                 }
+            }
+        }
 
+        private void ShowControlSettings(ref AddControl dialog, ControlSettingsEventArgs eventArgs)
+        {
+            SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+            editor.ShowDialog();
+            if (editor.DialogResult.HasValue)
+            {
+                if (editor.DialogResult.Value == true)
+                {
+                    if (editor.SettingsCollection.Validate())
+                    {
+                        dialog.Control.Settings = editor.SettingsCollection;
+                    }
+                    else
+                    {
+                        ErrorAlert.Show("Invalid settings entered.");
+                        ShowControlSettings(ref dialog, eventArgs);
+                    }
+                }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                    ShowControlSettings(ref dialog, eventArgs);
+                }
+            }
+            else
+            {
+                ErrorAlert.Show("Invalid settings entered.");
+                ShowControlSettings(ref dialog, eventArgs);
             }
         }
 
@@ -1508,7 +1640,7 @@ namespace Interpic.Studio
                 SwitchVersion(CurrentProject.LastViewedVersionId);
             }
         }
-        
+
         public void FireVersionRemovedEvent(Models.Version version)
         {
             VersionRemoved?.Invoke(this, new VersionEventArgs(this, version));
@@ -1555,7 +1687,7 @@ namespace Interpic.Studio
                 pbBackgroundTask.Visibility = Visibility.Visible;
                 lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
             }
-            
+
             backgroundTask.Executed += CheckForNewTasks;
             backgroundTask.Canceled += CheckForNewTasks;
             taskProcessor.ProcessTask();
@@ -1571,7 +1703,7 @@ namespace Interpic.Studio
             }
             else
             {
-                if (! this.Dispatcher.CheckAccess())
+                if (!this.Dispatcher.CheckAccess())
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -1586,7 +1718,7 @@ namespace Interpic.Studio
                     pbBackgroundTask.Value = 0;
                     pbBackgroundTask.Visibility = Visibility.Collapsed;
                 }
-                
+
             }
         }
 
@@ -1655,8 +1787,9 @@ namespace Interpic.Studio
                 mStudio.Items.Add(menuItemControl);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.LogError($"Error while registering extension menu items: {ex.Message}", "Studio");
                 return false;
             }
         }
@@ -1674,7 +1807,7 @@ namespace Interpic.Studio
             item.Click += ExtensionMenuItemClick;
             item.MouseEnter += DisplayControlHint;
             item.Tag = menuItem;
-            foreach(Models.MenuItem subItem in menuItem.SubItems)
+            foreach (Models.MenuItem subItem in menuItem.SubItems)
             {
                 item.Items.Add(CreateMenuItem(subItem));
             }
@@ -1683,9 +1816,9 @@ namespace Interpic.Studio
 
         private void ExtensionMenuItemClick(object sender, RoutedEventArgs e)
         {
-                Models.MenuItem item = ((System.Windows.Controls.MenuItem)e.Source).Tag as Models.MenuItem;
-                item.FireClickedEvent(this, new ProjectStateEventArgs(this, CurrentProject, currentVersion, currentPage, currentSection, currentControl));
-                e.Handled = true;
+            Models.MenuItem item = ((System.Windows.Controls.MenuItem)e.Source).Tag as Models.MenuItem;
+            item.FireClickedEvent(this, new ProjectStateEventArgs(this, CurrentProject, currentVersion, currentPage, currentSection, currentControl));
+            e.Handled = true;
         }
 
         public void RemoveExtensionMenuItem(string menuItemId)
@@ -1718,6 +1851,11 @@ namespace Interpic.Studio
                 imOfflineModeIndicator.Visibility = Visibility.Visible;
                 WarningAlert.Show("Offline mode is now on. Actions that require internet access are not available.\n\nClick this button again to disable offline mode.");
             }
+        }
+
+        public IDLLManager GetDLLManager()
+        {
+            return DLLManager.Instance;
         }
     }
 }

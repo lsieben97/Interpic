@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -61,13 +61,23 @@
     <Compile Include="EventArgs\SectionSettingsEventArgs.cs" />
     <Compile Include="EventArgs\VersionEventArgs.cs" />
     <Compile Include="Extension.cs" />
+    <Compile Include="ExtensionDeclaration.cs" />
     <Compile Include="ExtensionObject.cs" />
+    <Compile Include="Extensions\IControlFinder.cs" />
+    <Compile Include="Extensions\IControlIdentifierSelector.cs" />
+    <Compile Include="Extensions\IDLLManager.cs" />
+    <Compile Include="Extensions\IExtensionRegistry.cs" />
+    <Compile Include="Extensions\IProjectBuilder.cs" />
+    <Compile Include="Extensions\IProjectTypeProvider.cs" />
+    <Compile Include="Extensions\ISectionIdentifierSelector.cs" />
+    <Compile Include="Extensions\ISourceProvider.cs" />
     <Compile Include="ExtensionType.cs" />
     <Compile Include="IgnoreChangeListenerAttribute.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="EventArgs\InterpicStudioEventArgs.cs" />
     <Compile Include="InternetUsage.cs" />
     <Compile Include="IStudioEnvironment.cs" />
+    <Compile Include="LoadedAssembly.cs" />
     <Compile Include="MenuItem.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Project.cs" />
@@ -77,6 +87,7 @@
     <Compile Include="Section.cs" />
     <Compile Include="delegates.cs" />
     <Compile Include="SectionIdentifier.cs" />
+    <Compile Include="TrustedAssembly.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>

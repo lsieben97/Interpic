@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Studio", "Interpic\Interpic.Studio.csproj", "{D6B930AF-DCA0-431C-B6F8-F5D6B39D3F89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Extensions", "Interpic.Extension\Interpic.Extensions.csproj", "{E693FDF3-6871-4B6F-A8C0-15C70B527C75}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Settings", "Interpic.Settings\Interpic.Settings.csproj", "{90F34232-79A3-4904-B093-FCFB4DCA3666}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Alerts", "Interpic.Alerts\Interpic.Alerts.csproj", "{3AD0E4F3-71A4-4CF7-A34F-F190939B2AE3}"
@@ -27,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Builders.MarkdownM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Web.Icons", "Interpic.Web.Icons\Interpic.Web.Icons.csproj", "{891EC131-0141-41E0-9915-E1F1DB9491FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Web.Behaviours", "Interpic.Web.Behaviours\Interpic.Web.Behaviours.csproj", "{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpic.Web.WebActions.BasicWebActions", "Interpic.Web.WebActions.BasicWebActions\Interpic.Web.WebActions.BasicWebActions.csproj", "{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,10 +39,6 @@ Global
 		{D6B930AF-DCA0-431C-B6F8-F5D6B39D3F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6B930AF-DCA0-431C-B6F8-F5D6B39D3F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6B930AF-DCA0-431C-B6F8-F5D6B39D3F89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E693FDF3-6871-4B6F-A8C0-15C70B527C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E693FDF3-6871-4B6F-A8C0-15C70B527C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E693FDF3-6871-4B6F-A8C0-15C70B527C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E693FDF3-6871-4B6F-A8C0-15C70B527C75}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90F34232-79A3-4904-B093-FCFB4DCA3666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90F34232-79A3-4904-B093-FCFB4DCA3666}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90F34232-79A3-4904-B093-FCFB4DCA3666}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +79,14 @@ Global
 		{891EC131-0141-41E0-9915-E1F1DB9491FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{891EC131-0141-41E0-9915-E1F1DB9491FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{891EC131-0141-41E0-9915-E1F1DB9491FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

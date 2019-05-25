@@ -42,7 +42,7 @@ namespace Interpic.Alerts
 
         private void btnOption2_Click(object sender, RoutedEventArgs e)
         {
-            OptionPicked = 1;
+            OptionPicked = 2;
             Close();
         }
 

@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -71,17 +71,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DLLManager.cs" />
     <Compile Include="RecursiveChangeListener\ChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ChildChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\CollectionChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ReflectionHelper.cs" />
     <Compile Include="Tasks\CreateProjectFilesTask.cs" />
+    <Compile Include="Tasks\LoadAssemblyTask.cs" />
     <Compile Include="Tasks\LoadGlobalSettingsTask.cs" />
     <Compile Include="Tasks\LoadProjectTask.cs" />
     <Compile Include="Tasks\SaveAsNewProjectTask.cs" />
     <Compile Include="Tasks\SaveProjectAsJson.cs" />
     <Compile Include="Tasks\SaveProjectTask.cs" />
     <Compile Include="Tasks\StartStudioTask.cs" />
+    <Compile Include="Tasks\UnloadAssemblyTask.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -273,10 +276,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Alerts\" />
-    <Folder Include="bin\Debug\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Interpic.Alerts\Interpic.Alerts.csproj">
       <Project>{3AD0E4F3-71A4-4CF7-A34F-F190939B2AE3}</Project>
@@ -289,10 +289,6 @@
     <ProjectReference Include="..\Interpic.Builders.MarkdownMKDocs\Interpic.Builders.MarkdownMKDocs.csproj">
       <Project>{3ac84298-71c6-44f4-a571-11e52c018a35}</Project>
       <Name>Interpic.Builders.MarkdownMKDocs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Interpic.Extension\Interpic.Extensions.csproj">
-      <Project>{e693fdf3-6871-4b6f-a8c0-15c70b527c75}</Project>
-      <Name>Interpic.Extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interpic.Icons\Interpic.UI.csproj">
       <Project>{656bbaf2-bb4d-4674-9d64-fc8c25d7237b}</Project>

@@ -162,14 +162,16 @@ namespace Interpic.AsyncTasks
                     this.Dispatcher.Invoke(() =>
                     {
                         ErrorAlert.Show(errorMessage);
+                        WarningAlert.Show("The task has been canceled.");
                     });
                 }
                 else
                 {
                     ErrorAlert.Show(errorMessage);
+                    WarningAlert.Show("The task has been canceled.");
                 }
             }
-            WarningAlert.Show("The task has been canceled.");
+            
             Close();
         }
     }

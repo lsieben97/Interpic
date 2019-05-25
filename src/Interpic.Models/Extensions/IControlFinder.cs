@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Interpic.Extensions
+namespace Interpic.Models.Extensions
 {
     public interface IControlFinder
     {

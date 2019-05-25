@@ -12,6 +12,6 @@
         <ListBox x:Name="lsbVersions" HorizontalAlignment="Left" Height="304" Margin="10,63,0,0" VerticalAlignment="Top" Width="446" SelectionChanged="LsbVersions_SelectionChanged" Style="{DynamicResource ListBoxStyle}"/>
         <Button x:Name="btnNew" Content="New" HorizontalAlignment="Left" Margin="461,63,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnNew_Click"/>
         <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Left" Margin="461,98,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnEdit_Click"/>
-        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="461,184,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click"/>
+        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="461,133,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click"/>
     </Grid>
 </Window>

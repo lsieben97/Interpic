@@ -47,5 +47,11 @@
   <ItemGroup>
     <Resource Include="Icons\OpenExternal.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Behaviour.png" />
+    <Resource Include="Icons\BehaviourWhite.png" />
+    <Resource Include="Icons\Web.png" />
+    <Resource Include="Icons\WebWhite.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

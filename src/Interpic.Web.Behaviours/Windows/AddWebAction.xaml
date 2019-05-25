@@ -1,0 +1,29 @@
+﻿<Window x:Class="Interpic.Web.Behaviours.Windows.AddWebAction"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
+        mc:Ignorable="d"
+        Title="New Web Action" Height="370" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid>
+        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Web Action" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <ComboBox x:Name="cbbType" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,86,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbType_SelectionChanged"/>
+        <Button x:Name="btnSetParameters" Content="Set Parameters" HorizontalAlignment="Left" Margin="10,133,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ButtonStyle}" Click="BtnSetParameters_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click" />
+        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click" />
+        <TextBlock HorizontalAlignment="Left" Margin="10,168,0,0" TextWrapping="Wrap" Text="Behaviour when true" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
+        <ComboBox x:Name="cbbBehaviourWhenTrue" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,190,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Behaviour when "/><Run Text="false"/></TextBlock>
+        <ComboBox x:Name="cbbBehaviourWhenFalse" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,247,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}"/>
+    </Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Interpic.UI;component/Themes/MetroDark/Styles.WPF.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+</Window>

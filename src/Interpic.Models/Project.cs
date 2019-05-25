@@ -16,7 +16,7 @@ namespace Interpic.Models
         private string _type;
         private string _outputType;
         private SettingsCollection _settings;
-        private ObservableCollection<Extension> _projectExtensions;
+        private ObservableCollection<ExtensionDeclaration> _projectExtensions;
         private string _typeProviderId;
         private DateTime _lastSaved;
 
@@ -24,18 +24,21 @@ namespace Interpic.Models
         private string _projectFolder;
         private ExtensionObject _extensions;
         private ObservableCollection<Version> _versions;
+        private ObservableCollection<TrustedAssembly> _trustedAssemblies = new ObservableCollection<TrustedAssembly>();
 
         public string Name { get => _name; set { _name = value; RaisePropertyChanged("Name"); } }
         public string Path { get => _path; set { _path = value; RaisePropertyChanged("Path"); } }
         public string Type { get => _type; set { _type = value; RaisePropertyChanged("Type"); } }
         public string OutputType { get => _outputType; set { _outputType = value; RaisePropertyChanged("OutputType"); } }
         public SettingsCollection Settings { get => _settings; set { _settings = value; RaisePropertyChanged("Settings"); } }
-        public ObservableCollection<Extension> ProjectExtensions { get => _projectExtensions; set { _projectExtensions = value; RaisePropertyChanged("ProjectSettings"); } }
+        public ObservableCollection<ExtensionDeclaration> ProjectExtensions { get => _projectExtensions; set { _projectExtensions = value; RaisePropertyChanged("ProjectSettings"); } }
         public string TypeProviderId { get => _typeProviderId; set { _typeProviderId = value; RaisePropertyChanged("TypeProviderId"); } }
         public DateTime LastSaved { get => _lastSaved; set { _lastSaved = value; RaisePropertyChanged("LastSaved"); } }
         public ObservableCollection<Version> Versions { get => _versions; set { _versions = value; RaisePropertyChanged("Versions"); } }
         public string OutputFolder { get => _outputFolder; set { _outputFolder = value; RaisePropertyChanged("OutputFolder"); } }
         public string ProjectFolder { get => _projectFolder; set { _projectFolder = value; RaisePropertyChanged("ProjectFolder"); } }
+        public ObservableCollection<TrustedAssembly> TrustedAssemblies { get => _trustedAssemblies; set { _trustedAssemblies = value; RaisePropertyChanged("TrustedAssemblies"); } }
+
         [JsonIgnore]
         public bool Changed { get; set; }
 

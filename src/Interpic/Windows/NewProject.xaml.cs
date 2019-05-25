@@ -1,5 +1,5 @@
 ﻿using Interpic.Web;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Microsoft.Win32;
 using System;

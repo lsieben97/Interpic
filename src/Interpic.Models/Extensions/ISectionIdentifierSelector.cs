@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interpic.Extensions
+namespace Interpic.Models.Extensions
 {
-    public interface IControlIdentifierSelector
+    public interface ISectionIdentifierSelector
     {
-        ControlIdentifier ControlIdentifier { get; set; }
-
-        Section Section { get; set; }
+        SectionIdentifier SectionIdentifier { get; set; }
+        Page Page { get; set; }
 
         void ShowSelector();
     }

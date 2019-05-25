@@ -5,15 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Alerts"
         mc:Ignorable="d"
-        Title="Warning" Height="200" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" BorderBrush="{DynamicResource Brush05}" Icon="/Interpic.UI;component/Icons/Warning.png">
+        Title="Warning" Height="200" MinHeight="200" SizeToContent="WidthAndHeight" Width="400" MinWidth="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" BorderBrush="{DynamicResource Brush05}" Icon="/Interpic.UI;component/Icons/Warning.png">
     <Grid>
-        <Button x:Name="btnClose" Content="X" HorizontalAlignment="Left" Margin="375,0,0,0" VerticalAlignment="Top" Width="25" Height="25" Background="#FFEB2F2F" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" Click="btnClose_Click" Panel.ZIndex="1"/>
-        <Image Margin="0,5,352,147" Source="/Interpic.UI;component/Icons/InfoWhite.png" Stretch="Fill"/>
-        <ScrollViewer Style="{DynamicResource ScrollViewerStyle}">
-            <TextBlock x:Name="lbMessage" HorizontalAlignment="Left" Margin="10,53,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" FontSize="16" Height="102" Width="380" FontFamily="Verdana"/>
-        </ScrollViewer>
-        <TextBlock HorizontalAlignment="Left" Margin="59.5,14,0,0" TextWrapping="Wrap" Text="Information" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Button x:Name="btnOk" Content="OK" HorizontalAlignment="Left" Margin="315,160,0,0" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnOk_Click"/>
+        <Button x:Name="btnClose" Content="X" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="25" Height="25" Background="#FFEB2F2F" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" Click="btnClose_Click" Panel.ZIndex="1"/>
+        <Image Margin="0,5,0,0" Width="48" Height="48" Source="/Interpic.UI;component/Icons/InfoWhite.png" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Fill"/>
+        <TextBlock x:Name="lbMessage" HorizontalAlignment="Left" Margin="10,55,95,40" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" FontSize="16" FontFamily="Verdana"/>
+        <TextBlock HorizontalAlignment="Left" Margin="60,14,0,0" TextWrapping="Wrap" Text="Information" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Button x:Name="btnOk" Content="OK" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnOk_Click"/>
 
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 ﻿using Interpic.Alerts;
+using Interpic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Interpic.Studio.Functional
     {
         private static AppDomain extensionDomain;
         private static AppDomain tempExtensionDomain;
+        private static Dictionary<string, AppDomain> appDomains = new Dictionary<string, AppDomain>();
 
         public static AppDomain GetExtensionDomain()
         {
@@ -59,6 +61,38 @@ namespace Interpic.Studio.Functional
             {
                 ErrorAlert.Show("Could not unload extensions, exiting...");
                 Environment.Exit(2);
+            }
+        }
+
+        public static AppDomain CreateAppDomainForAssembly(string path)
+        {
+            if (appDomains.ContainsKey(path))
+            {
+                return null;
+            }
+
+            AppDomain domain = AppDomain.CreateDomain(path);
+            appDomains.Add(path, domain);
+            return domain;
+        }
+
+        public static bool UnloadAppdomain(string path)
+        {
+            if (! appDomains.ContainsKey(path))
+            {
+                return false;
+            }
+            GC.Collect(); // collects all unused memory
+            GC.WaitForPendingFinalizers(); // wait until GC has finished its work
+            GC.Collect();
+            try
+            {
+                AppDomain.Unload(appDomains[path]);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }

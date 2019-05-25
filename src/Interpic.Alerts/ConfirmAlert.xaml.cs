@@ -21,10 +21,11 @@ namespace Interpic.Alerts
     {
         public bool Result { get; set; }
 
-        public ConfirmAlert(string message)
+        public ConfirmAlert(string message, bool showCancelButton = true)
         {
             InitializeComponent();
             lbMessage.Text = message;
+            btnCancel.Visibility = showCancelButton ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -33,9 +34,9 @@ namespace Interpic.Alerts
             Close();
         }
 
-        public static ConfirmAlert Show(string message)
+        public static ConfirmAlert Show(string message, bool showCancelButton = true)
         {
-            ConfirmAlert alert = new ConfirmAlert(message);
+            ConfirmAlert alert = new ConfirmAlert(message, showCancelButton);
             alert.ShowDialog();
             return alert;
         }

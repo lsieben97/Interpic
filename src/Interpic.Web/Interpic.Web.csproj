@@ -37,8 +37,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.8.8.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.8.8\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.9.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.9.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="SgmlReaderDll, Version=1.8.11.0, Culture=neutral, PublicKeyToken=46b2db9ca481831b, processorArchitecture=MSIL">
       <HintPath>..\packages\SgmlReader.1.8.11\lib\4.0\SgmlReaderDll.dll</HintPath>
@@ -68,6 +68,7 @@
     <Compile Include="UrlValidator.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WebControlFinder.cs" />
+    <Compile Include="WebExtension.cs" />
     <Compile Include="WebPageExtensions.cs" />
     <Compile Include="WebProjectTypeProvider.cs" />
     <Compile Include="Windows\SectionSelector.xaml.cs">
@@ -110,10 +111,6 @@
       <Project>{36d32067-9305-4f38-8159-b5f5cc2cfb9a}</Project>
       <Name>Interpic.AsyncTasks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Interpic.Extension\Interpic.Extensions.csproj">
-      <Project>{e693fdf3-6871-4b6f-a8c0-15c70b527c75}</Project>
-      <Name>Interpic.Extensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Interpic.Icons\Interpic.UI.csproj">
       <Project>{656bbaf2-bb4d-4674-9d64-fc8c25d7237b}</Project>
       <Name>Interpic.UI</Name>
@@ -130,6 +127,10 @@
       <Project>{c5137bae-8acf-42e5-8ff1-8dc33437fd7a}</Project>
       <Name>Interpic.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interpic.Web.Behaviours\Interpic.Web.Behaviours.csproj">
+      <Project>{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}</Project>
+      <Name>Interpic.Web.Behaviours</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpic.Web.Icons\Interpic.Web.Icons.csproj">
       <Project>{891ec131-0141-41e0-9915-e1f1db9491fc}</Project>
       <Name>Interpic.Web.Icons</Name>
@@ -137,6 +138,10 @@
     <ProjectReference Include="..\Interpic.Web.Selenium\Interpic.Web.Selenium.csproj">
       <Project>{9404fbb0-7bf9-4213-9b49-a9335bacc24d}</Project>
       <Name>Interpic.Web.Selenium</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Web.WebActions.BasicWebActions\Interpic.Web.WebActions.BasicWebActions.csproj">
+      <Project>{32361C2B-E5F5-497A-A2F0-E4CC19B6AE4C}</Project>
+      <Name>Interpic.Web.WebActions.BasicWebActions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -99,6 +99,45 @@ namespace Interpic.Settings
             }
             return null;
         }
+
+        public bool Validate()
+        {
+            bool valid = true;
+
+            foreach (Setting<string> setting in TextSettings)
+            {
+                if (setting.Value == null)
+                {
+                    valid = false;
+                }
+            }
+
+            foreach (MultipleChoiceSetting setting in MultipleChoiceSettings)
+            {
+                if (setting.Value == null)
+                {
+                    valid = false;
+                }
+            }
+
+            foreach (PathSetting setting in PathSettings)
+            {
+                if (setting.Value == null)
+                {
+                    valid = false;
+                }
+            }
+
+            foreach (Setting<SettingsCollection> setting in SubSettings)
+            {
+                if (setting.Value.Validate() == false)
+                {
+                    valid = false;
+                }
+            }
+
+            return valid;
+        }
         #endregion
 
         #region *** INotifyPropertyChanged Members and Invoker ***

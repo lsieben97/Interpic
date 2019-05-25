@@ -1,0 +1,26 @@
+﻿<Window x:Class="Interpic.Web.Behaviours.Windows.ManageWebBehaviours"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
+        mc:Ignorable="d"
+        Title="Manage behaviours" Height="423" Width="610" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Manage behaviours" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
+        <ListBox x:Name="lsbBehaviours" HorizontalAlignment="Left" Height="304" Margin="10,63,0,0" VerticalAlignment="Top" Width="446" SelectionChanged="LsbBehaviours_SelectionChanged" Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name"/>
+        <Button x:Name="btnNew" Content="New" HorizontalAlignment="Left" Margin="461,63,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnNew_Click"/>
+        <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Left" Margin="461,98,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnEdit_Click" IsEnabled="False"/>
+        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="461,133,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click" IsEnabled="False" />
+        <Button x:Name="btnExport" Content="Export" HorizontalAlignment="Left" Margin="461,337,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnExport_Click" IsEnabled="False" />
+        <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="461,302,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnImport_Click" />
+    </Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Interpic.UI;component/Themes/MetroDark/Styles.WPF.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        </Window.Resources>
+</Window>

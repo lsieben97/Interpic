@@ -1,21 +1,26 @@
 ﻿using HtmlAgilityPack;
 using Interpic.Alerts;
 using Interpic.AsyncTasks;
-using Interpic.Extensions;
+using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Models.EventArgs;
 using Interpic.Settings;
+using Interpic.Web.Behaviours.Tasks;
+using Interpic.Web.Behaviours.Windows;
 using Interpic.Web.Providers;
 using Interpic.Web.Selenium.Tasks;
 using Interpic.Web.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static Interpic.Web.Selenium.SeleniumWrapper;
+using Interpic.Web.Behaviours.Models;
+using Interpic.Web.WebActions.BasicWebActions;
 
 namespace Interpic.Web
 {
@@ -24,6 +29,7 @@ namespace Interpic.Web
         public IStudioEnvironment Studio { get; set; }
         public static Dictionary<BrowserType, Selenium.SeleniumWrapper> Selenium { get; set; } = new Dictionary<BrowserType, Selenium.SeleniumWrapper>();
         public InternetUsage InternetUsage { get; set; } = new InternetUsage();
+        public WebBehaviourConfiguration BehaviourConfiguration { get; set; }
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
@@ -114,6 +120,51 @@ namespace Interpic.Web
             PrepareObjectModel();
             StartSelenium();
             RegisterMenuItems();
+            LoadWebBehaviourConfiguration();
+        }
+
+        private void LoadWebBehaviourConfiguration()
+        {
+            if (File.Exists(Studio.CurrentProject.ProjectFolder + "\\Webbehaviours.dat"))
+            {
+                LoadWebBehaviourConfigurationTask loadWebBehaviourConfigurationTask = new LoadWebBehaviourConfigurationTask(Studio.CurrentProject);
+                ProcessTaskDialog dialog = new ProcessTaskDialog(loadWebBehaviourConfigurationTask);
+                dialog.ShowDialog();
+                if (!dialog.TaskToExecute.IsCanceled)
+                {
+                    BehaviourConfiguration = loadWebBehaviourConfigurationTask.WebBehaviourConfiguration;
+                    BehaviourConfiguration.InternalWebActionPacks.Add(new BaseWebActionPack());
+                    List<string> assembliesToLoad = BehaviourConfiguration.WebActionpacks.FindAll(pack => pack != "BasicWebActionsPack");
+                    if (assembliesToLoad.Count > 0)
+                    {
+                        
+                        List<LoadedAssembly> loadedAssemblies = Studio.GetDLLManager().LoadAssemblies(assembliesToLoad, WebExtension.Instance);
+                        foreach(LoadedAssembly assembly in loadedAssemblies)
+                        {
+                            try
+                            {
+                                Type packType = assembly.Assembly.GetExportedTypes().First(ass => ass.BaseType.Name == "WebActionPack");
+                                WebActionPack pack = Activator.CreateInstance<WebActionPack>();
+                                BehaviourConfiguration.InternalWebActionPacks.Add(pack);
+                            }
+                            catch(Exception ex)
+                            {
+                                ErrorAlert.Show($"Could not load web action pack from assembly {assembly.Path}:\n\n{ex.Message}");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                WebBehaviourConfiguration configuration = new WebBehaviourConfiguration();
+                configuration.WebActionpacks.Add("BasicWebActionsPack");
+                configuration.InternalWebActionPacks.Add(new BaseWebActionPack());
+                BehaviourConfiguration = configuration;
+                SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, configuration);
+                ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
+                dialog.ShowDialog();
+            }
         }
 
         private void RegisterMenuItems()
@@ -124,7 +175,39 @@ namespace Interpic.Web
             openInWebBrowserItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/OpenExternal.png", UriKind.RelativeOrAbsolute));
             openInWebBrowserItem.Clicked += OpenInWebBrowserItemClicked;
             webToolsItem.SubItems.Add(openInWebBrowserItem);
+
+            MenuItem behavioursMenuItem = new MenuItem("Web Behaviours");
+            behavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+
+            MenuItem manageWebActionsMenuItem = new MenuItem("Manage Web Actions");
+            manageWebActionsMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+            manageWebActionsMenuItem.Clicked += ManageWebActionsMenuItemClicked;
+            behavioursMenuItem.SubItems.Add(manageWebActionsMenuItem);
+
+            MenuItem manageBehavioursMenuItem = new MenuItem("Manage Web Behaviours");
+            manageBehavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+            manageBehavioursMenuItem.Clicked += ManageBehavioursMenuItemClicked;
+            behavioursMenuItem.SubItems.Add(manageBehavioursMenuItem);
+
+            webToolsItem.SubItems.Add(behavioursMenuItem);
             Studio.RegisterExtensionMenuItem(webToolsItem);
+            
+        }
+
+        private void ManageBehavioursMenuItemClicked(object sender, ProjectStateEventArgs e)
+        {
+            ManageWebBehaviours manageWebBehaviours = new ManageWebBehaviours(BehaviourConfiguration, Studio.CurrentProject);
+            manageWebBehaviours.ShowDialog();
+            BehaviourConfiguration = manageWebBehaviours.Configuration;
+            SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, BehaviourConfiguration);
+            ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
+            dialog.ShowDialog();
+        }
+
+        private void ManageWebActionsMenuItemClicked(object sender, ProjectStateEventArgs e)
+        {
+            ManageWebActions manageWebActions = new ManageWebActions(BehaviourConfiguration);
+            manageWebActions.ShowDialog();
         }
 
         private void OpenInWebBrowserItemClicked(object sender, ProjectStateEventArgs e)
@@ -355,12 +438,11 @@ namespace Interpic.Web
             MultipleChoiceSetting browserSetting = new MultipleChoiceSetting();
             browserSetting.Key = "BrowserType";
             browserSetting.Name = "Browser";
-            browserSetting.Description = "The browser to use for this version.\n\nNote that Opera does not have a headless mode and will display a browser window.\nNo interaction is needed with the window as Interpic fully controls the webdriver.\n\nFor all browsers:\nThe browser MUST be installed localy on the system.";
+            browserSetting.Description = "The browser to use for this version.\n\nFor all browsers:\nThe browser MUST be installed localy on the system.";
             browserSetting.Choices = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("Chrome", "chrome"),
                 new KeyValuePair<string, string>("Firefox", "firefox"),
-                new KeyValuePair<string, string>("Opera", "opera")
             };
             browserSetting.Value = "chrome";
             collection.Name = GetProjectTypeName();

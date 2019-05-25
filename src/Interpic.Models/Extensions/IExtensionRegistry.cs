@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interpic.Extensions
+namespace Interpic.Models.Extensions
 {
     public interface IExtensionRegistry
     {

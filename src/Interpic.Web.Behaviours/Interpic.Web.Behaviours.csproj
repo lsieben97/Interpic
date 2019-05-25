@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3D5DE99D-BE10-46A5-B28F-EC87BC4EAF29}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Interpic.Web.Behaviours</RootNamespace>
+    <AssemblyName>Interpic.Web.Behaviours</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WebDriver, Version=3.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.14.0\lib\net45\WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\CheckWebAction.cs" />
+    <Compile Include="Models\ElementSelector.cs" />
+    <Compile Include="Models\WebAction.cs" />
+    <Compile Include="Models\WebActionPack.cs" />
+    <Compile Include="Models\WebBehaviour.cs" />
+    <Compile Include="Models\WebBehaviourConfiguration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Tasks\LoadWebBehaviourConfigurationTask.cs" />
+    <Compile Include="Tasks\SaveWebBehaviourConfigurationTask.cs" />
+    <Compile Include="Utils\ElementSelectorSettingHelper.cs" />
+    <Compile Include="Utils\WebActionUtils.cs" />
+    <Compile Include="WebActionException.cs" />
+    <Compile Include="Windows\AddBehaviour.xaml.cs">
+      <DependentUpon>AddBehaviour.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AddWebAction.xaml.cs">
+      <DependentUpon>AddWebAction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ElementSelectorEditor.xaml.cs">
+      <DependentUpon>ElementSelectorEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ManageWebActions.xaml.cs">
+      <DependentUpon>ManageWebActions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ManageWebBehaviours.xaml.cs">
+      <DependentUpon>ManageWebBehaviours.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Interpic.Alerts\Interpic.Alerts.csproj">
+      <Project>{3ad0e4f3-71a4-4cf7-a34f-f190939b2ae3}</Project>
+      <Name>Interpic.Alerts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.AsyncTasks\Interpic.AsyncTasks.csproj">
+      <Project>{36d32067-9305-4f38-8159-b5f5cc2cfb9a}</Project>
+      <Name>Interpic.AsyncTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Icons\Interpic.UI.csproj">
+      <Project>{656bbaf2-bb4d-4674-9d64-fc8c25d7237b}</Project>
+      <Name>Interpic.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Models\Interpic.Models.csproj">
+      <Project>{0c2b5f62-9f46-487e-a16e-090a2b8f5dbe}</Project>
+      <Name>Interpic.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">
+      <Project>{90F34232-79A3-4904-B093-FCFB4DCA3666}</Project>
+      <Name>Interpic.Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Web.Icons\Interpic.Web.Icons.csproj">
+      <Project>{891ec131-0141-41e0-9915-e1f1db9491fc}</Project>
+      <Name>Interpic.Web.Icons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Web.Selenium\Interpic.Web.Selenium.csproj">
+      <Project>{9404FBB0-7BF9-4213-9B49-A9335BACC24D}</Project>
+      <Name>Interpic.Web.Selenium</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Windows\AddBehaviour.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\AddWebAction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ElementSelectorEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ManageWebActions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ManageWebBehaviours.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

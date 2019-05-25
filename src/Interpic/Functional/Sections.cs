@@ -1,4 +1,4 @@
-﻿using Interpic.Extensions;
+﻿using Interpic.Models.Extensions;
 using Interpic.Settings;
 using System.Collections.Generic;
 
