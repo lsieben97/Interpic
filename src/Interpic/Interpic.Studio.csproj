@@ -72,18 +72,29 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DLLManager.cs" />
+    <Compile Include="Functional\Packages.cs" />
+    <Compile Include="InternalModels\PackageCache.cs" />
+    <Compile Include="InternalModels\PackageCacheEntry.cs" />
     <Compile Include="RecursiveChangeListener\ChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ChildChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\CollectionChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ReflectionHelper.cs" />
+    <Compile Include="Tasks\CleanUpAfterPackageCreationTask.cs" />
+    <Compile Include="Tasks\CreatePackageManifestTask.cs" />
     <Compile Include="Tasks\CreateProjectFilesTask.cs" />
     <Compile Include="Tasks\LoadAssemblyTask.cs" />
     <Compile Include="Tasks\LoadGlobalSettingsTask.cs" />
+    <Compile Include="Tasks\CleanPackageCacheTask.cs" />
+    <Compile Include="Tasks\CreatePackageTask.cs" />
+    <Compile Include="Tasks\PreparePackageContentsTask.cs" />
+    <Compile Include="Tasks\SavePackageCacheTask.cs" />
+    <Compile Include="Tasks\LoadPackageCacheTask.cs" />
     <Compile Include="Tasks\LoadProjectTask.cs" />
     <Compile Include="Tasks\SaveAsNewProjectTask.cs" />
     <Compile Include="Tasks\SaveProjectAsJson.cs" />
     <Compile Include="Tasks\SaveProjectTask.cs" />
     <Compile Include="Tasks\StartStudioTask.cs" />
+    <Compile Include="Tasks\UnpackPackageTask.cs" />
     <Compile Include="Tasks\UnloadAssemblyTask.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
@@ -96,6 +107,9 @@
     </Compile>
     <Compile Include="Windows\BuildCompleted.xaml.cs">
       <DependentUpon>BuildCompleted.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Developer\CreatePackage.xaml.cs">
+      <DependentUpon>CreatePackage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Developer\Log.xaml.cs">
       <DependentUpon>Log.xaml</DependentUpon>
@@ -174,6 +188,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\BuildCompleted.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Developer\CreatePackage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

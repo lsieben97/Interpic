@@ -1,6 +1,7 @@
 ﻿using Interpic.AsyncTasks;
 using Interpic.Models;
 using Interpic.Models.Extensions;
+using Interpic.Models.Packaging;
 using Interpic.Settings;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace Interpic.Models
         /// Schedule the given task to be executed in the background. Use the <see cref="AsyncTask.Executed"/> and <see cref="AsyncTask.Canceled"/> events to listen for when the task is executed.
         /// </summary>
         /// <param name="Task"></param>
-        void ScheduleBackgroundTask(AsyncTask task);
+        void ScheduleBackgroundTask(BackgroundTask task);
 
         /// <summary>
         /// Cancel the scheduled background task with the given id.
@@ -82,6 +83,8 @@ namespace Interpic.Models
         void RemoveExtensionMenuItem(string menuItemId);
 
         bool OfflineMode { get; }
+
+        void RegisterPackageDefinition(PackageDefinition definition);
 
         #region Events
         /// <summary>

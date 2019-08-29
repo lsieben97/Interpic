@@ -33,9 +33,6 @@ namespace Interpic.Web.Providers
                 navigateTask.PassThroughTarget = "Selenium";
 
                 GetHtmlTask getHtmlTask = new GetHtmlTask(url);
-                getHtmlTask.PassThrough = true;
-                getHtmlTask.PassThroughSource = "Selenium";
-                getHtmlTask.PassThroughTarget = "Selenium";
 
                 tasks.Add(navigateTask);
                 tasks.Add(getHtmlTask);

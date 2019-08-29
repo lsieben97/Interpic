@@ -17,20 +17,6 @@ namespace Interpic.Web.WebActions.BasicWebActions
         public override string Id { get; } = "ElementExists";
         public override string Name { get; set; } = "Check if element exists";
         public override string Description { get; set; } = "Checks if the given element is present on the page.";
-
-        public override SettingsCollection Parameters { get; set; } = new SettingsCollection
-        {
-            TextSettings = new List<Setting<string>>
-            {
-                new Setting<string>
-                {
-                    Name = "Element",
-                    Description = "The element which existence needs to be checked.",
-                    Key = ActionParameters.ELEMENT_PARAMETER,
-                    Helper = new ElementSelectorSettingHelper()
-                }
-            }
-        };
         public override void Execute()
         {
             ElementSelector selector = JsonConvert.DeserializeObject<ElementSelector>(Parameters.GetTextSetting(ActionParameters.ELEMENT_PARAMETER));
@@ -38,7 +24,22 @@ namespace Interpic.Web.WebActions.BasicWebActions
             CheckResult = element != null;
         }
 
-        
+        public override SettingsCollection GetDefaultParameters()
+        {
+            return new SettingsCollection
+            {
+                TextSettings = new List<Setting<string>>
+                {
+                    new Setting<string>
+                    {
+                        Name = "Element",
+                        Description = "The element which existence needs to be checked.",
+                        Key = ActionParameters.ELEMENT_PARAMETER,
+                        Helper = new ElementSelectorSettingHelper()
+                    }
+                }
+            };
+        }
 
         public static class ActionParameters
         {

@@ -140,6 +140,8 @@
     <Resource Include="Icons\LogWhite.png" />
     <Resource Include="Icons\OfflineMode.png" />
     <Resource Include="Icons\OfflineModeRed.png" />
+    <Resource Include="Icons\Package.png" />
+    <Resource Include="Icons\PackageWhite.png" />
     <Content Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <ItemGroup>

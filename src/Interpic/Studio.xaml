@@ -135,10 +135,15 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem x:Name="miDeveloper" Header="Developer" Visibility="Collapsed">
+            <MenuItem x:Name="miDeveloper" Header="Developer" Visibility="Visible">
                 <MenuItem x:Name="miOpenObjectModelViewer" Header="Object Model Viewer" MouseEnter="DisplayControlHint" Tag="Open the Object Model Viewer." Click="MiOpenObjectModelViewer_Click">
                     <MenuItem.Icon>
                         <Image Source="/Interpic.UI;component/Icons/Object.png" MouseEnter="DisplayControlHint"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="miCreatePackage" Header="Create Package" MouseEnter="DisplayControlHint" Tag="Create a package for an extension." Click="MiCreatePackage_Click">
+                    <MenuItem.Icon>
+                        <Image Source="/Interpic.UI;component/Icons/Package.png" MouseEnter="DisplayControlHint"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem x:Name="miShowLog" Header="Show Log" MouseEnter="DisplayControlHint" Tag="Show the application log." Click="MiShowLog_Click">

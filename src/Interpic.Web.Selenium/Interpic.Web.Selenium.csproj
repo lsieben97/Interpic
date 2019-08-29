@@ -70,6 +70,10 @@
       <Project>{36d32067-9305-4f38-8159-b5f5cc2cfb9a}</Project>
       <Name>Interpic.AsyncTasks</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">
+      <Project>{90F34232-79A3-4904-B093-FCFB4DCA3666}</Project>
+      <Name>Interpic.Settings</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Selenium.Chrome.WebDriver.2.42\build\Selenium.Chrome.WebDriver.targets" Condition="Exists('..\packages\Selenium.Chrome.WebDriver.2.42\build\Selenium.Chrome.WebDriver.targets')" />

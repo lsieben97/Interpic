@@ -136,6 +136,7 @@ namespace Interpic.Studio
         {
             List<AsyncTask> tasks = new List<AsyncTask>();
             tasks.Add(new LoadGlobalSettingsTask());
+            tasks.Add(new LoadPackageCacheTask());
             LoadProjectTask task = new LoadProjectTask(path);
             task.PassThrough = true;
             task.PassThroughSource = "Project";

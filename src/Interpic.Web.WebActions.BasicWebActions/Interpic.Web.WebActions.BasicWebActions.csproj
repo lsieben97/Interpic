@@ -51,6 +51,7 @@
     <Compile Include="BaseWebActionPack.cs" />
     <Compile Include="ElementExists.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">

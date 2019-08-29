@@ -26,6 +26,7 @@ namespace Interpic.Web.Behaviours.Windows
         {
             InitializeComponent();
             cbbSelectorType.ItemsSource = Enum.GetValues(typeof(ElementSelector.ElementSelectorType)).Cast<ElementSelector.ElementSelectorType>();
+            cbbSelectorType.SelectedIndex = 0;
         }
 
         public ElementSelectorEditor(ElementSelector selector) : this()
@@ -33,20 +34,6 @@ namespace Interpic.Web.Behaviours.Windows
             Selector = selector;
             cbbSelectorType.SelectedValue = Selector.SelectorType;
             tbSelector.Text = Selector.Selector;
-        }
-
-        private void CbbSelectorType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (((ElementSelectorType)cbbSelectorType.SelectedValue) == ElementSelectorType.XPath)
-            {
-                tbSelector.Width = 492;
-                btnSelect.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                tbSelector.Width = double.NaN;
-                btnSelect.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
@@ -57,11 +44,18 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(tbSelector.Text))
+            {
+                lbSelectorError.Text = "Selector is required";
+                return;
+            }
+
             if (Selector == null)
             {
                 Selector = new ElementSelector();
             }
 
+            
             Selector.SelectorType = (ElementSelectorType)cbbSelectorType.SelectedValue;
             Selector.Selector = tbSelector.Text;
             Close();

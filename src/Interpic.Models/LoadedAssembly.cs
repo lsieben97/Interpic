@@ -12,5 +12,7 @@ namespace Interpic.Models
         public string Path { get; set; }
         public Extension RequestingExtension { get; set; }
         public Assembly Assembly { get; set; }
+        public bool InPackage { get; set; }
+        public string PackagePath { get; set; }
     }
 }

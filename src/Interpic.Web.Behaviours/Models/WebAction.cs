@@ -15,9 +15,10 @@ namespace Interpic.Web.Behaviours.Models
         public abstract string Description { get; set; }
         public WebActionType Type { get; set; }
         public SeleniumWrapper Selenium { get; set; }
-        public abstract SettingsCollection Parameters { get; set; }
+        public SettingsCollection Parameters { get; set; }
 
         public abstract void Execute();
+        public abstract SettingsCollection GetDefaultParameters();
 
         public enum WebActionType
         {

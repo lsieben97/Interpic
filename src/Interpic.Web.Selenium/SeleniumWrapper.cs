@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interpic.Alerts;
+using Interpic.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -28,35 +29,57 @@ namespace Interpic.Web.Selenium
             Chrome,
             FireFox
         }
-        public void Start()
+        public void Start(SettingsCollection settings)
         {
             switch (Browsertype)
             {
                 case BrowserType.Chrome:
-                    StartChrome();
+                    StartChrome(settings);
                     break;
                 case BrowserType.FireFox:
-                    StartFireFox();
+                    StartFireFox(settings);
                     break;
             }
         }
 
-        private void StartFireFox()
+        private void StartFireFox(SettingsCollection settings)
         {
             FirefoxOptions options = new FirefoxOptions();
-            options.AddArgument("-headless");
+            if (settings.GetBooleanSetting("debugEnabled"))
+            {
+                if (!settings.GetBooleanSetting("browserVisible"))
+                {
+                    options.AddArgument("-headless");
+                }
+            }
+            else
+            {
+                options.AddArgument("-headless");
+            }
+            
             FirefoxDriverService service = FirefoxDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             Driver = new FirefoxDriver(service, options);
             Driver.Manage().Window.Maximize();
         }
 
-        private void StartChrome()
+        private void StartChrome(SettingsCollection settings)
         {
             ChromeOptions options = new ChromeOptions();
+            if (settings.GetBooleanSetting("debugEnabled"))
+            {
+                if (!settings.GetBooleanSetting("browserVisible"))
+                {
+                    options.AddArgument("--start-fullscreen");
+                    options.AddArgument("headless");
+                }
+            }
+            else
+            {
+                options.AddArgument("--start-fullscreen");
+                options.AddArgument("headless");
+            }
             options.AddArgument("--start-maximized");
-            options.AddArgument("--start-fullscreen");
-            options.AddArgument("headless");
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             Driver = new ChromeDriver(service, options);

@@ -19,10 +19,13 @@ namespace Interpic.Models.EventArgs
         /// </summary>
         public SettingsCollection Settings { get; }
 
-        public PageSettingsEventArgs(IStudioEnvironment environment, Page page, SettingsCollection settings) : base(environment)
+        public SettingsChanges Changes { get; set; }
+
+        public PageSettingsEventArgs(IStudioEnvironment environment, Page page, SettingsCollection settings, SettingsChanges changes) : base(environment)
         {
             Page = page;
             Settings = settings;
+            Changes = changes;
         }
     }
 }

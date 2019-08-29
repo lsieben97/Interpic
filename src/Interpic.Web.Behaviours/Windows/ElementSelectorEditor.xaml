@@ -9,15 +9,13 @@
     <Grid>
         <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Edit Element Selector" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
         <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/WebWhite.png" Width="48"/>
-        <ComboBox x:Name="cbbSelectorType" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" Width="562" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbSelectorType_SelectionChanged"/>
-        <TextBox x:Name="tbSelector" HorizontalAlignment="Stretch" Height="23" DockPanel.Dock="Left" Margin="10,146,80,73" Width="auto" TextWrapping="Wrap"  Style="{DynamicResource TextBoxStyle}"/>
-            <Button x:Name="btnSelect" HorizontalAlignment="Right" Content="Select" Style="{DynamicResource ButtonStyle}" Height="23" FontFamily="Verdana" Margin="0,146,10,73" />
-
-        
+        <ComboBox x:Name="cbbSelectorType" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" Width="562" Style="{DynamicResource ComboBoxStyle}"/>
+        <TextBox x:Name="tbSelector" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Margin="10,146,10,0" VerticalAlignment="Top" Width="auto" TextWrapping="Wrap"  Style="{DynamicResource TextBoxStyle}"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Selector Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,123,0,0" TextWrapping="Wrap" Text="Selector" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
         <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
         <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click"/>
+        <TextBlock x:Name="lbSelectorError" HorizontalAlignment="Left" Margin="72,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="10" Foreground="Red"/>
 
     </Grid>
     <Window.Resources>

@@ -140,6 +140,72 @@ namespace Interpic.Settings
         }
         #endregion
 
+        public static SettingsChanges GetChanges(SettingsCollection oldCollection, SettingsCollection newCollection)
+        {
+            SettingsChanges changes = new SettingsChanges();
+
+            foreach (Setting<string> setting in oldCollection.TextSettings)
+            {
+                if (setting.Value != newCollection.GetTextSetting(setting.Key))
+                {
+                    changes.TextChanges.Add(setting.Key);
+                    changes.Any = true;
+                }
+            }
+
+            foreach (Setting<int> setting in oldCollection.NumeralSettings)
+            {
+                if (setting.Value != newCollection.GetNumeralSetting(setting.Key))
+                {
+                    changes.NumeralChanges.Add(setting.Key);
+                    changes.Any = true;
+                }
+            }
+
+            foreach (Setting<bool> setting in oldCollection.BooleanSettings)
+            {
+                if (setting.Value != newCollection.GetBooleanSetting(setting.Key))
+                {
+                    changes.BooleanChanges.Add(setting.Key);
+                    changes.Any = true;
+                }
+            }
+
+            foreach (MultipleChoiceSetting setting in oldCollection.MultipleChoiceSettings)
+            {
+                if (setting.Value != newCollection.GetMultipleChoiceSetting(setting.Key))
+                {
+                    changes.MultipleChoiceChanges.Add(setting.Key);
+                    changes.Any = true;
+                }
+            }
+
+            foreach (PathSetting setting in oldCollection.PathSettings)
+            {
+                if (setting.Value != newCollection.GetPathSetting(setting.Key))
+                {
+                    changes.PathChanges.Add(setting.Key);
+                    changes.Any = true;
+                }
+            }
+
+            foreach (Setting<SettingsCollection> setting in oldCollection.SubSettings)
+            {
+                SettingsChanges subChanges = GetChanges(setting.Value, newCollection.GetSubSettings(setting.Key));
+                if (subChanges.Any)
+                {
+                    changes.SubSettingsChanges.Add(setting.Key, subChanges);
+                }
+            }
+
+            if (changes.SubSettingsChanges.Any(subChanges => subChanges.Value.Any == true))
+            {
+                changes.Any = true;
+            }
+
+            return changes;
+        }
+
         #region *** INotifyPropertyChanged Members and Invoker ***
         public event PropertyChangedEventHandler PropertyChanged;
 

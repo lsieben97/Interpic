@@ -22,6 +22,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ThomasJaworski.ComponentModel;
+using Interpic.Models.Packaging;
+using Interpic.Studio.InternalModels;
+using Interpic.Utils;
 
 namespace Interpic.Studio
 {
@@ -31,7 +34,10 @@ namespace Interpic.Studio
     public partial class Studio : Window, IStudioEnvironment, IProcessTaskDialog
     {
         internal static List<IProjectTypeProvider> AvailableProjectTypes = new List<IProjectTypeProvider>();
+        internal static List<PackageDefinition> packageDefinitions = new List<PackageDefinition>();
         internal static List<IProjectBuilder> AvailableBuilders = new List<IProjectBuilder>();
+        internal static PackageCache packageCache;
+        internal static Studio Instance { get; set; }
         private DispatcherTimer checkTimer = new DispatcherTimer();
         private Models.Page currentPage;
         private Models.Section currentSection;
@@ -42,8 +48,8 @@ namespace Interpic.Studio
         private IProgress<int> progress;
         private Dictionary<string, System.Windows.Controls.MenuItem> ExtensionMenuItems = new Dictionary<string, System.Windows.Controls.MenuItem>();
 
-        private Stack<AsyncTask> backgroundTasks = new Stack<AsyncTask>();
-        private AsyncTask backgroundTask;
+        private Stack<BackgroundTask> backgroundTasks = new Stack<BackgroundTask>();
+        private BackgroundTask backgroundTask;
         private SilentTaskProcessor taskProcessor;
         #region Events
         public event OnStudioStartup StudioStartup;
@@ -76,7 +82,7 @@ namespace Interpic.Studio
 
         public Studio(Models.Project project)
         {
-
+            Instance = this;
             openingNewProject = false;
             InitializeComponent();
 
@@ -146,10 +152,11 @@ namespace Interpic.Studio
                 {
                     InfoAlert.Show("The manual settings dialog will now be shown to further configure the project.");
                 }
-                ProjectSettingsEventArgs eventArgs = new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings);
+                SettingsCollection oldSettings = CurrentProject.Settings.Copy();
+                ProjectSettingsEventArgs eventArgs = new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings, null);
                 ProjectSettingsOpening?.Invoke(this, eventArgs);
                 ShowProjectSettings(eventArgs);
-                ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+                ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings, SettingsCollection.GetChanges(oldSettings, CurrentProject.Settings)));
             }
         }
 
@@ -342,10 +349,11 @@ namespace Interpic.Studio
                     {
                         InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
                     }
-                    PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings);
+                    SettingsCollection oldSettings = dialog.Page.Settings.Copy();
+                    PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
                     PageSettingsOpening?.Invoke(this, eventArgs);
                     ShowPageSettings(dialog, eventArgs);
-                    PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings));
+                    PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
                 }
                 Project currentProject = CurrentProject;
                 Models.Page currentPage = dialog.Page;
@@ -1094,6 +1102,7 @@ namespace Interpic.Studio
 
         private void miGlobalSettings_Click(object sender, RoutedEventArgs e)
         {
+            SettingsCollection oldSettings = App.GlobalSettings.Copy();
             SettingsEditor editor = new SettingsEditor(App.GlobalSettings);
             editor.ShowDialog();
             if (editor.DialogResult.Value == true)
@@ -1101,7 +1110,7 @@ namespace Interpic.Studio
                 App.GlobalSettings = editor.SettingsCollection;
                 App.SaveGlobalSettings();
                 SetStatusBar("Global settings saved.");
-                GlobalSettingsSaved?.Invoke(this, new GlobalSettingsEventArgs(this, App.GlobalSettings));
+                GlobalSettingsSaved?.Invoke(this, new GlobalSettingsEventArgs(this, App.GlobalSettings, SettingsCollection.GetChanges(oldSettings, App.GlobalSettings)));
             }
             else
             {
@@ -1196,7 +1205,9 @@ namespace Interpic.Studio
 
         private void miProjectSettings_Click(object sender, RoutedEventArgs e)
         {
-            ProjectSettingsOpening?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+            SettingsCollection oldSettings = CurrentProject.Settings.Copy();
+            ProjectSettingsEventArgs eventArgs = new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings, null);
+            ProjectSettingsOpening?.Invoke(this, eventArgs);
             SettingsEditor editor = new SettingsEditor(CurrentProject.Settings);
             editor.ShowDialog();
             if (editor.DialogResult.Value == true)
@@ -1205,7 +1216,7 @@ namespace Interpic.Studio
                 {
                     CurrentProject.Settings = editor.SettingsCollection;
                     SetStatusBar("Project settings saved.");
-                    ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings));
+                    ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings, SettingsCollection.GetChanges(oldSettings, CurrentProject.Settings)));
                 }
                 else
                 {
@@ -1282,6 +1293,25 @@ namespace Interpic.Studio
             CurrentProject = null;
             currentPage = null;
             currentSection = null;
+            packageDefinitions.Clear();
+            LoadStudioPackageDefinitions();
+            if (backgroundTask != null)
+            {
+                if (backgroundTask.Important)
+                {
+                    if (WarningAlert.Show($"An important background task is currenly running:\n{backgroundTask.ActionName}\n{backgroundTask.ImportanceReason}\n\nThe background task will now be canceled.", true).Result)
+                    {
+                        backgroundTask.CancellationTokenSource.Cancel();
+                        backgroundTask.FireCanceledEvent(this);
+                        backgroundTasks.Clear();
+                    }
+                }
+            }
+        }
+
+        private void LoadStudioPackageDefinitions()
+        {
+            
         }
 
         private bool ConfirmProjectClose()
@@ -1376,9 +1406,11 @@ namespace Interpic.Studio
                 dialog.Section.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
                 if (dialog.Section.HasSettingsAvailable)
                 {
-                    SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings);
+                    SettingsCollection oldSettings = dialog.Section.Settings.Copy();
+                    SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, null);
                     SectionSettingsOpening?.Invoke(this, eventArgs);
                     ShowSectionSettings(ref dialog, eventArgs);
+                    SectionSettingsOpened?.Invoke(this, new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Section.Settings)));
                 }
 
                 if (ProjectTypeProvider.GetControlFinder() != null)
@@ -1396,7 +1428,7 @@ namespace Interpic.Studio
                     {
                         if (result.section.ElementBounds != null)
                         {
-                            page.Sections.Add(dialog.Section);
+                            page.Sections.Add(result.section);
                             RedrawTreeView();
                             dialog.Section.TreeViewItem.IsSelected = true;
                             dialog.Section.TreeViewItem.BringIntoView();
@@ -1413,7 +1445,7 @@ namespace Interpic.Studio
                     (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, currentVersion, CurrentProject);
                     if (result.succes)
                     {
-                        page.Sections.Add(dialog.Section);
+                        page.Sections.Add(result.section);
                     }
                     else
                     {
@@ -1483,17 +1515,18 @@ namespace Interpic.Studio
                 dialog.Control.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
                 if (dialog.Control.HasSettingsAvailable)
                 {
-                    ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings);
+                    SettingsCollection oldSettings = dialog.Control.Settings.Copy();
+                    ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, null);
                     ControlSettingsOpening?.Invoke(this, eventArgs);
                     ShowControlSettings(ref dialog, eventArgs);
-                    ControlSettingsOpened?.Invoke(this, new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings));
+                    ControlSettingsOpened?.Invoke(this, new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Control.Settings)));
                 }
                 (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, currentVersion, CurrentProject);
                 if (result.succes)
                 {
                     if (result.control.ElementBounds != null)
                     {
-                        section.Controls.Add(dialog.Control);
+                        section.Controls.Add(result.control);
                         RedrawTreeView();
                         dialog.Control.TreeViewItem.IsSelected = true;
                     }
@@ -1655,8 +1688,9 @@ namespace Interpic.Studio
             new Log(Logger as Logger).Show();
         }
 
-        public void ScheduleBackgroundTask(AsyncTask task)
+        public void ScheduleBackgroundTask(BackgroundTask task)
         {
+            task.IsCancelable = true;
             if (backgroundTask != null)
             {
                 backgroundTasks.Push(task);
@@ -1726,9 +1760,16 @@ namespace Interpic.Studio
         {
             if (backgroundTasks.Any(task => task.Id == id))
             {
-                List<AsyncTask> list = backgroundTasks.ToList();
-                list.Remove(list.Find(task => task.Id == id));
-                backgroundTasks = new Stack<AsyncTask>(list);
+                List<BackgroundTask> list = backgroundTasks.ToList();
+                BackgroundTask task = list.Find(t => t.Id == id);
+                if (backgroundTask.Dialog != null)
+                {
+                    backgroundTask.CancellationTokenSource.Cancel();
+                    backgroundTask.FireCanceledEvent(this);
+                }
+                task.FireCanceledEvent(this);
+                list.Remove(task);
+                backgroundTasks = new Stack<BackgroundTask>(list);
                 return true;
             }
             else
@@ -1856,6 +1897,22 @@ namespace Interpic.Studio
         public IDLLManager GetDLLManager()
         {
             return DLLManager.Instance;
+        }
+
+        public void RegisterPackageDefinition(PackageDefinition definition)
+        {
+            if (packageDefinitions.Contains(definition))
+            {
+                Logger.LogError("Tried to register same defintion twice, ignoring.", "Studio");
+                return;
+            }
+
+            packageDefinitions.Add(definition);
+        }
+
+        private void MiCreatePackage_Click(object sender, RoutedEventArgs e)
+        {
+            new CreatePackage(packageDefinitions).ShowDialog();
         }
     }
 }

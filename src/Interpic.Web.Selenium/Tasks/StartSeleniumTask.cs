@@ -1,5 +1,6 @@
 ﻿using Interpic.Alerts;
 using Interpic.AsyncTasks;
+using Interpic.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +10,22 @@ using static Interpic.Web.Selenium.SeleniumWrapper;
 
 namespace Interpic.Web.Selenium.Tasks
 {
-    public class StartSeleniumTask : AsyncTask
+    public class StartSeleniumTask : BackgroundTask
     {
         public SeleniumWrapper Selenium { get; set; }
         public BrowserType Type { get; set; }
-        public StartSeleniumTask(BrowserType type)
+        public SettingsCollection Settings { get; }
+
+        public StartSeleniumTask(BrowserType type, SettingsCollection settings)
         {
             TaskName = "Starting Selenium (" + GetBrowserName(type) + ")...";
             TaskDescription = "Chrome Webdriver";
             ActionName = "Start Selenium";
             IsIndeterminate = true;
             Type = type;
+            Settings = settings;
+            Important = true;
+            ImportanceReason = "Processes needed by Interpic might not exit properly.";
         }
 
         public override Task Execute()
@@ -32,7 +38,7 @@ namespace Interpic.Web.Selenium.Tasks
             try
             {
                 Selenium = new SeleniumWrapper(Type);
-                Selenium.Start();
+                Selenium.Start(Settings);
             }
             catch (Exception ex)
             {

@@ -21,6 +21,8 @@ using System.Windows.Media.Imaging;
 using static Interpic.Web.Selenium.SeleniumWrapper;
 using Interpic.Web.Behaviours.Models;
 using Interpic.Web.WebActions.BasicWebActions;
+using Interpic.Web.Behaviours.Utils;
+using Interpic.Web.Tasks;
 
 namespace Interpic.Web
 {
@@ -29,11 +31,22 @@ namespace Interpic.Web
         public IStudioEnvironment Studio { get; set; }
         public static Dictionary<BrowserType, Selenium.SeleniumWrapper> Selenium { get; set; } = new Dictionary<BrowserType, Selenium.SeleniumWrapper>();
         public InternetUsage InternetUsage { get; set; } = new InternetUsage();
-        public WebBehaviourConfiguration BehaviourConfiguration { get; set; }
+        public WebBehaviourConfiguration WebBehaviourConfiguration { get; set; }
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
-            return null;
+            SettingsCollection collection = new SettingsCollection();
+
+            Setting<string> webBehaviours = new Setting<string>();
+            webBehaviours.Key = "WebBehaviours";
+            webBehaviours.Name = "Web Behaviours";
+            webBehaviours.Description = "List of webbehaviours to execute when refreshing the control.";
+            webBehaviours.Value = string.Empty;
+            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
+
+            collection.TextSettings.Add(webBehaviours);
+            collection.Name = "Control settings";
+            return collection;
         }
 
         public Settings.SettingsCollection GetDefaultPageSettings()
@@ -46,19 +59,106 @@ namespace Interpic.Web
             baseUrl.Description = "URL of this page.\nThe base URL of the manual will be prepended to this value.";
             baseUrl.Value = "";
 
+            Setting<string> webBehaviours = new Setting<string>();
+            webBehaviours.Key = "WebBehaviours";
+            webBehaviours.Name = "Web Behaviours";
+            webBehaviours.Description = "List of webbehaviours to execute when refreshing the page.";
+            webBehaviours.Value = string.Empty;
+            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
+
             collection.TextSettings.Add(baseUrl);
-            collection.Name = "page settings";
+            collection.TextSettings.Add(webBehaviours);
+            collection.Name = "Page settings";
             return collection;
         }
 
         public Settings.SettingsCollection GetDefaultProjectSettings()
         {
-            return null;
+            return new SettingsCollection
+            {
+                Name = "Web Project Settings",
+                SubSettings = new List<Setting<SettingsCollection>>
+                {
+                    new Setting<SettingsCollection> {
+                        Name = "Debug Settings",
+                        Description = "Settings for debugging the web project.",
+                        Key = "debugSettings",
+                        Value = new SettingsCollection
+                        {
+                            Name = "Debug Settings",
+                            SubSettings = new List<Setting<SettingsCollection>>
+                            {
+                                new Setting<SettingsCollection>
+                                {
+                                    Key = "chromeSettings",
+                                    Name = "Chrome Settings",
+                                    Description = "Debug settings for Chrome.",
+                                    Value = new SettingsCollection
+                                    {
+                                        Name = "Debug settings for Chrome",
+                                        BooleanSettings = new List<Setting<bool>>
+                                        {
+                                            new Setting<bool>
+                                            {
+                                                Name = "Debug mode enabled",
+                                                Key = "debugEnabled",
+                                                Description = "Whether debug settings are enabled."
+                                            },
+                                            new Setting<bool>
+                                            {
+                                                Name = "Browser visible",
+                                                Key = "browserVisible",
+                                                Description = "Whether the browser window is visible."
+                                            }
+                                        }
+                                    }
+                                },
+                                new Setting<SettingsCollection>
+                                {
+                                    Key = "firefoxSettings",
+                                    Name = "Firefox Settings",
+                                    Description = "Debug settings for Firefox.",
+                                    Value = new SettingsCollection
+                                    {
+                                        Name = "Debug settings for Firefox",
+                                        BooleanSettings = new List<Setting<bool>>
+                                        {
+                                            new Setting<bool>
+                                            {
+                                                Name = "Debug mode enabled",
+                                                Key = "debugEnabled",
+                                                Description = "Whether debug settings are enabled."
+                                            },
+                                            new Setting<bool>
+                                            {
+                                                Name = "Browser visible",
+                                                Key = "browserVisible",
+                                                Description = "Whether the browser window is visible."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
         }
 
         public Settings.SettingsCollection GetDefaultSectionSettings()
         {
-            return null;
+            SettingsCollection collection = new SettingsCollection();
+
+            Setting<string> webBehaviours = new Setting<string>();
+            webBehaviours.Key = "WebBehaviours";
+            webBehaviours.Name = "Web Behaviours";
+            webBehaviours.Description = "List of webbehaviours to execute when refreshing the section.";
+            webBehaviours.Value = string.Empty;
+            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
+
+            collection.TextSettings.Add(webBehaviours);
+            collection.Name = "Section settings";
+            return collection;
         }
 
         public string GetProjectTypeDescription()
@@ -91,14 +191,67 @@ namespace Interpic.Web
             Studio.ProjectLoaded += StudioEnvironment_ProjectLoaded;
             Studio.ProjectUnloaded += StudioProjectUnloaded;
             Studio.VersionAdded += StudioVersionAdded;
+            Studio.ProjectSettingsOpened += StudioProjectSettingsOpened;
+        }
+
+        private void StudioProjectSettingsOpened(object sender, ProjectSettingsEventArgs e)
+        {
+            if (e.Changes.SubSettingsChanges.ContainsKey("debugSettings"))
+            {
+                if (e.Changes.SubSettingsChanges["debugSettings"].SubSettingsChanges.ContainsKey("chromeSettings"))
+                {
+                    RestartSelenium(e.Settings, BrowserType.Chrome);
+                }
+
+                if (e.Changes.SubSettingsChanges["debugSettings"].SubSettingsChanges.ContainsKey("firefoxSettings"))
+                {
+                    RestartSelenium(e.Settings, BrowserType.FireFox);
+                }
+            }
+        }
+
+        private void RestartSelenium(SettingsCollection projectSettings, BrowserType browserType)
+        {
+            if (VersionForBrowserExists(browserType))
+            {
+                (bool debugModeOn, SettingsCollection browserSettings) settings = GetDebugSettings(projectSettings.GetSubSettings("debugSettings"), browserType);
+                if (settings.debugModeOn)
+                {
+                    if (!CheckSelenium(browserType))
+                    {
+                        Studio.CancelScheduledBackgroundTask("start" + GetBrowserTypeString(browserType));
+                        Studio.ScheduleBackgroundTask(new StartSeleniumTask(browserType, settings.browserSettings));
+                    }
+                }
+            }
+        }
+
+        private bool VersionForBrowserExists(BrowserType type)
+        {
+            return Studio.CurrentProject.Versions.ToList().Find(version => version.Settings.GetMultipleChoiceSetting("BrowserType") == GetBrowserTypeString(type)) != null;
+        }
+
+        private (bool debugModeOn, SettingsCollection browserSettings) GetDebugSettings(SettingsCollection settings, BrowserType browserType)
+        {
+            string browserKey = "";
+            if (browserType == BrowserType.Chrome)
+            {
+                browserKey = "chromeSettings";
+            }
+            else if(browserType == BrowserType.FireFox)
+            {
+                browserKey = "FirefoxSettings";
+            }
+            return (settings.GetSubSettings(browserKey).GetBooleanSetting("debugEnabled"), settings.GetSubSettings(browserKey));
         }
 
         private void StudioVersionAdded(object sender, VersionEventArgs e)
         {
             BrowserType type = GetBrowserType(e.Version.Settings.GetMultipleChoiceSetting("BrowserType"));
-            if (! Selenium.ContainsKey(type))
+            if (!Selenium.ContainsKey(type))
             {
-                Studio.ScheduleBackgroundTask(new StartSeleniumTask(type));
+                (bool debugModeOn, SettingsCollection browserSettings) settings = GetDebugSettings(Studio.CurrentProject.Settings.GetSubSettings("debugSettings"), type);
+                Studio.ScheduleBackgroundTask(new StartSeleniumTask(type, settings.browserSettings));
             }
         }
 
@@ -107,7 +260,7 @@ namespace Interpic.Web
             if (Selenium != null)
             {
                 List<AsyncTask> tasks = new List<AsyncTask>();
-                foreach(KeyValuePair<BrowserType, Selenium.SeleniumWrapper> browser in Selenium)
+                foreach (KeyValuePair<BrowserType, Selenium.SeleniumWrapper> browser in Selenium)
                 {
                     tasks.Add(new CloseSeleniumTask(browser.Value));
                 }
@@ -121,6 +274,7 @@ namespace Interpic.Web
             StartSelenium();
             RegisterMenuItems();
             LoadWebBehaviourConfiguration();
+            Studio.RegisterPackageDefinition(new Models.Packaging.PackageDefinition() { Name = "Web action package", Extension = "iwp" });
         }
 
         private void LoadWebBehaviourConfiguration()
@@ -132,22 +286,23 @@ namespace Interpic.Web
                 dialog.ShowDialog();
                 if (!dialog.TaskToExecute.IsCanceled)
                 {
-                    BehaviourConfiguration = loadWebBehaviourConfigurationTask.WebBehaviourConfiguration;
-                    BehaviourConfiguration.InternalWebActionPacks.Add(new BaseWebActionPack());
-                    List<string> assembliesToLoad = BehaviourConfiguration.WebActionpacks.FindAll(pack => pack != "BasicWebActionsPack");
+                    WebBehaviourConfiguration = loadWebBehaviourConfigurationTask.WebBehaviourConfiguration;
+                    WebBehaviourConfiguration.InternalWebActionPacks.Add(new BaseWebActionPack());
+                    WebBehaviour.AvailableBehaviours = WebBehaviourConfiguration.Behaviours;
+                    List<string> assembliesToLoad = WebBehaviourConfiguration.WebActionpacks.FindAll(pack => pack != "BasicWebActionsPack");
                     if (assembliesToLoad.Count > 0)
                     {
-                        
+
                         List<LoadedAssembly> loadedAssemblies = Studio.GetDLLManager().LoadAssemblies(assembliesToLoad, WebExtension.Instance);
-                        foreach(LoadedAssembly assembly in loadedAssemblies)
+                        foreach (LoadedAssembly assembly in loadedAssemblies)
                         {
                             try
                             {
                                 Type packType = assembly.Assembly.GetExportedTypes().First(ass => ass.BaseType.Name == "WebActionPack");
                                 WebActionPack pack = Activator.CreateInstance<WebActionPack>();
-                                BehaviourConfiguration.InternalWebActionPacks.Add(pack);
+                                WebBehaviourConfiguration.InternalWebActionPacks.Add(pack);
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 ErrorAlert.Show($"Could not load web action pack from assembly {assembly.Path}:\n\n{ex.Message}");
                             }
@@ -160,7 +315,7 @@ namespace Interpic.Web
                 WebBehaviourConfiguration configuration = new WebBehaviourConfiguration();
                 configuration.WebActionpacks.Add("BasicWebActionsPack");
                 configuration.InternalWebActionPacks.Add(new BaseWebActionPack());
-                BehaviourConfiguration = configuration;
+                WebBehaviourConfiguration = configuration;
                 SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, configuration);
                 ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
                 dialog.ShowDialog();
@@ -191,28 +346,32 @@ namespace Interpic.Web
 
             webToolsItem.SubItems.Add(behavioursMenuItem);
             Studio.RegisterExtensionMenuItem(webToolsItem);
-            
+
         }
 
         private void ManageBehavioursMenuItemClicked(object sender, ProjectStateEventArgs e)
         {
-            ManageWebBehaviours manageWebBehaviours = new ManageWebBehaviours(BehaviourConfiguration, Studio.CurrentProject);
+            ManageWebBehaviours manageWebBehaviours = new ManageWebBehaviours(WebBehaviourConfiguration, Studio.CurrentProject);
             manageWebBehaviours.ShowDialog();
-            BehaviourConfiguration = manageWebBehaviours.Configuration;
-            SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, BehaviourConfiguration);
+            WebBehaviourConfiguration = manageWebBehaviours.Configuration;
+            SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, WebBehaviourConfiguration);
             ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
             dialog.ShowDialog();
+            if (! dialog.TaskToExecute.IsCanceled)
+            {
+                WebBehaviour.AvailableBehaviours = WebBehaviourConfiguration.Behaviours;
+            }
         }
 
         private void ManageWebActionsMenuItemClicked(object sender, ProjectStateEventArgs e)
         {
-            ManageWebActions manageWebActions = new ManageWebActions(BehaviourConfiguration);
+            ManageWebActions manageWebActions = new ManageWebActions(WebBehaviourConfiguration);
             manageWebActions.ShowDialog();
         }
 
         private void OpenInWebBrowserItemClicked(object sender, ProjectStateEventArgs e)
         {
-            if(Studio.OfflineMode)
+            if (Studio.OfflineMode)
             {
                 ErrorAlert.Show("Action not allowed.\n\nOffline mode is enabled.");
                 return;
@@ -229,7 +388,7 @@ namespace Interpic.Web
                 {
                     ErrorAlert.Show("Could not open page in browser:\n" + ex.Message);
                 }
-                
+
             }
             else
             {
@@ -249,7 +408,9 @@ namespace Interpic.Web
             }
             foreach (BrowserType type in typesToStart)
             {
-                StartSeleniumTask task = new StartSeleniumTask(type);
+                (bool debugModeOn, SettingsCollection browserSettings) settings = GetDebugSettings(Studio.CurrentProject.Settings.GetSubSettings("debugSettings"), type);
+                StartSeleniumTask task = new StartSeleniumTask(type, settings.browserSettings);
+                task.Id = "start" + GetBrowserTypeString(type);
                 task.Executed += SeleniumStarted;
                 Studio.ScheduleBackgroundTask(task);
             }
@@ -270,7 +431,7 @@ namespace Interpic.Web
 
         public static BrowserType GetBrowserType(string name)
         {
-            switch(name)
+            switch (name)
             {
                 case "chrome":
                     return BrowserType.Chrome;
@@ -281,10 +442,23 @@ namespace Interpic.Web
             }
         }
 
+        public static string GetBrowserTypeString(BrowserType browserType)
+        {
+            switch (browserType)
+            {
+                case BrowserType.Chrome:
+                    return "chrome";
+                case BrowserType.FireFox:
+                    return "firefox";
+                default:
+                    return "";
+            }
+        }
+
         private void SeleniumStarted(object sender, AsyncTasks.EventArgs.AsyncTaskEventArgs eventArgs)
         {
             StartSeleniumTask task = eventArgs.Task as StartSeleniumTask;
-            Selenium.Add(task.Type,task.Selenium);
+            Selenium.Add(task.Type, task.Selenium);
         }
 
         public IControlFinder GetControlFinder()
@@ -309,13 +483,21 @@ namespace Interpic.Web
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
+                tasks.Add(navigateTask);
+
+                if (control.Settings.GetTextSetting("WebBehaviours") != null)
+                {
+                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(control.Settings.GetTextSetting("WebBehaviours"), null);
+                    executeWebBehavioursTask.PassThrough = true;
+                    executeWebBehavioursTask.PassThroughSource = "Selenium";
+                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
+                    tasks.Add(executeWebBehavioursTask);
+                }
 
                 GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(control.Identifier.Identifier);
                 getElementBoundsTask.PassThrough = true;
                 getElementBoundsTask.PassThroughSource = "Selenium";
                 getElementBoundsTask.PassThroughTarget = "Selenium";
-
-                tasks.Add(navigateTask);
                 tasks.Add(getElementBoundsTask);
 
                 ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
@@ -351,13 +533,21 @@ namespace Interpic.Web
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
+                tasks.Add(navigateTask);
+
+                if (section.Settings.GetTextSetting("WebBehaviours") != null)
+                {
+                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(section.Settings.GetTextSetting("WebBehaviours"), null);
+                    executeWebBehavioursTask.PassThrough = true;
+                    executeWebBehavioursTask.PassThroughSource = "Selenium";
+                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
+                    tasks.Add(executeWebBehavioursTask);
+                }
 
                 GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(section.SectionIdentifier.Identifier);
                 getElementBoundsTask.PassThrough = true;
                 getElementBoundsTask.PassThroughSource = "Selenium";
                 getElementBoundsTask.PassThroughTarget = "Selenium";
-
-                tasks.Add(navigateTask);
                 tasks.Add(getElementBoundsTask);
 
                 ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
@@ -386,19 +576,27 @@ namespace Interpic.Web
             List<AsyncTask> tasks = new List<AsyncTask>();
             BrowserType type = GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
             if (CheckSelenium(type))
-            { 
+            {
                 NavigateToPageTask navigateTask = new NavigateToPageTask(version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl"));
                 navigateTask.Selenium = Selenium[type];
                 navigateTask.PassThrough = true;
                 navigateTask.PassThroughSource = "Selenium";
                 navigateTask.PassThroughTarget = "Selenium";
+                tasks.Add(navigateTask);
+
+                if (page.Settings.GetTextSetting("WebBehaviours") != null)
+                {
+                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(page.Settings.GetTextSetting("WebBehaviours"), null);
+                    executeWebBehavioursTask.PassThrough = true;
+                    executeWebBehavioursTask.PassThroughSource = "Selenium";
+                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
+                    tasks.Add(executeWebBehavioursTask);
+                }
 
                 MakeScreenshotTask makeScreenshotTask = new MakeScreenshotTask();
                 makeScreenshotTask.PassThrough = true;
                 makeScreenshotTask.PassThroughSource = "Selenium";
                 makeScreenshotTask.PassThroughTarget = "Selenium";
-
-                tasks.Add(navigateTask);
                 tasks.Add(makeScreenshotTask);
 
                 ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);

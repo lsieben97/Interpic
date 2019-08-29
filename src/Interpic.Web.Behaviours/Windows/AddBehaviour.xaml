@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
         mc:Ignorable="d"
-        Title="New Behaviour" Height="600" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStartupLocation="CenterScreen">
+        Title="New Behaviour" Height="600" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
         <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Behaviour" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
         <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Stretch" Margin="10,86,10,453" Width="auto" TextWrapping="Wrap"  Style="{DynamicResource TextBoxStyle}"/>
+        <TextBox x:Name="tbName" HorizontalAlignment="Stretch" Height="30" Margin="10,86,10,0" Width="auto" VerticalAlignment="Top" TextWrapping="Wrap" Style="{DynamicResource TextBoxStyle}"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>
         <TextBox x:Name="tbDescription" HorizontalAlignment="Stretch" Margin="10,143,10,301" Width="auto" TextWrapping="Wrap"  Style="{DynamicResource TextBoxStyle}"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,273,0,0" TextWrapping="Wrap" Text="Actions" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>

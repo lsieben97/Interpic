@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ImageMapUtils.cs" />
     <Compile Include="ImageUtils.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UiUtils.cs" />
     <Compile Include="XmlUtils.cs" />

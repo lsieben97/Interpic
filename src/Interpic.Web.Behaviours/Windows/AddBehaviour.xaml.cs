@@ -34,13 +34,6 @@ namespace Interpic.Web.Behaviours.Windows
             this.availableActions = availableActions;
             this.availableWebBehaviours = availableWebBehaviours;
             this.edit = edit;
-            
-            if (edit)
-            {
-                tbName.Text = WebBehaviour.Name;
-                tbDescription.Text = WebBehaviour.Description;
-                webActions = new ObservableCollection<WebAction>(WebBehaviour.Actions);
-            }
 
             lsbWebActions.ItemsSource = webActions;
         }
@@ -129,6 +122,16 @@ namespace Interpic.Web.Behaviours.Windows
         {
             btnRemove.IsEnabled = lsbWebActions.SelectedItem != null;
             btnEdit.IsEnabled = lsbWebActions.SelectedItem != null;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (edit)
+            {
+                tbName.Text = WebBehaviour.Name;
+                tbDescription.Text = WebBehaviour.Description;
+                webActions = new ObservableCollection<WebAction>(WebBehaviour.Actions);
+            }
         }
     }
 }

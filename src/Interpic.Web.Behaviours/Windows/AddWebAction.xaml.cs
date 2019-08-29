@@ -70,7 +70,9 @@ namespace Interpic.Web.Behaviours.Windows
         private void CbbType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             WebAction webAction = availableActions.Find(webaction => webaction.Id == cbbType.SelectedValue.ToString());
+            webAction.Parameters = webAction.GetDefaultParameters();
             parameters = webAction.Parameters;
+            
             btnSetParameters.IsEnabled = parameters != null;
             if (webAction.Type == WebAction.WebActionType.Action)
             {

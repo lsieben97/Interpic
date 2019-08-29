@@ -19,10 +19,13 @@ namespace Interpic.Models.EventArgs
         /// </summary>
         public SettingsCollection Settings { get; }
 
-        public ControlSettingsEventArgs(IStudioEnvironment environment, Control control, SettingsCollection settings) : base(environment)
+        public SettingsChanges Changes { get; }
+
+        public ControlSettingsEventArgs(IStudioEnvironment environment, Control control, SettingsCollection settings, SettingsChanges changes) : base(environment)
         {
             Control = control;
             Settings = settings;
+            Changes = changes;
         }
     }
 }

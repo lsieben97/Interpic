@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using Interpic.Studio.InternalModels;
 
 namespace Interpic
 {
@@ -28,6 +29,7 @@ namespace Interpic
         internal static readonly Logger ApplicationLogger = new Logger();
 
         internal static SettingsCollection GlobalSettings { get; set; }
+        internal static PackageCache PackageCache { get; set; }
         private static SettingsCollection DefaultGlobalSettings;
 
         internal static void LoadGlobalSettings()

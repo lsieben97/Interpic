@@ -116,8 +116,9 @@ namespace Interpic.Studio.Windows
                 
                 project.LastSaved = DateTime.Now;
                 project.IsNew = true;
-                project.OutputFolder = App.GlobalSettings.GetPathSetting("workspaceDirectory") + directoryName + "\\Output\\";
-                project.ProjectFolder = App.GlobalSettings.GetPathSetting("workspaceDirectory") + directoryName;
+                project.OutputFolder = System.IO.Path.Combine(App.GlobalSettings.GetPathSetting("workspaceDirectory"), directoryName, "\\Output\\");
+                project.ProjectFolder = System.IO.Path.Combine(App.GlobalSettings.GetPathSetting("workspaceDirectory"), directoryName);
+                project.Path = System.IO.Path.Combine(project.ProjectFolder, directoryName + ".ipp");
                 NewVersion newVersionDialog = new NewVersion(provider.GetDefaultVersionSettings());
                 newVersionDialog.ShowDialog();
                 if (newVersionDialog.DialogResult.Value)

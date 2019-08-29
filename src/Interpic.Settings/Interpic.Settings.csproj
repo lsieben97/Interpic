@@ -96,6 +96,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Setting.cs" />
+    <Compile Include="SettingsChanges.cs" />
     <Compile Include="SettingsCollection.cs" />
     <Compile Include="SettingsEditor.xaml.cs">
       <DependentUpon>SettingsEditor.xaml</DependentUpon>
