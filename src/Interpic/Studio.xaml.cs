@@ -288,7 +288,9 @@ namespace Interpic.Studio
             currentVersion = CurrentProject.Versions.Single(version => version.Id == CurrentProject.LastViewedVersionId);
             currentVersion.IsCurrent = true;
             lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
-            spVersions.ItemsSource = CurrentProject.Versions;
+            lsbVersions.ItemsSource = CurrentProject.Versions;
+            lsbVersions.SelectedValue = currentVersion.Id;
+            lsbVersions.SelectionChanged += LsbVersions_SelectionChanged;
             RedrawTreeView();
             (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
             InitializeUI();
@@ -1913,6 +1915,14 @@ namespace Interpic.Studio
         private void MiCreatePackage_Click(object sender, RoutedEventArgs e)
         {
             new CreatePackage(packageDefinitions).ShowDialog();
+        }
+
+        private void LsbVersions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lsbVersions.SelectedValue != null)
+            {
+                SwitchVersion(lsbVersions.SelectedValue.ToString());
+            }
         }
     }
 }
