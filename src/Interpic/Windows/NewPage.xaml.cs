@@ -1,19 +1,8 @@
 ﻿using Interpic.Alerts;
 using Interpic.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Interpic.Studio.Windows
 {
@@ -40,11 +29,11 @@ namespace Interpic.Studio.Windows
             btnCreate.Content = "Save";
             edit = true;
             tbName.Text = Page.Name;
-            if (Page.Type == "text")
+            if (Page.Type == Models.Page.PAGE_TYPE_TEXT)
             {
                 cbbType.SelectedIndex = 1;
             }
-            else if (Page.Type == "reference")
+            else if (Page.Type == Models.Page.PAGE_TYPE_REFERENCE)
             {
                 cbbType.SelectedIndex = 0;
             }
@@ -71,6 +60,7 @@ namespace Interpic.Studio.Windows
                     Page.Name = tbName.Text;
                     Page.Type = ((ComboBoxItem)cbbType.SelectedItem).Tag.ToString();
                     Page.Sections = new ObservableCollection<Models.Section>();
+                    Page.IsLoaded = Page.Type == Models.Page.PAGE_TYPE_TEXT;
                     Close();
                 }
                 else
@@ -100,8 +90,14 @@ namespace Interpic.Studio.Windows
             }
             else if (cbbType.SelectedIndex == 1)
             {
-                tbTypeDescription.Text = "Text page to enter text in the output format of the project.\nThen page will be rendered like every other page.";
+                tbTypeDescription.Text = "Text page to enter text in the output format of the project.";
             }
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Page = null;
+            Close();
         }
     }
 }

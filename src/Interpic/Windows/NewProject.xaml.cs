@@ -1,23 +1,13 @@
-﻿using Interpic.Web;
-using Interpic.Models.Extensions;
+﻿using Interpic.Models.Extensions;
 using Interpic.Models;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using Interpic.AsyncTasks;
 using Interpic.Studio.Tasks;
+using Interpic.Alerts;
 
 namespace Interpic.Studio.Windows
 {
@@ -106,6 +96,12 @@ namespace Interpic.Studio.Windows
                 {
                     directoryName = directoryName.Replace(c.ToString(), "");
                 }
+                string fullDirectory = System.IO.Path.Combine(App.GlobalSettings.GetPathSetting("workspaceDirectory"), directoryName);
+                if (System.IO.Directory.Exists(fullDirectory))
+                {
+                    WarningAlert.Show($"The folder {fullDirectory} already exists.\nPlease choose another project name.");
+                    return;
+                }
                 project = new Project();
                 project.Name = tbName.Text;
                 IProjectTypeProvider provider = ((ComboBoxItem)cbbApplicationType.SelectedValue).Tag as IProjectTypeProvider;
@@ -117,7 +113,7 @@ namespace Interpic.Studio.Windows
                 project.LastSaved = DateTime.Now;
                 project.IsNew = true;
                 project.OutputFolder = System.IO.Path.Combine(App.GlobalSettings.GetPathSetting("workspaceDirectory"), directoryName, "\\Output\\");
-                project.ProjectFolder = System.IO.Path.Combine(App.GlobalSettings.GetPathSetting("workspaceDirectory"), directoryName);
+                project.ProjectFolder = fullDirectory;
                 project.Path = System.IO.Path.Combine(project.ProjectFolder, directoryName + ".ipp");
                 NewVersion newVersionDialog = new NewVersion(provider.GetDefaultVersionSettings());
                 newVersionDialog.ShowDialog();
@@ -187,6 +183,12 @@ namespace Interpic.Studio.Windows
         {
             IProjectBuilder builder = ((ComboBoxItem)cbbOutputType.SelectedValue).Tag as IProjectBuilder;
             tbOutputTypeDescription.Text = builder.GetBuilderDescription();
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Project = null;
+            Close();
         }
     }
 }

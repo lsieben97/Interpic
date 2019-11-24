@@ -2,20 +2,11 @@
 using Interpic.Models.Packaging;
 using Interpic.Studio.Functional;
 using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Interpic.Studio.Windows.Developer
 {
@@ -76,7 +67,7 @@ namespace Interpic.Studio.Windows.Developer
                 errors.Add("Package name is required.");
             }
 
-            if (string.IsNullOrWhiteSpace(cbbMainDll.SelectedValue.ToString()))
+            if (cbbMainDll.SelectedValue == null)
             {
                 errors.Add("Main DLL is required, Please add a DLL to the package contents.");
             }

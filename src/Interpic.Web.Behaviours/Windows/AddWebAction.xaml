@@ -5,19 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
         mc:Ignorable="d"
-        Title="New Web Action" Height="370" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Web Action" Height="320" Width="400" MinHeight="320" MaxHeight="320" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Web Action" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <ComboBox x:Name="cbbType" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,86,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbType_SelectionChanged"/>
-        <Button x:Name="btnSetParameters" Content="Set Parameters" HorizontalAlignment="Left" Margin="10,133,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ButtonStyle}" Click="BtnSetParameters_Click"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click" />
-        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click" />
-        <TextBlock HorizontalAlignment="Left" Margin="10,168,0,0" TextWrapping="Wrap" Text="Behaviour when true" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <ComboBox x:Name="cbbBehaviourWhenTrue" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,190,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Behaviour when "/><Run Text="false"/></TextBlock>
-        <ComboBox x:Name="cbbBehaviourWhenFalse" HorizontalAlignment="Left" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="10,247,0,0" VerticalAlignment="Top" Width="372" Style="{DynamicResource ComboBoxStyle}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Action" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <StackPanel Margin="10,0" Grid.Row="1">
+            <TextBlock Margin="0,0,0,2" Text="Type"/>
+            <ComboBox x:Name="cbbType" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,5" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbType_SelectionChanged"/>
+            <Button x:Name="btnSetParameters" Content="Set Parameters" HorizontalAlignment="Stretch" Margin="0,0,0,2" Style="{DynamicResource ButtonStyle}" Click="BtnSetParameters_Click"/>
+            <TextBlock Margin="0,0,0,2" Text="Behaviour when true"/>
+            <ComboBox x:Name="cbbBehaviourWhenTrue" HorizontalAlignment="Stretch" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,2" Style="{DynamicResource ComboBoxStyle}"/>
+            <TextBlock Text="Behaviour when false" Margin="0,0,0,2" />
+            <ComboBox x:Name="cbbBehaviourWhenFalse" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,2" Style="{DynamicResource ComboBoxStyle}"/>
+        </StackPanel>
+        <Button x:Name="btnCancel" Grid.Row="2" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click" />
+        <Button x:Name="btnSave" Content="Save" Grid.Row="2" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click" />
     </Grid>
     <Window.Resources>
         <ResourceDictionary>

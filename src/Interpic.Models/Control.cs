@@ -1,11 +1,10 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.EventArgs;
+using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Controls;
-using System.Xml;
 
 namespace Interpic.Models
 {
@@ -17,6 +16,7 @@ namespace Interpic.Models
         private ElementBounds _elementBounds;
         private ExtensionObject _extensions;
         private string _description;
+        private bool isLoaded;
 
         /// <summary>
         /// The name of the control.
@@ -55,6 +55,8 @@ namespace Interpic.Models
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        public bool IsLoaded { get => isLoaded; set { isLoaded = value; RaisePropertyChanged("IsLoaded"); } }
+
         /// <summary>
         /// Occurs before the control settings window is shown for this control.
         /// Changes made to the settings will be visible in the window.
@@ -69,6 +71,27 @@ namespace Interpic.Models
         /// This event fires before the <see cref="IStudioEnvironment.ControlSettingsOpened"/> event;
         /// </summary>
         public event OnControlSettingsOpened SettingsOpened;
+
+        /// <summary>
+        /// Occurs when the control is about to be deleted. This is the last time the <see cref="Models.Control"/> object is available.
+        /// This event occurs after the <see cref="IStudioEnvironment.ControlRemoved"/> event.
+        /// </summary>
+        public event OnControlRemoved Removed;
+
+        public void FireSettingsOpeningEvent(object sender, ControlSettingsEventArgs e)
+        {
+            SettingsOpening?.Invoke(sender, e);
+        }
+
+        public void FireSettingsOpenedEvent(object sender, ControlSettingsEventArgs e)
+        {
+            SettingsOpened?.Invoke(sender, e);
+        }
+
+        public void FireRemovedEvent(object sender, ControlEventArgs e)
+        {
+            Removed?.Invoke(sender, e);
+        }
 
         [JsonIgnore]
         public ExtensionObject Extensions

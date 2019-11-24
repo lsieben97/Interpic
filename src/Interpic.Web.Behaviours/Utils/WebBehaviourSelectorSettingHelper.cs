@@ -2,11 +2,8 @@
 using Interpic.Web.Behaviours.Models;
 using Interpic.Web.Behaviours.Windows;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpic.Web.Behaviours.Utils
 {

@@ -1,18 +1,13 @@
 ﻿using Interpic.Alerts;
 using Interpic.AsyncTasks;
-using Interpic.Models.Extensions;
 using Interpic.Models;
-using Interpic.Settings;
 using Interpic.Studio.Tasks;
 using Interpic.Utils;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Interpic.Studio.Functional
 {
@@ -130,6 +125,7 @@ namespace Interpic.Studio.Functional
 
         public static bool SaveAsNewProject(Project project, string path)
         {
+            //TODO: Copy source directory to target and save ipp file to target directory.
             string projectPath = path + Path.GetFileName(project.Path);
             string oldPath = new string(project.Path.ToCharArray());
             string oldProjectPath = new string(project.ProjectFolder.ToCharArray());

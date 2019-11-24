@@ -1,12 +1,11 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.EventArgs;
+using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
-using System.Xml;
 
 namespace Interpic.Models
 {
@@ -20,6 +19,8 @@ namespace Interpic.Models
         private ObservableCollection<DiscoveredControl> _discoveredControls = new ObservableCollection<DiscoveredControl>();
         private ElementBounds _elementBounds;
         private ExtensionObject _extensions;
+        private bool isLoaded;
+
         /// <summary>
         /// The name of the Section.
         /// </summary>
@@ -62,6 +63,8 @@ namespace Interpic.Models
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        public bool IsLoaded { get => isLoaded; set { isLoaded = value; RaisePropertyChanged("IsLoaded"); } }
+
         /// <summary>
         /// The list of automatically dicovered controls for this page.
         /// </summary>
@@ -81,6 +84,27 @@ namespace Interpic.Models
         /// This event fires before the <see cref="IStudioEnvironment.SectionSettingsOpened"/> event;
         /// </summary>
         public event OnSectionSettingsOpened SettingsOpened;
+
+        /// <summary>
+        /// Occurs when the section is about to be deleted. This is the last time the <see cref="Models.Section"/> object is available.
+        /// This event occurs after the <see cref="IStudioEnvironment.SectionRemoved"/> event.
+        /// </summary>
+        public event OnSectionRemoved Removed;
+
+        public void FireSettingsOpeningEvent(object sender, SectionSettingsEventArgs e)
+        {
+            SettingsOpening?.Invoke(sender, e);
+        }
+
+        public void FireSettingsOpenedEvent(object sender, SectionSettingsEventArgs e)
+        {
+            SettingsOpened?.Invoke(sender, e);
+        }
+
+        public void FireRemovedEvent(object sender, SectionEventArgs e)
+        {
+            Removed?.Invoke(sender, e);
+        }
 
         [JsonIgnore]
         public ExtensionObject Extensions

@@ -71,14 +71,45 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ControlListItem.cs">
+      <DependentUpon>ControlListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SectionListItem.cs">
+      <DependentUpon>SectionListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PageListItem.xaml.cs">
+      <DependentUpon>PageListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DLLManager.cs" />
     <Compile Include="Functional\Packages.cs" />
+    <Compile Include="Functional\StudioTabs.cs" />
     <Compile Include="InternalModels\PackageCache.cs" />
     <Compile Include="InternalModels\PackageCacheEntry.cs" />
     <Compile Include="RecursiveChangeListener\ChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ChildChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\CollectionChangeListener.cs" />
     <Compile Include="RecursiveChangeListener\ReflectionHelper.cs" />
+    <Compile Include="StudioViews\ControlView.xaml.cs">
+      <DependentUpon>ControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudioViews\HomeStudioView.cs" />
+    <Compile Include="StudioViews\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudioViews\ControlStudioView.cs" />
+    <Compile Include="StudioViews\ManageVersionsStudioView.cs" />
+    <Compile Include="StudioViews\SectionStudioView.cs" />
+    <Compile Include="StudioViews\PageStudioView.cs" />
+    <Compile Include="StudioViews\PageView.xaml.cs">
+      <DependentUpon>PageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudioViews\ProjectStudioView.cs" />
+    <Compile Include="StudioViews\ProjectView.xaml.cs">
+      <DependentUpon>ProjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudioViews\SectionView.xaml.cs">
+      <DependentUpon>SectionView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tasks\CleanUpAfterPackageCreationTask.cs" />
     <Compile Include="Tasks\CreatePackageManifestTask.cs" />
     <Compile Include="Tasks\CreateProjectFilesTask.cs" />
@@ -122,12 +153,11 @@
       <DependentUpon>ExtensionManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Functional\Extensions.cs" />
-    <Compile Include="Functional\Pages.cs" />
     <Compile Include="Functional\Projects.cs" />
     <Compile Include="Functional\RecentProjects.cs" />
     <Compile Include="Functional\Sections.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Windows\ManageVersions.xaml.cs">
+    <Compile Include="StudioViews\ManageVersions.xaml.cs">
       <DependentUpon>ManageVersions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\NewSection.xaml.cs">
@@ -155,25 +185,37 @@
     <Compile Include="Windows\Selectors\SelectSection.xaml.cs">
       <DependentUpon>SelectSection.xaml</DependentUpon>
     </Compile>
-    <Page Include="Themes\MetroDark\MetroDark.MSControls.Core.Implicit.xaml">
+    <Page Include="Controls\ControlListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\MetroDark\MetroDark.MSControls.Toolkit.Implicit.xaml">
+    <Page Include="Controls\SectionListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\MetroDark\Styles.Shared.xaml">
+    <Page Include="Controls\PageListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StudioViews\ControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StudioViews\HomeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\MetroDark\Styles.WPF.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="StudioViews\PageView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\MetroDark\Theme.Colors.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="StudioViews\ProjectView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StudioViews\SectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\About.xaml">
       <SubType>Designer</SubType>
@@ -219,7 +261,7 @@
       <DependentUpon>Splash.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Windows\ManageVersions.xaml">
+    <Page Include="StudioViews\ManageVersions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -328,9 +370,6 @@
       <Project>{ced872a4-920c-4579-adf3-903353b9383a}</Project>
       <Name>Interpic.Web</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

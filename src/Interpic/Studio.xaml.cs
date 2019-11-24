@@ -25,6 +25,8 @@ using ThomasJaworski.ComponentModel;
 using Interpic.Models.Packaging;
 using Interpic.Studio.InternalModels;
 using Interpic.Utils;
+using Interpic.Studio.StudioViews;
+using Interpic.UI.Controls;
 
 namespace Interpic.Studio
 {
@@ -47,10 +49,12 @@ namespace Interpic.Studio
         private bool offlineMode;
         private IProgress<int> progress;
         private Dictionary<string, System.Windows.Controls.MenuItem> ExtensionMenuItems = new Dictionary<string, System.Windows.Controls.MenuItem>();
+        private Dictionary<StudioTabItem, IStudioViewHandler> tabs = new Dictionary<StudioTabItem, IStudioViewHandler>();
 
         private Stack<BackgroundTask> backgroundTasks = new Stack<BackgroundTask>();
         private BackgroundTask backgroundTask;
         private SilentTaskProcessor taskProcessor;
+
         #region Events
         public event OnStudioStartup StudioStartup;
         public event OnProjectLoaded ProjectLoaded;
@@ -66,8 +70,16 @@ namespace Interpic.Studio
         public event OnProjectUnloaded ProjectUnloaded;
         public event OnProjectCreated ProjectCreated;
         public event OnGlobalSettingsSaved GlobalSettingsSaved;
-        public event OnNewVersionAdded VersionAdded;
+        public event OnVersionAdded VersionAdded;
         public event OnVersionRemoved VersionRemoved;
+        public event OnVersionSettingsOpening VersionSettingsOpening;
+        public event OnVersionSettingsOpened VersionSettingsOpened;
+        public event OnPageRemoved PageRemoved;
+        public event OnSectionRemoved SectionRemoved;
+        public event OnControlRemoved ControlRemoved;
+        public event OnPageAdded PageAdded;
+        public event OnSectionAdded SectionAdded;
+        public event OnControlAdded ControlAdded;
         #endregion
 
         public Project CurrentProject { get; set; }
@@ -157,12 +169,13 @@ namespace Interpic.Studio
                 ProjectSettingsOpening?.Invoke(this, eventArgs);
                 ShowProjectSettings(eventArgs);
                 ProjectSettingsOpened?.Invoke(this, new ProjectSettingsEventArgs(this, CurrentProject, CurrentProject.Settings, SettingsCollection.GetChanges(oldSettings, CurrentProject.Settings)));
+                ProjectCreated?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
             }
         }
 
         private void ShowProjectSettings(ProjectSettingsEventArgs eventArgs)
         {
-            
+
             SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
             editor.ShowDialog();
             if (editor.DialogResult.HasValue)
@@ -178,14 +191,12 @@ namespace Interpic.Studio
                         ErrorAlert.Show("Invalid settings entered.");
                         ShowProjectSettings(eventArgs);
                     }
-
                 }
                 else
                 {
                     ErrorAlert.Show("Invalid settings entered.");
                     ShowProjectSettings(eventArgs);
                 }
-                ProjectCreated?.Invoke(this as IStudioEnvironment, new InterpicStudioEventArgs(this));
             }
             else
             {
@@ -294,6 +305,33 @@ namespace Interpic.Studio
             RedrawTreeView();
             (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
             InitializeUI();
+            if (App.GlobalSettings.GetBooleanSetting("showHomeOnProjectLoad"))
+            {
+                CreateAndShowStudioTab("Home", ImageUtils.ImageFromString("HomeWhite.png"), new HomeStudioView());
+            }
+
+        }
+
+        private void StudioTabClosed(object sender, RoutedEventArgs e)
+        {
+            StudioTabItem tabItem = sender as StudioTabItem;
+            IStudioViewHandler handler = tabs[tabItem];
+            if (tabItem.DoesContainChanges && tabItem.ForceClose == false)
+            {
+                if (WarningAlert.Show($"Tab {tabItem.Title} has unsaved changes.\nThe tab will now be closed.", true).DialogResult.Value)
+                {
+                    handler.ViewDetached();
+                    tcTabs.Items.Remove(sender);
+                    tabs.Remove(tabItem);
+                }
+            }
+            else
+            {
+                handler.ViewDetached();
+                tcTabs.Items.Remove(sender);
+                tabs.Remove(tabItem);
+            }
+
         }
 
         public void RedrawTreeView()
@@ -328,69 +366,64 @@ namespace Interpic.Studio
             CurrentProject = project;
         }
 
-        private void miAddPage_Click(object sender, RoutedEventArgs e)
-        {
-            AddPage();
-        }
-
         private void AddPage()
         {
-            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingPage)
-            {
-                ShowOfflineError();
-                return;
-            }
-            NewPage dialog = new NewPage();
-            dialog.ShowDialog();
-            if (dialog.Page != null)
-            {
-                if (ProjectTypeProvider.GetDefaultPageSettings() != null)
-                {
-                    dialog.Page.Settings = ProjectTypeProvider.GetDefaultPageSettings();
-                    if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
-                    {
-                        InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
-                    }
-                    SettingsCollection oldSettings = dialog.Page.Settings.Copy();
-                    PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
-                    PageSettingsOpening?.Invoke(this, eventArgs);
-                    ShowPageSettings(dialog, eventArgs);
-                    PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
-                }
-                Project currentProject = CurrentProject;
-                Models.Page currentPage = dialog.Page;
-                Models.Version currentVersion = this.currentVersion;
-                string document = ProjectTypeProvider.GetSourceProvider().GetSource(ref currentProject, ref currentVersion, ref currentPage);
-                CurrentProject = currentProject;
-                this.currentVersion = currentVersion;
-                dialog.Page = currentPage;
-                if (document != null)
-                {
-                    dialog.Page.Source = document;
-                    dialog.Page.Parent = currentVersion;
+            //if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingPage)
+            //{
+            //    ShowOfflineError();
+            //    return;
+            //}
+            //NewPage dialog = new NewPage();
+            //dialog.ShowDialog();
+            //if (dialog.Page != null)
+            //{
+            //    if (ProjectTypeProvider.GetDefaultPageSettings() != null)
+            //    {
+            //        dialog.Page.Settings = ProjectTypeProvider.GetDefaultPageSettings();
+            //        if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+            //        {
+            //            InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
+            //        }
+            //        SettingsCollection oldSettings = dialog.Page.Settings.Copy();
+            //        PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
+            //        PageSettingsOpening?.Invoke(this, eventArgs);
+            //        ShowPageSettings(dialog, eventArgs);
+            //        PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
+            //    }
+            //    Project currentProject = CurrentProject;
+            //    Models.Page currentPage = dialog.Page;
+            //    Models.Version currentVersion = this.currentVersion;
+            //    string document = ProjectTypeProvider.GetSourceProvider().GetSource(ref currentProject, ref currentVersion, ref currentPage);
+            //    CurrentProject = currentProject;
+            //    this.currentVersion = currentVersion;
+            //    dialog.Page = currentPage;
+            //    if (document != null)
+            //    {
+            //        dialog.Page.Source = document;
+            //        dialog.Page.Parent = currentVersion;
 
-                    (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, currentVersion, CurrentProject);
-                    if (result.succes)
-                    {
-                        if (result.page.Screenshot != null)
-                        {
-                            currentVersion.Pages.Add(dialog.Page);
-                            RedrawTreeView();
-                            dialog.Page.TreeViewItem.IsSelected = true;
-                        }
-                        else
-                        {
-                            SetStatusBar("page not added because refreshing failed.");
-                        }
-                    }
-                }
+            //        (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, currentVersion, CurrentProject);
+            //        if (result.succes)
+            //        {
+            //            if (result.page.Screenshot != null)
+            //            {
+            //                currentVersion.Pages.Add(dialog.Page);
+            //                RedrawTreeView();
+            //                dialog.Page.TreeViewItem.IsSelected = true;
+            //            }
+            //            else
+            //            {
+            //                SetStatusBar("page not added because refreshing failed.");
+            //            }
+            //        }
+            //    }
 
-            }
+            //}
         }
 
         private void ShowPageSettings(NewPage dialog, PageSettingsEventArgs eventArgs)
         {
-            
+
             SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
             editor.ShowDialog();
             if (editor.DialogResult.HasValue)
@@ -438,648 +471,6 @@ namespace Interpic.Studio
                 if (item != null)
                     item.IsExpanded = true;
             }
-        }
-
-        private void tvManualTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            if (tvManualTree.SelectedItem != null)
-            {
-                object selection = (tvManualTree.SelectedItem as TreeViewItem).Tag;
-
-
-                if (selection.GetType() == typeof(Models.Page))
-                {
-                    Models.Page page = selection as Models.Page;
-                    currentPage = page;
-                    if (page.Type == "text")
-                    {
-                        RenderTextPage(page);
-                    }
-                    else if (page.Type == "reference")
-                    {
-                        RenderTOCForPage(page);
-                    }
-                }
-                else if (selection.GetType() == typeof(Section))
-                {
-                    currentSection = selection as Section;
-                    currentPage = ((Section)selection).Parent;
-                    RenderSection(selection as Section);
-                }
-                else if (selection.GetType() == typeof(Models.Control))
-                {
-                    currentSection = ((Models.Control)selection).Parent;
-                    currentControl = ((Models.Control)selection);
-                    RenderControlPage(selection as Models.Control);
-                }
-                else if (selection.GetType() == typeof(Project))
-                {
-                    RenderTOC(CurrentProject);
-                }
-            }
-            else
-            {
-                spWorkspace.Children.Clear();
-            }
-        }
-
-        private void RenderSection(Models.Section section)
-        {
-            spWorkspace.Children.Clear();
-            // stack panel for title and icon
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 0);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Width = double.NaN;
-            titlePanel.Height = double.NaN;
-
-            // Icon
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/SectionWhite.png", UriKind.RelativeOrAbsolute));
-            image.Width = 48;
-            image.Height = 48;
-            image.Margin = new Thickness(12, -1, 0, 0);
-            titlePanel.Children.Add(image);
-
-            // title
-            TextBlock titleTextBlock = new TextBlock();
-            titleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            titleTextBlock.FontSize = 24;
-            titleTextBlock.Width = double.NaN;
-            titleTextBlock.Margin = new Thickness(5, 10, 0, 0);
-            titleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            titleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            titleTextBlock.Text = section.Name;
-            titlePanel.Children.Add(titleTextBlock);
-
-            spWorkspace.Children.Add(titlePanel);
-
-            TextBlock descriptionTextBlock = new TextBlock();
-            descriptionTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBlock.FontSize = 14;
-            descriptionTextBlock.Width = double.NaN;
-            descriptionTextBlock.Margin = new Thickness(12, 5, 0, 0);
-            descriptionTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            descriptionTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBlock.Text = "Page description";
-            spWorkspace.Children.Add(descriptionTextBlock);
-
-            // textbox for description 
-            TextBox descriptionTextBox = new TextBox();
-            descriptionTextBox.Margin = new Thickness(12, 5, 12, 12);
-            descriptionTextBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            descriptionTextBox.VerticalAlignment = VerticalAlignment.Stretch;
-            descriptionTextBox.Height = 75;
-            descriptionTextBox.AcceptsReturn = true;
-            descriptionTextBox.AcceptsTab = true;
-            descriptionTextBox.Tag = section;
-            descriptionTextBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            descriptionTextBox.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBox.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBox.Text = section.Description;
-            descriptionTextBox.TextChanged += PageDescriptionTextAreaChanged;
-            spWorkspace.Children.Add(descriptionTextBox);
-
-            Button saveButton = new Button();
-            saveButton.Margin = new Thickness(12, 5, 12, 12);
-            saveButton.Tag = (section, descriptionTextBox);
-            saveButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-            saveButton.Content = "Save";
-            saveButton.Click += SectionSaveButton_Click;
-            spWorkspace.Children.Add(saveButton);
-
-            foreach (Models.Control control in section.Controls)
-            {
-                // stack panel for edit and remove buttons
-                StackPanel pagePanel = new StackPanel();
-                pagePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                pagePanel.Margin = new Thickness(0, 0, 0, 0);
-                pagePanel.Orientation = Orientation.Vertical;
-                pagePanel.Width = double.NaN;
-                pagePanel.Height = double.NaN;
-                spWorkspace.Children.Add(pagePanel);
-
-                // line between sections
-                Separator seperator2 = new Separator();
-                seperator2.HorizontalAlignment = HorizontalAlignment.Stretch;
-                seperator2.Width = double.NaN;
-                seperator2.Height = double.NaN;
-                seperator2.Margin = new Thickness(6, 6, 6, 3);
-                pagePanel.Children.Add(seperator2);
-
-                // title
-                TextBlock pageTitleTextBlock = new TextBlock();
-                pageTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                pageTitleTextBlock.FontSize = 20;
-                pageTitleTextBlock.Width = double.NaN;
-                pageTitleTextBlock.Margin = new Thickness(12, 12, 0, 0);
-                pageTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                VerticalAlignment = VerticalAlignment.Center;
-                pageTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                pageTitleTextBlock.Text = control.Name;
-                pagePanel.Children.Add(pageTitleTextBlock);
-
-                // stack panel for edit and remove buttons
-                StackPanel panel = new StackPanel();
-                panel.HorizontalAlignment = HorizontalAlignment.Right;
-                panel.VerticalAlignment = VerticalAlignment.Top;
-                panel.Margin = new Thickness(0, -12, 6, 0);
-                panel.Orientation = Orientation.Horizontal;
-                panel.Width = double.NaN;
-                panel.Height = double.NaN;
-                pagePanel.Children.Add(panel);
-
-                // remove button
-                Button removeButton = new Button();
-                removeButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                removeButton.Content = "Remove";
-                removeButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                removeButton.HorizontalAlignment = HorizontalAlignment.Right;
-                removeButton.VerticalAlignment = VerticalAlignment.Top;
-                removeButton.Margin = new Thickness(0, 0, 6, 0);
-                removeButton.Tag = control;
-                removeButton.Click += TOCRemoveControlButton_Click;
-                panel.Children.Add(removeButton);
-
-                // edit button
-                Button editButton = new Button();
-                editButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                editButton.Content = "Edit";
-                editButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                editButton.HorizontalAlignment = HorizontalAlignment.Right;
-                editButton.VerticalAlignment = VerticalAlignment.Top;
-                editButton.Margin = new Thickness(0, 0, 6, 0);
-                editButton.Tag = control;
-                editButton.Click += TOCEditControlButton_Click;
-                panel.Children.Add(editButton);
-
-                // edit button
-                //Button viewButton = new Button();
-                //viewButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                //viewButton.Content = "View";
-                //viewButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                //viewButton.HorizontalAlignment = HorizontalAlignment.Right;
-                //viewButton.VerticalAlignment = VerticalAlignment.Top;
-                //viewButton.Margin = new Thickness(0, 0, 12, 0);
-                //viewButton.Tag = control;
-                //viewButton.Click += TOCViewControlButton_Click;
-                //panel.Children.Add(viewButton);
-            }
-        }
-
-        private void TOCEditControlButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Control control = (e.Source as Button).Tag as Models.Control;
-            new AddControl(control, ProjectTypeProvider.GetControlSelector());
-        }
-
-        private void TOCRemoveControlButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Control control = (e.Source as Button).Tag as Models.Control;
-            ConfirmAlert confirm = ConfirmAlert.Show("'" + control.Name + "' will be removed.");
-            if (confirm.Result == true)
-            {
-                control.Parent.TreeViewItem.IsSelected = true;
-                control.Parent.TreeViewItem.BringIntoView();
-                control.Parent.Controls.Remove(control);
-            }
-        }
-
-        internal void RemovePage(Models.Page page)
-        {
-            currentVersion.Pages.Remove(page);
-            page.TreeViewItem.IsSelected = false;
-            tvManualTree.Items.Remove(page.TreeViewItem);
-            RedrawTreeView();
-            (tvManualTree.Items.GetItemAt(0) as TreeViewItem).IsSelected = true;
-        }
-
-        private void RenderTOC(Project project)
-        {
-            spWorkspace.Children.Clear();
-
-            // stack panel for title and icon
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 0);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Width = double.NaN;
-            titlePanel.Height = double.NaN;
-
-            // Icon
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/ProjectWhite.png", UriKind.RelativeOrAbsolute));
-            image.Width = 48;
-            image.Height = 48;
-            image.Margin = new Thickness(12, -1, 0, 0);
-            titlePanel.Children.Add(image);
-
-            // title
-            TextBlock titleTextBlock = new TextBlock();
-            titleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            titleTextBlock.FontSize = 24;
-            titleTextBlock.Width = double.NaN;
-            titleTextBlock.Margin = new Thickness(5, 10, 0, 0);
-            titleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            titleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            titleTextBlock.Text = project.Name;
-            titlePanel.Children.Add(titleTextBlock);
-
-            spWorkspace.Children.Add(titlePanel);
-            foreach (Models.Page page in currentVersion.Pages)
-            {
-
-
-                // stack panel for edit and remove buttons
-                StackPanel pagePanel = new StackPanel();
-                pagePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                pagePanel.Margin = new Thickness(0, 0, 0, 0);
-                pagePanel.Orientation = Orientation.Vertical;
-                pagePanel.Width = double.NaN;
-                pagePanel.Height = double.NaN;
-                spWorkspace.Children.Add(pagePanel);
-
-                // line between pages
-                Separator seperator = new Separator();
-                seperator.HorizontalAlignment = HorizontalAlignment.Stretch;
-                seperator.Width = double.NaN;
-                seperator.Height = double.NaN;
-                seperator.Margin = new Thickness(6, 6, 6, 3);
-                pagePanel.Children.Add(seperator);
-
-                // title
-                TextBlock pageTitleTextBlock = new TextBlock();
-                pageTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                pageTitleTextBlock.FontSize = 20;
-                pageTitleTextBlock.Width = double.NaN;
-                pageTitleTextBlock.Margin = new Thickness(12, 12, 0, 0);
-                pageTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                VerticalAlignment = VerticalAlignment.Center;
-                pageTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                pageTitleTextBlock.Text = page.Name;
-                pagePanel.Children.Add(pageTitleTextBlock);
-
-                // stack panel for edit and remove buttons
-                StackPanel panel = new StackPanel();
-                panel.HorizontalAlignment = HorizontalAlignment.Right;
-                panel.VerticalAlignment = VerticalAlignment.Top;
-                panel.Margin = new Thickness(0, -12, 6, 0);
-                panel.Orientation = Orientation.Horizontal;
-                panel.Width = double.NaN;
-                panel.Height = double.NaN;
-                pagePanel.Children.Add(panel);
-
-                // remove button
-                Button removeButton = new Button();
-                removeButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                removeButton.Content = "Remove";
-                removeButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                removeButton.HorizontalAlignment = HorizontalAlignment.Right;
-                removeButton.VerticalAlignment = VerticalAlignment.Top;
-                removeButton.Margin = new Thickness(0, 0, 6, 0);
-                removeButton.Tag = page;
-                removeButton.Click += TOCRemoveButton_Click;
-                panel.Children.Add(removeButton);
-
-                // edit button
-                Button editButton = new Button();
-                editButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                editButton.Content = "Edit";
-                editButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                editButton.HorizontalAlignment = HorizontalAlignment.Right;
-                editButton.VerticalAlignment = VerticalAlignment.Top;
-                editButton.Margin = new Thickness(0, 0, 6, 0);
-                editButton.Tag = page;
-                editButton.Click += TOCEditButton_Click;
-                panel.Children.Add(editButton);
-
-                // edit button
-                Button viewButton = new Button();
-                viewButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                viewButton.Content = "View";
-                viewButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                viewButton.HorizontalAlignment = HorizontalAlignment.Right;
-                viewButton.VerticalAlignment = VerticalAlignment.Top;
-                viewButton.Margin = new Thickness(0, 0, 12, 0);
-                viewButton.Tag = page;
-                viewButton.Click += TOCViewButton_Click;
-                panel.Children.Add(viewButton);
-            }
-        }
-
-        private void RenderTOCForPage(Models.Page page)
-        {
-            spWorkspace.Children.Clear();
-            // stack panel for title and icon
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 0);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Width = double.NaN;
-            titlePanel.Height = double.NaN;
-
-            // Icon
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/PageWhite.png", UriKind.RelativeOrAbsolute));
-            image.Width = 48;
-            image.Height = 48;
-            image.Margin = new Thickness(12, -1, 0, 0);
-            titlePanel.Children.Add(image);
-
-            // title
-            TextBlock titleTextBlock = new TextBlock();
-            titleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            titleTextBlock.FontSize = 24;
-            titleTextBlock.Width = double.NaN;
-            titleTextBlock.Margin = new Thickness(5, 10, 0, 0);
-            titleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            titleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            titleTextBlock.Text = page.Name;
-            titlePanel.Children.Add(titleTextBlock);
-
-            spWorkspace.Children.Add(titlePanel);
-
-            TextBlock descriptionTextBlock = new TextBlock();
-            descriptionTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBlock.FontSize = 14;
-            descriptionTextBlock.Width = double.NaN;
-            descriptionTextBlock.Margin = new Thickness(12, 5, 0, 0);
-            descriptionTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            descriptionTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBlock.Text = "Page description";
-            spWorkspace.Children.Add(descriptionTextBlock);
-
-            // textbox for description 
-            TextBox descriptionTextBox = new TextBox();
-            descriptionTextBox.Margin = new Thickness(12, 5, 12, 12);
-            descriptionTextBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            descriptionTextBox.VerticalAlignment = VerticalAlignment.Stretch;
-            descriptionTextBox.Height = 75;
-            descriptionTextBox.AcceptsReturn = true;
-            descriptionTextBox.AcceptsTab = true;
-            descriptionTextBox.Tag = page;
-            descriptionTextBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            descriptionTextBox.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBox.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBox.TextChanged += PageDescriptionTextAreaChanged;
-            descriptionTextBox.Text = page.Description;
-            spWorkspace.Children.Add(descriptionTextBox);
-
-            Button saveButton = new Button();
-            saveButton.Margin = new Thickness(12, 5, 12, 12);
-            saveButton.Tag = (page, descriptionTextBox);
-            saveButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-            saveButton.Content = "Save";
-            saveButton.Click += PageSaveButton_Click;
-            spWorkspace.Children.Add(saveButton);
-
-            // line between sections
-            Separator seperator = new Separator();
-            seperator.HorizontalAlignment = HorizontalAlignment.Stretch;
-            seperator.Width = double.NaN;
-            seperator.Height = double.NaN;
-            seperator.Margin = new Thickness(6, 6, 6, 3);
-            spWorkspace.Children.Add(seperator);
-
-            foreach (Models.Section section in page.Sections)
-            {
-                // stack panel for edit and remove buttons
-                StackPanel pagePanel = new StackPanel();
-                pagePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                pagePanel.Margin = new Thickness(0, 0, 0, 0);
-                pagePanel.Orientation = Orientation.Vertical;
-                pagePanel.Width = double.NaN;
-                pagePanel.Height = double.NaN;
-                spWorkspace.Children.Add(pagePanel);
-
-                // line between sections
-                Separator seperator2 = new Separator();
-                seperator2.HorizontalAlignment = HorizontalAlignment.Stretch;
-                seperator2.Width = double.NaN;
-                seperator2.Height = double.NaN;
-                seperator2.Margin = new Thickness(6, 6, 6, 3);
-                pagePanel.Children.Add(seperator2);
-
-                // title
-                TextBlock pageTitleTextBlock = new TextBlock();
-                pageTitleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                pageTitleTextBlock.FontSize = 20;
-                pageTitleTextBlock.Width = double.NaN;
-                pageTitleTextBlock.Margin = new Thickness(12, 12, 0, 0);
-                pageTitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                VerticalAlignment = VerticalAlignment.Center;
-                pageTitleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                pageTitleTextBlock.Text = section.Name;
-                pagePanel.Children.Add(pageTitleTextBlock);
-
-                // stack panel for edit and remove buttons
-                StackPanel panel = new StackPanel();
-                panel.HorizontalAlignment = HorizontalAlignment.Right;
-                panel.VerticalAlignment = VerticalAlignment.Top;
-                panel.Margin = new Thickness(0, -12, 6, 0);
-                panel.Orientation = Orientation.Horizontal;
-                panel.Width = double.NaN;
-                panel.Height = double.NaN;
-                pagePanel.Children.Add(panel);
-
-                // remove button
-                Button removeButton = new Button();
-                removeButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                removeButton.Content = "Remove";
-                removeButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                removeButton.HorizontalAlignment = HorizontalAlignment.Right;
-                removeButton.VerticalAlignment = VerticalAlignment.Top;
-                removeButton.Margin = new Thickness(0, 0, 6, 0);
-                removeButton.Tag = section;
-                removeButton.Click += TOCRemoveSectionButton_Click;
-                panel.Children.Add(removeButton);
-
-                // edit button
-                Button editButton = new Button();
-                editButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                editButton.Content = "Edit";
-                editButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                editButton.HorizontalAlignment = HorizontalAlignment.Right;
-                editButton.VerticalAlignment = VerticalAlignment.Top;
-                editButton.Margin = new Thickness(0, 0, 6, 0);
-                editButton.Tag = section;
-                editButton.Click += TOCEditSectionButton_Click;
-                panel.Children.Add(editButton);
-
-                // edit button
-                Button viewButton = new Button();
-                viewButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-                viewButton.Content = "View";
-                viewButton.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-                viewButton.HorizontalAlignment = HorizontalAlignment.Right;
-                viewButton.VerticalAlignment = VerticalAlignment.Top;
-                viewButton.Margin = new Thickness(0, 0, 12, 0);
-                viewButton.Tag = section;
-                viewButton.Click += TOCViewSectionButton_Click;
-                panel.Children.Add(viewButton);
-            }
-        }
-
-        private void RenderControlPage(Models.Control control)
-        {
-            spWorkspace.Children.Clear();
-            // stack panel for title and icon
-            StackPanel titlePanel = new StackPanel();
-            titlePanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-            titlePanel.Margin = new Thickness(0, 0, 0, 0);
-            titlePanel.Orientation = Orientation.Horizontal;
-            titlePanel.Width = double.NaN;
-            titlePanel.Height = double.NaN;
-
-            // Icon
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri("/Interpic.UI;component/Icons/ControlWhite.png", UriKind.RelativeOrAbsolute));
-            image.Width = 48;
-            image.Height = 48;
-            image.Margin = new Thickness(12, -1, 0, 0);
-            titlePanel.Children.Add(image);
-
-            // title
-            TextBlock titleTextBlock = new TextBlock();
-            titleTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            titleTextBlock.FontSize = 24;
-            titleTextBlock.Width = double.NaN;
-            titleTextBlock.Margin = new Thickness(5, 10, 0, 0);
-            titleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            titleTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            titleTextBlock.Text = control.Name;
-            titlePanel.Children.Add(titleTextBlock);
-
-            spWorkspace.Children.Add(titlePanel);
-
-            TextBlock descriptionTextBlock = new TextBlock();
-            descriptionTextBlock.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBlock.FontSize = 14;
-            descriptionTextBlock.Width = double.NaN;
-            descriptionTextBlock.Margin = new Thickness(12, 5, 0, 0);
-            descriptionTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            descriptionTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBlock.Text = "Page description";
-            spWorkspace.Children.Add(descriptionTextBlock);
-
-            // textbox for description 
-            TextBox descriptionTextBox = new TextBox();
-            descriptionTextBox.Margin = new Thickness(12, 5, 12, 12);
-            descriptionTextBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            descriptionTextBox.VerticalAlignment = VerticalAlignment.Stretch;
-            descriptionTextBox.Height = 75;
-            descriptionTextBox.AcceptsReturn = true;
-            descriptionTextBox.AcceptsTab = true;
-            descriptionTextBox.Tag = control;
-            descriptionTextBox.Style = Application.Current.Resources["TextBoxStyle"] as Style;
-            descriptionTextBox.FontFamily = new System.Windows.Media.FontFamily("Verdana");
-            descriptionTextBox.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            descriptionTextBox.TextChanged += PageDescriptionTextAreaChanged;
-            descriptionTextBox.Text = control.Description;
-            spWorkspace.Children.Add(descriptionTextBox);
-
-            Button saveButton = new Button();
-            saveButton.Margin = new Thickness(12, 5, 12, 12);
-            saveButton.Tag = (control, descriptionTextBox);
-            saveButton.Style = Application.Current.Resources["ButtonStyle"] as Style;
-            saveButton.Content = "Save";
-            saveButton.Click += ControlSaveButton_Click;
-            spWorkspace.Children.Add(saveButton);
-
-            // line between sections
-            Separator seperator = new Separator();
-            seperator.HorizontalAlignment = HorizontalAlignment.Stretch;
-            seperator.Width = double.NaN;
-            seperator.Height = double.NaN;
-            seperator.Margin = new Thickness(6, 6, 6, 3);
-            spWorkspace.Children.Add(seperator);
-        }
-
-        private void PageSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            (Models.Page page, TextBox textbox) controls = ((Models.Page page, TextBox textbox))(e.Source as Button).Tag;
-            currentVersion.Pages[currentVersion.Pages.IndexOf(controls.page)].Description = controls.textbox.Text;
-            RenderTOCForPage(controls.page);
-            SetStatusBar("Page description saved.");
-        }
-
-        private void SectionSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            (Models.Section section, TextBox textbox) controls = ((Models.Section section, TextBox textbox))(e.Source as Button).Tag;
-            currentPage.Sections[currentPage.Sections.IndexOf(controls.section)].Description = controls.textbox.Text;
-            RenderSection(controls.section);
-            SetStatusBar("Section description saved.");
-        }
-
-        private void ControlSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            (Models.Control control, TextBox textbox) controls = ((Models.Control section, TextBox textbox))(e.Source as Button).Tag;
-            currentSection.Controls[currentSection.Controls.IndexOf(controls.control)].Description = controls.textbox.Text;
-            RenderControlPage(controls.control);
-            SetStatusBar("Control description saved.");
-        }
-
-        private void PageDescriptionTextAreaChanged(object sender, TextChangedEventArgs e)
-        {
-            //Models.Page page = (e.Source as TextBox).Tag as Models.Page;
-            //page.Description = (e.Source as TextBox).Text;
-        }
-
-        private void TOCRemoveSectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Section section = (e.Source as Button).Tag as Models.Section;
-            ConfirmAlert confirm = ConfirmAlert.Show("'" + section.Name + "' will be removed.");
-            if (confirm.Result == true)
-            {
-                section.Parent.Sections.Remove(section);
-            }
-        }
-
-        private void TOCEditSectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Section section = (e.Source as Button).Tag as Models.Section;
-            NewSection newSection = new NewSection(section);
-            newSection.sectionIdentifierSelector = ProjectTypeProvider.GetSectionSelector();
-            newSection.ShowDialog();
-        }
-
-        private void TOCViewSectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Section section = (e.Source as Button).Tag as Models.Section;
-            section.TreeViewItem.IsSelected = true;
-            section.TreeViewItem.BringIntoView();
-        }
-
-        private void TOCViewButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Page page = (e.Source as Button).Tag as Models.Page;
-            page.TreeViewItem.IsSelected = true;
-        }
-
-        private void TOCEditButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Page page = (e.Source as Button).Tag as Models.Page;
-            NewPage editPage = new NewPage(page);
-            editPage.ShowDialog();
-            RedrawTreeView();
-            (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
-        }
-
-        private void TOCRemoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            Models.Page page = (e.Source as Button).Tag as Models.Page;
-            ConfirmAlert alert = ConfirmAlert.Show("'" + page.Name + "' will be removed.");
-            if (alert.Result == true)
-            {
-                RemovePage(page);
-            }
-        }
-
-        private void RenderTextPage(Models.Page page)
-        {
-            spWorkspace.Children.Clear();
-            spWorkspace.Children.Add(Pages.RenderTextPage(page));
         }
 
         private void miSave_Click(object sender, RoutedEventArgs e)
@@ -1229,7 +620,7 @@ namespace Interpic.Studio
             {
                 SetStatusBar("Changes in project settings canceled.");
             }
-            
+
         }
 
         private void DisplayControlHint(object sender, System.Windows.Input.MouseEventArgs e)
@@ -1313,7 +704,7 @@ namespace Interpic.Studio
 
         private void LoadStudioPackageDefinitions()
         {
-            
+
         }
 
         private bool ConfirmProjectClose()
@@ -1321,26 +712,6 @@ namespace Interpic.Studio
             WarningAlert alert = new WarningAlert(CurrentProject.Name + " has unsaved changes.\nThe project will now be closed.");
             alert.ShowDialog();
             return alert.Result;
-        }
-
-        private void miNewPage_Click(object sender, RoutedEventArgs e)
-        {
-            AddPage();
-        }
-
-        private void miNewSection_Click(object sender, RoutedEventArgs e)
-        {
-            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingSection)
-            {
-                ShowOfflineError();
-                return;
-            }
-            SelectPage selector = new SelectPage(currentVersion);
-            if (selector.ShowDialog().Value)
-            {
-                Models.Page selectedpage = currentVersion.Pages.Single(Page => Page.Id == selector.SelectedPageId);
-                AddSection(ref selectedpage);
-            }
         }
 
         private void miSaveAs_Click(object sender, RoutedEventArgs e)
@@ -1380,83 +751,6 @@ namespace Interpic.Studio
             new Build(ProjectBuilder, CurrentProject).ShowDialog();
         }
 
-        private void miBuildPage_Click(object sender, RoutedEventArgs e)
-        {
-            new Build(ProjectBuilder, CurrentProject, currentVersion).ShowDialog();
-        }
-
-        private void miAddSection_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentPage != null)
-            {
-                AddSection(ref currentPage);
-            }
-            else
-            {
-                ErrorAlert.Show("No page selected.\nSelect a page from the manual tree on the left.");
-            }
-        }
-
-        private void AddSection(ref Models.Page page)
-        {
-            NewSection dialog = new NewSection(page);
-            dialog.sectionIdentifierSelector = ProjectTypeProvider.GetSectionSelector();
-            dialog.ShowDialog();
-            if (dialog.Section != null)
-            {
-                dialog.Section.Parent = page;
-                dialog.Section.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
-                if (dialog.Section.HasSettingsAvailable)
-                {
-                    SettingsCollection oldSettings = dialog.Section.Settings.Copy();
-                    SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, null);
-                    SectionSettingsOpening?.Invoke(this, eventArgs);
-                    ShowSectionSettings(ref dialog, eventArgs);
-                    SectionSettingsOpened?.Invoke(this, new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Section.Settings)));
-                }
-
-                if (ProjectTypeProvider.GetControlFinder() != null)
-                {
-                    ObservableCollection<DiscoveredControl> foundControls = ProjectTypeProvider.GetControlFinder().FindControls(dialog.Section);
-                    if (foundControls == null)
-                    {
-                        foundControls = new ObservableCollection<DiscoveredControl>();
-                    }
-
-                    dialog.Section.DiscoveredControls = foundControls;
-                    SetStatusBar("Found " + foundControls.Count.ToString() + " controls.");
-                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, currentVersion, CurrentProject);
-                    if (result.succes)
-                    {
-                        if (result.section.ElementBounds != null)
-                        {
-                            page.Sections.Add(result.section);
-                            RedrawTreeView();
-                            dialog.Section.TreeViewItem.IsSelected = true;
-                            dialog.Section.TreeViewItem.BringIntoView();
-                        }
-                        else
-                        {
-                            SetStatusBar("Section not added because refreshing failed.");
-                        }
-                    }
-                }
-                else
-                {
-                    SetStatusBar("No control finder found for this project type, skipping control discovery.");
-                    (Section section, bool succes) result = ProjectTypeProvider.RefreshSection(dialog.Section, dialog.Section.Parent, currentVersion, CurrentProject);
-                    if (result.succes)
-                    {
-                        page.Sections.Add(result.section);
-                    }
-                    else
-                    {
-                        SetStatusBar("Section not added because refreshing failed.");
-                    }
-                }
-            }
-        }
-
         private void ShowSectionSettings(ref NewSection dialog, SectionSettingsEventArgs eventArgs)
         {
             SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
@@ -1485,58 +779,6 @@ namespace Interpic.Studio
             {
                 ErrorAlert.Show("Invalid settings entered.");
                 ShowSectionSettings(ref dialog, eventArgs);
-            }
-        }
-
-        private void miAddControl_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentSection != null)
-            {
-                AddControl(ref currentSection);
-            }
-            else
-            {
-                ErrorAlert.Show("No page selected.\nSelect a page from the manual tree on the left.");
-            }
-        }
-
-        private void AddControl(ref Models.Section section)
-        {
-            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingControl)
-            {
-                ShowOfflineError();
-                return;
-            }
-            IControlIdentifierSelector selector = ProjectTypeProvider.GetControlSelector();
-            selector.Section = section;
-            AddControl dialog = new AddControl(section.DiscoveredControls, selector);
-            dialog.ShowDialog();
-            if (dialog.Control != null)
-            {
-                dialog.Control.Parent = section;
-                dialog.Control.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
-                if (dialog.Control.HasSettingsAvailable)
-                {
-                    SettingsCollection oldSettings = dialog.Control.Settings.Copy();
-                    ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, null);
-                    ControlSettingsOpening?.Invoke(this, eventArgs);
-                    ShowControlSettings(ref dialog, eventArgs);
-                    ControlSettingsOpened?.Invoke(this, new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Control.Settings)));
-                }
-                (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(dialog.Control, section, section.Parent, currentVersion, CurrentProject);
-                if (result.succes)
-                {
-                    if (result.control.ElementBounds != null)
-                    {
-                        section.Controls.Add(result.control);
-                        RedrawTreeView();
-                        dialog.Control.TreeViewItem.IsSelected = true;
-                    }
-                    else
-                    {
-                        SetStatusBar("Control not added because refreshing failed.");
-                    }
-                }
             }
         }
 
@@ -1586,21 +828,6 @@ namespace Interpic.Studio
             }
         }
 
-        private void MiNewControl_Click(object sender, RoutedEventArgs e)
-        {
-            SelectPage selector = new SelectPage(currentVersion);
-            if (selector.ShowDialog().Value)
-            {
-                Models.Page selectedpage = currentVersion.Pages.Single(Page => Page.Id == selector.SelectedPageId);
-                SelectSection sectionSelector = new SelectSection(selectedpage);
-                if (sectionSelector.ShowDialog().Value)
-                {
-                    Models.Section selectedSection = selectedpage.Sections.Single(section => section.Id == sectionSelector.SelectedSectionId);
-                    AddControl(ref selectedSection);
-                }
-            }
-        }
-
         private void MiExportJson_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
@@ -1625,11 +852,6 @@ namespace Interpic.Studio
             InfoAlert.Show("No user manual available now.");
         }
 
-        private void BtnVersion_Click(object sender, RoutedEventArgs e)
-        {
-            SwitchVersion((e.Source as Button).Tag.ToString());
-        }
-
         private void SwitchVersion(string id)
         {
             currentVersion = CurrentProject.Versions.Single(version => version.Id == id);
@@ -1652,39 +874,6 @@ namespace Interpic.Studio
             }
         }
 
-        private void MiNewVersion_Click(object sender, RoutedEventArgs e)
-        {
-            NewVersion dialog = new NewVersion(ProjectTypeProvider.GetDefaultVersionSettings());
-            if (dialog.ShowDialog().Value)
-            {
-                dialog.Version.Parent = CurrentProject;
-                CurrentProject.Versions.Add(dialog.Version);
-                SwitchVersion(dialog.Version.Id);
-            }
-        }
-
-        private void MiManageVersions_Click(object sender, RoutedEventArgs e)
-        {
-            ManageVersions dialog = new ManageVersions(CurrentProject, ProjectTypeProvider, this);
-            dialog.ShowDialog();
-            CurrentProject = dialog.Project;
-            RedrawTreeView();
-            if (!CurrentProject.Versions.Any(version => version.Id == CurrentProject.LastViewedVersionId))
-            {
-                CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
-                SwitchVersion(CurrentProject.LastViewedVersionId);
-            }
-        }
-
-        public void FireVersionRemovedEvent(Models.Version version)
-        {
-            VersionRemoved?.Invoke(this, new VersionEventArgs(this, version));
-        }
-
-        public void FireVersionAdded(Models.Version version)
-        {
-            VersionAdded?.Invoke(this, new VersionEventArgs(this, version));
-        }
         private void MiShowLog_Click(object sender, RoutedEventArgs e)
         {
             new Log(Logger as Logger).Show();
@@ -1713,14 +902,32 @@ namespace Interpic.Studio
                 this.Dispatcher.Invoke(() =>
                 {
                     pbBackgroundTask.IsIndeterminate = true;
-                    pbBackgroundTask.Visibility = Visibility.Visible;
+                    if (backgroundTask.IsIndeterminate)
+                    {
+                        imgBackgroundTaskLoading.Visibility = Visibility.Visible;
+                        pbBackgroundTask.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        imgBackgroundTaskLoading.Visibility = Visibility.Collapsed;
+                        pbBackgroundTask.Visibility = Visibility.Visible;
+                    }
                     lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
                 });
             }
             else
             {
                 pbBackgroundTask.IsIndeterminate = true;
-                pbBackgroundTask.Visibility = Visibility.Visible;
+                if (backgroundTask.IsIndeterminate)
+                {
+                    imgBackgroundTaskLoading.Visibility = Visibility.Visible;
+                    pbBackgroundTask.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    imgBackgroundTaskLoading.Visibility = Visibility.Collapsed;
+                    pbBackgroundTask.Visibility = Visibility.Visible;
+                }
                 lbCurrentBackgroundTask.Text = backgroundTask.TaskName;
             }
 
@@ -1746,6 +953,7 @@ namespace Interpic.Studio
                         lbCurrentBackgroundTask.Text = string.Empty;
                         pbBackgroundTask.Value = 0;
                         pbBackgroundTask.Visibility = Visibility.Collapsed;
+                        imgBackgroundTaskLoading.Visibility = Visibility.Collapsed;
                     });
                 }
                 else
@@ -1753,6 +961,7 @@ namespace Interpic.Studio
                     lbCurrentBackgroundTask.Text = string.Empty;
                     pbBackgroundTask.Value = 0;
                     pbBackgroundTask.Visibility = Visibility.Collapsed;
+                    imgBackgroundTaskLoading.Visibility = Visibility.Collapsed;
                 }
 
             }
@@ -1923,6 +1132,609 @@ namespace Interpic.Studio
             {
                 SwitchVersion(lsbVersions.SelectedValue.ToString());
             }
+        }
+
+        public void CreateAndShowStudioTab<T>(string title, ImageSource icon, StudioView<T> view) where T : UserControl, IStudioViewHandler
+        {
+            StudioTabItem tabItem = new StudioTabItem();
+            tabItem.Icon = icon;
+            tabItem.Title = title;
+            tcTabs.Items.Add(tabItem);
+            view.Title = title;
+            tabItem.SetStudioView(view.Title, view.Icon, view.View);
+            tabItem.CloseTab += StudioTabClosed;
+            tabItem.IsSelected = true;
+            view.View.Studio = this;
+            view.View.StudioTab = tabItem;
+            view.View.ViewAttached();
+            tabs.Add(tabItem, view.View);
+        }
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (tvManualTree.SelectedItem != null)
+            {
+                object selection = (tvManualTree.SelectedItem as TreeViewItem).Tag;
+
+                if (selection.GetType() == typeof(Models.Page))
+                {
+                    Models.Page page = selection as Models.Page;
+                    ShowBuiltinStudioView(page);
+                }
+                else if (selection.GetType() == typeof(Section))
+                {
+                    Section section = selection as Models.Section;
+                    ShowBuiltinStudioView(section);
+                }
+                else if (selection.GetType() == typeof(Models.Control))
+                {
+                    Models.Control control = selection as Models.Control;
+                    ShowBuiltinStudioView(control);
+                }
+                else if (selection.GetType() == typeof(Project))
+                {
+                    ShowBuiltinStudioView(BuildInStudioViews.Version);
+                }
+            }
+        }
+
+        public bool TabWithContentExists(string contents)
+        {
+            return tabs.Any(t => t.Value.GetTabContents() == contents);
+        }
+
+        public void ShowBuiltinStudioView(BuildInStudioViews type)
+        {
+            switch (type)
+            {
+                case BuildInStudioViews.Home:
+                    if (TabWithContentExists("Home"))
+                    {
+                        ShowExistingTab("Home");
+                    }
+                    else
+                    {
+                        CreateAndShowStudioTab("Home", ImageUtils.ImageFromString("HomeWhite.png"), new HomeStudioView());
+                    }
+                    break;
+                case BuildInStudioViews.ManageVersions:
+                    if (TabWithContentExists("ManageVersions"))
+                    {
+                        ShowExistingTab("ManageVersions");
+                    }
+                    else
+                    {
+                        CreateAndShowStudioTab("Manage Versions", ImageUtils.ImageFromString("VersionWhite.png"), new ManageVersionsStudioView(CurrentProject, ProjectTypeProvider, this));
+                    }
+                    break;
+                case BuildInStudioViews.Version:
+                    if (TabWithContentExists(currentVersion.Id))
+                    {
+                        ShowExistingTab(currentVersion.Id);
+                    }
+                    else
+                    {
+                        ProjectStudioView studioView = new ProjectStudioView(currentVersion);
+                        CreateAndShowStudioTab(CurrentProject.Name, ImageUtils.ImageFromString("ProjectWhite.png"), studioView);
+                    }
+                    break;
+            }
+        }
+
+        public bool ShowManualItemSettings(Project project)
+        {
+            if (project.HasSettingsAvailable)
+            {
+                ProjectSettingsEventArgs eventArgs = new ProjectSettingsEventArgs(this, project, project.Settings, null);
+                ProjectSettingsOpening?.Invoke(this, eventArgs);
+                SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+                editor.ShowDialog();
+                eventArgs = new ProjectSettingsEventArgs(this, project, editor.SettingsCollection, SettingsCollection.GetChanges(project.Settings, editor.SettingsCollection));
+                project.Settings = editor.SettingsCollection;
+                ProjectSettingsOpened?.Invoke(this, eventArgs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public bool ShowManualItemSettings(Models.Version version)
+        {
+            if (version.HasSettingsAvailable)
+            {
+                VersionSettingsEventArgs eventArgs = new VersionSettingsEventArgs(this, version, version.Settings, null);
+                VersionSettingsOpening?.Invoke(this, eventArgs);
+                version.FireSettingsOpeningEvent(this, eventArgs);
+                SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+                editor.ShowDialog();
+                eventArgs = new VersionSettingsEventArgs(this, version, editor.SettingsCollection, SettingsCollection.GetChanges(version.Settings, editor.SettingsCollection));
+                version.Settings = editor.SettingsCollection;
+                VersionSettingsOpened?.Invoke(this, eventArgs);
+                version.FireSettingsOpenedEvent(this, eventArgs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool AddPage(Models.Version version, bool autoShow)
+        {
+            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingPage)
+            {
+                ShowOfflineError();
+                return false;
+            }
+
+            NewPage dialog = new NewPage();
+            dialog.ShowDialog();
+            if (dialog.Page != null)
+            {
+                if (dialog.Page.Type == Models.Page.PAGE_TYPE_REFERENCE)
+                {
+                    if (ProjectTypeProvider.GetDefaultPageSettings() != null)
+                    {
+                        dialog.Page.Settings = ProjectTypeProvider.GetDefaultPageSettings();
+                        if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                        {
+                            InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
+                        }
+                        SettingsCollection oldSettings = dialog.Page.Settings.Copy();
+                        PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
+                        PageSettingsOpening?.Invoke(this, eventArgs);
+                        dialog.Page.FireSettingsOpeningEvent(this, eventArgs);
+                        ShowPageSettings(dialog, eventArgs);
+                        PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
+                        dialog.Page.FireSettingsOpenedEvent(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
+
+                    }
+                }
+                else
+                {
+                    if (ProjectTypeProvider.GetDefaultTextPageSettings() != null)
+                    {
+                        dialog.Page.Settings = ProjectTypeProvider.GetDefaultTextPageSettings();
+                        if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                        {
+                            InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
+                        }
+                        SettingsCollection oldSettings = dialog.Page.Settings.Copy();
+                        PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
+                        PageSettingsOpening?.Invoke(this, eventArgs);
+                        dialog.Page.FireSettingsOpeningEvent(this, eventArgs);
+                        ShowPageSettings(dialog, eventArgs);
+                        PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
+                        dialog.Page.FireSettingsOpenedEvent(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
+
+                    }
+                }
+                dialog.Page.Parent = version;
+                version.Pages.Add(dialog.Page);
+                RedrawTreeView();
+                PageAdded?.Invoke(this, new PageEventArgs(this, dialog.Page));
+                if (autoShow)
+                {
+                    dialog.Page.TreeViewItem.IsSelected = true;
+                    dialog.Page.TreeViewItem.BringIntoView();
+                    ShowBuiltinStudioView(dialog.Page);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ShowExistingTab(string contents)
+        {
+            if (tabs.Any((tab) => tab.Value.GetTabContents() == contents))
+            {
+                IEnumerable<KeyValuePair<StudioTabItem, IStudioViewHandler>> tabs = this.tabs.Where((tab) => tab.Value.GetTabContents() == contents);
+                if (tabs.Any())
+                {
+                    (tabs.First().Key as IStudioTab).Focus();
+                }
+            }
+        }
+
+        public bool CloseTab(string contents, bool force)
+        {
+            if (tabs.Any((tab) => tab.Value.GetTabContents() == contents))
+            {
+                IEnumerable<KeyValuePair<StudioTabItem, IStudioViewHandler>> tabs = this.tabs.Where((tab) => tab.Value.GetTabContents() == contents);
+                if (tabs.Any())
+                {
+                    tabs.First().Value.StudioTab.ForceClose = force;
+                    tabs.First().Value.StudioTab.CloseTab();
+                    return force ? true : !tabs.First().Value.StudioTab.DoesContainChanges;
+                }
+            }
+            return false;
+        }
+
+        public void ShowBuiltinStudioView(Models.Page page)
+        {
+            if (TabWithContentExists(page.Id))
+            {
+                ShowExistingTab(page.Id);
+            }
+            else
+            {
+                PageStudioView studioView = new PageStudioView(page);
+                CreateAndShowStudioTab(page.Name, ImageUtils.ImageFromString("PageWhite.png"), studioView);
+            }
+        }
+
+        public void ShowBuiltinStudioView(Section section)
+        {
+            if (TabWithContentExists(section.Id))
+            {
+                ShowExistingTab(section.Id);
+            }
+            else
+            {
+                SectionStudioView studioView = new SectionStudioView(section);
+                CreateAndShowStudioTab(section.Name, ImageUtils.ImageFromString("SectionWhite.png"), studioView);
+            }
+        }
+
+        public void ShowBuiltinStudioView(Models.Control control)
+        {
+            if (TabWithContentExists(control.Id))
+            {
+                ShowExistingTab(control.Id);
+            }
+            else
+            {
+                ControlStudioView studioView = new ControlStudioView(control);
+                CreateAndShowStudioTab(control.Name, ImageUtils.ImageFromString("ControlWhite.png"), studioView);
+            }
+        }
+
+        public bool ShowManualItemSettings(Models.Page page)
+        {
+            if (page.HasSettingsAvailable)
+            {
+                PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, page, page.Settings, null);
+                PageSettingsOpening?.Invoke(this, eventArgs);
+                page.FireSettingsOpeningEvent(this, eventArgs);
+                SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+                editor.ShowDialog();
+                eventArgs = new PageSettingsEventArgs(this, page, editor.SettingsCollection, SettingsCollection.GetChanges(page.Settings, editor.SettingsCollection));
+                page.Settings = editor.SettingsCollection;
+                PageSettingsOpened?.Invoke(this, eventArgs);
+                page.FireSettingsOpenedEvent(this, eventArgs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool ShowManualItemSettings(Section section)
+        {
+            if (section.HasSettingsAvailable)
+            {
+                SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, section, section.Settings, null);
+                SectionSettingsOpening?.Invoke(this, eventArgs);
+                section.FireSettingsOpeningEvent(this, eventArgs);
+                SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+                editor.ShowDialog();
+                eventArgs = new SectionSettingsEventArgs(this, section, editor.SettingsCollection, SettingsCollection.GetChanges(section.Settings, editor.SettingsCollection));
+                section.Settings = editor.SettingsCollection;
+                SectionSettingsOpened?.Invoke(this, eventArgs);
+                section.FireSettingsOpenedEvent(this, eventArgs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool ShowManualItemSettings(Models.Control control)
+        {
+            if (control.HasSettingsAvailable)
+            {
+                ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, control, control.Settings, null);
+                ControlSettingsOpening?.Invoke(this, eventArgs);
+                control.FireSettingsOpeningEvent(this, eventArgs);
+                SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+                editor.ShowDialog();
+                eventArgs = new ControlSettingsEventArgs(this, control, editor.SettingsCollection, SettingsCollection.GetChanges(control.Settings, editor.SettingsCollection));
+                control.Settings = editor.SettingsCollection;
+                ControlSettingsOpened?.Invoke(this, eventArgs);
+                control.FireSettingsOpenedEvent(this, eventArgs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool AddVersion(bool autoSwitch)
+        {
+            NewVersion dialog = new NewVersion(ProjectTypeProvider.GetDefaultVersionSettings());
+            if (dialog.ShowDialog().Value)
+            {
+                dialog.Version.Parent = CurrentProject;
+                CurrentProject.Versions.Add(dialog.Version);
+                VersionAdded?.Invoke(this, new VersionEventArgs(this, dialog.Version));
+                if (autoSwitch)
+                {
+                    SwitchVersion(dialog.Version.Id);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddSection(Models.Page page, bool autoShow)
+        {
+            if (page.Type == Models.Page.PAGE_TYPE_TEXT)
+            {
+                WarningAlert.Show("the parent page is a text page and cannot contain any sections");
+                return false;
+            }
+            if (page.IsLoaded == false)
+            {
+                WarningAlert.Show("The page must be loaded before any sections can be added.");
+                return false;
+            }
+            NewSection dialog = new NewSection(page);
+            dialog.sectionIdentifierSelector = ProjectTypeProvider.GetSectionSelector();
+            dialog.ShowDialog();
+            if (dialog.Section != null)
+            {
+                dialog.Section.Parent = page;
+                dialog.Section.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
+                if (dialog.Section.HasSettingsAvailable)
+                {
+                    SettingsCollection oldSettings = dialog.Section.Settings.Copy();
+                    SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, null);
+                    SectionSettingsOpening?.Invoke(this, eventArgs);
+                    ShowSectionSettings(ref dialog, eventArgs);
+                    SectionSettingsOpened?.Invoke(this, new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Section.Settings)));
+                }
+
+                if (ProjectTypeProvider.GetControlFinder() != null)
+                {
+                    ObservableCollection<DiscoveredControl> foundControls = ProjectTypeProvider.GetControlFinder().FindControls(dialog.Section);
+                    if (foundControls == null)
+                    {
+                        foundControls = new ObservableCollection<DiscoveredControl>();
+                    }
+
+                    dialog.Section.DiscoveredControls = foundControls;
+                    SetStatusBar("Found " + foundControls.Count.ToString() + " controls.");
+                }
+                else
+                {
+                    SetStatusBar("No control finder found for this project type, skipping control discovery.");
+                }
+
+                dialog.Section.Parent = page;
+                page.Sections.Add(dialog.Section);
+                RedrawTreeView();
+                SectionAdded?.Invoke(this, new SectionEventArgs(this, dialog.Section));
+                if (autoShow)
+                {
+                    dialog.Section.TreeViewItem.IsSelected = true;
+                    dialog.Section.TreeViewItem.BringIntoView();
+                    ShowBuiltinStudioView(dialog.Section);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddControl(Section section, bool autoShow)
+        {
+            if (section.IsLoaded == false)
+            {
+                WarningAlert.Show("The section must be loaded before any controls can be added.");
+                return false;
+            }
+
+            if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingControl)
+            {
+                ShowOfflineError();
+                return false;
+            }
+            IControlIdentifierSelector selector = ProjectTypeProvider.GetControlSelector();
+            selector.Section = section;
+            AddControl dialog = new AddControl(section.DiscoveredControls, selector);
+            dialog.ShowDialog();
+            if (dialog.Control != null)
+            {
+                dialog.Control.Parent = section;
+                dialog.Control.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
+                if (dialog.Control.HasSettingsAvailable)
+                {
+                    SettingsCollection oldSettings = dialog.Control.Settings.Copy();
+                    ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, null);
+                    ControlSettingsOpening?.Invoke(this, eventArgs);
+                    ShowControlSettings(ref dialog, eventArgs);
+                    ControlSettingsOpened?.Invoke(this, new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Control.Settings)));
+                }
+                dialog.Control.Parent = section;
+                section.Controls.Add(dialog.Control);
+                RedrawTreeView();
+                ControlAdded?.Invoke(this, new ControlEventArgs(this, dialog.Control));
+                if (autoShow)
+                {
+                    dialog.Control.TreeViewItem.IsSelected = true;
+                    dialog.Control.TreeViewItem.BringIntoView();
+                    ShowBuiltinStudioView(dialog.Control);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        (Models.Page page, bool succes) IStudioEnvironment.LoadManualItem(Models.Page page)
+        {
+            if (page.IsLoaded)
+            {
+                return (page, false);
+            }
+            Models.Page sourceResult = ProjectTypeProvider.GetSourceProvider().GetSource(page);
+            if (sourceResult != null)
+            {
+                page = sourceResult;
+            }
+            else
+            {
+                return (page, false);
+            }
+
+            (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(page, page.Parent, CurrentProject);
+            if (result.succes)
+            {
+                result.page.IsLoaded = true;
+            }
+            return result;
+        }
+
+        (Section page, bool succes) IStudioEnvironment.LoadManualItem(Section section)
+        {
+            if (section.IsLoaded)
+            {
+                return (section, false);
+            }
+
+            (Models.Section section, bool succes) result = ProjectTypeProvider.RefreshSection(section, section.Parent, section.Parent.Parent, CurrentProject);
+            if (result.succes)
+            {
+                result.section.IsLoaded = true;
+            }
+            return result;
+        }
+
+        (Models.Control control, bool succes) IStudioEnvironment.LoadManualItem(Models.Control control)
+        {
+            if (control.IsLoaded)
+            {
+                return (control, false);
+            }
+
+            (Models.Control control, bool succes) result = ProjectTypeProvider.RefreshControl(control, control.Parent, control.Parent.Parent, control.Parent.Parent.Parent, CurrentProject);
+            if (result.succes)
+            {
+                result.control.IsLoaded = true;
+            }
+            return result;
+        }
+
+        public bool RemoveManualItem(Models.Version version, bool confirm)
+        {
+            if (confirm)
+            {
+                if (ConfirmAlert.Show($"The version '{version.Name}' and all it's pages will be removed.").Result == false)
+                {
+                    return false;
+                }
+            }
+
+            List<string> ids = ObjectModelUtils.GetAllIds(version);
+            foreach (string id in ids)
+            {
+                if (TabWithContentExists(id))
+                {
+                    CloseTab(id, true);
+                }
+            }
+
+            VersionRemoved?.Invoke(this, new VersionEventArgs(this, version));
+            version.FireRemovedEvent(this, new VersionEventArgs(this, version));
+            version.Parent.Versions.Remove(version);
+            RedrawTreeView();
+            return true;
+        }
+
+        public bool RemoveManualItem(Models.Page page, bool confirm)
+        {
+            if (confirm)
+            {
+                if (ConfirmAlert.Show($"The page '{page.Name}' and all it's sections will be removed.").Result == false)
+                {
+                    return false;
+                }
+            }
+
+            List<string> ids = ObjectModelUtils.GetAllIds(page);
+            foreach (string id in ids)
+            {
+                if (TabWithContentExists(id))
+                {
+                    CloseTab(id, true);
+                }
+            }
+
+            PageRemoved?.Invoke(this, new PageEventArgs(this, page));
+            page.FireRemovedEvent(this, new PageEventArgs(this, page));
+            page.Parent.Pages.Remove(page);
+            RedrawTreeView();
+            return true;
+        }
+
+        public bool RemoveManualItem(Section section, bool confirm)
+        {
+            if (confirm)
+            {
+                if (ConfirmAlert.Show($"The section '{section.Name}' and all it's controls will be removed.").Result == false)
+                {
+                    return false;
+                }
+            }
+
+            List<string> ids = ObjectModelUtils.GetAllIds(section);
+            foreach (string id in ids)
+            {
+                if (TabWithContentExists(id))
+                {
+                    CloseTab(id, true);
+                }
+            }
+
+            SectionRemoved?.Invoke(this, new SectionEventArgs(this, section));
+            section.FireRemovedEvent(this, new SectionEventArgs(this, section));
+            section.Parent.Sections.Remove(section);
+            RedrawTreeView();
+            return true;
+        }
+
+        public bool RemoveManualItem(Models.Control control, bool confirm)
+        {
+            if (confirm)
+            {
+                if (ConfirmAlert.Show($"The control '{control.Name}' and all it's controls will be removed.").Result == false)
+                {
+                    return false;
+                }
+            }
+
+            if (TabWithContentExists(control.Id))
+            {
+                CloseTab(control.Id, true);
+            }
+
+
+            ControlRemoved?.Invoke(this, new ControlEventArgs(this, control));
+            control.FireRemovedEvent(this, new ControlEventArgs(this, control));
+            control.Parent.Controls.Remove(control);
+            RedrawTreeView();
+            return true;
+        }
+
+        private void Image_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            ShowBuiltinStudioView(BuildInStudioViews.ManageVersions);
         }
     }
 }

@@ -15,8 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static Interpic.Web.Selenium.SeleniumWrapper;
 using Interpic.Web.Behaviours.Models;
@@ -325,34 +323,28 @@ namespace Interpic.Web
         private void RegisterMenuItems()
         {
             MenuItem webToolsItem = new MenuItem("Web tools");
-            MenuItem openInWebBrowserItem = new MenuItem("Open current page in webbrowser");
-            openInWebBrowserItem.Description = "Open the current page in the default webbrowser.";
-            openInWebBrowserItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/OpenExternal.png", UriKind.RelativeOrAbsolute));
-            openInWebBrowserItem.Clicked += OpenInWebBrowserItemClicked;
-            webToolsItem.SubItems.Add(openInWebBrowserItem);
 
             MenuItem behavioursMenuItem = new MenuItem("Web Behaviours");
-            behavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+            behavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
 
             MenuItem manageWebActionsMenuItem = new MenuItem("Manage Web Actions");
-            manageWebActionsMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+            manageWebActionsMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
             manageWebActionsMenuItem.Clicked += ManageWebActionsMenuItemClicked;
             behavioursMenuItem.SubItems.Add(manageWebActionsMenuItem);
 
             MenuItem manageBehavioursMenuItem = new MenuItem("Manage Web Behaviours");
-            manageBehavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/Behaviour.png", UriKind.RelativeOrAbsolute));
+            manageBehavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
             manageBehavioursMenuItem.Clicked += ManageBehavioursMenuItemClicked;
             behavioursMenuItem.SubItems.Add(manageBehavioursMenuItem);
-
             webToolsItem.SubItems.Add(behavioursMenuItem);
-            Studio.RegisterExtensionMenuItem(webToolsItem);
 
+            Studio.RegisterExtensionMenuItem(webToolsItem);
         }
 
         private void ManageBehavioursMenuItemClicked(object sender, ProjectStateEventArgs e)
         {
             ManageWebBehaviours manageWebBehaviours = new ManageWebBehaviours(WebBehaviourConfiguration, Studio.CurrentProject);
-            manageWebBehaviours.ShowDialog();
+            //manageWebBehaviours.ShowDialog();
             WebBehaviourConfiguration = manageWebBehaviours.Configuration;
             SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, WebBehaviourConfiguration);
             ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
@@ -367,33 +359,6 @@ namespace Interpic.Web
         {
             ManageWebActions manageWebActions = new ManageWebActions(WebBehaviourConfiguration);
             manageWebActions.ShowDialog();
-        }
-
-        private void OpenInWebBrowserItemClicked(object sender, ProjectStateEventArgs e)
-        {
-            if (Studio.OfflineMode)
-            {
-                ErrorAlert.Show("Action not allowed.\n\nOffline mode is enabled.");
-                return;
-            }
-
-            if (e.Page != null && e.Version != null)
-            {
-                string url = e.Version.Settings.GetTextSetting("BaseUrl") + e.Page.Settings.GetTextSetting("PageUrl");
-                try
-                {
-                    Process.Start(url);
-                }
-                catch (Exception ex)
-                {
-                    ErrorAlert.Show("Could not open page in browser:\n" + ex.Message);
-                }
-
-            }
-            else
-            {
-                ErrorAlert.Show("No page selected.");
-            }
         }
 
         private void StartSelenium()
@@ -485,7 +450,7 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (control.Settings.GetTextSetting("WebBehaviours") != null)
+                if (control.Settings.GetTextSetting("WebBehaviours") != string.Empty)
                 {
                     ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(control.Settings.GetTextSetting("WebBehaviours"), null);
                     executeWebBehavioursTask.PassThrough = true;
@@ -535,7 +500,7 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (section.Settings.GetTextSetting("WebBehaviours") != null)
+                if (section.Settings.GetTextSetting("WebBehaviours") != string.Empty)
                 {
                     ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(section.Settings.GetTextSetting("WebBehaviours"), null);
                     executeWebBehavioursTask.PassThrough = true;
@@ -584,7 +549,7 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (page.Settings.GetTextSetting("WebBehaviours") != null)
+                if (page.Settings.GetTextSetting("WebBehaviours") != string.Empty)
                 {
                     ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(page.Settings.GetTextSetting("WebBehaviours"), null);
                     executeWebBehavioursTask.PassThrough = true;
@@ -659,6 +624,11 @@ namespace Interpic.Web
                 ErrorAlert.Show("Please wait until selenium has started.");
                 return false;
             }
+        }
+
+        public SettingsCollection GetDefaultTextPageSettings()
+        {
+            return null;
         }
     }
 }

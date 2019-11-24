@@ -1,13 +1,10 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.EventArgs;
+using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpic.Models
 {
@@ -30,6 +27,27 @@ namespace Interpic.Models
         [IgnoreChangeListener]
         [JsonIgnore]
         public Project Parent { get; set; }
+
+        public event OnVersionSettingsOpening SettingsOpening;
+
+        public event OnVersionSettingsOpened SettingsOpened;
+        public event OnVersionRemoved Removed;
+
+        public void FireSettingsOpenedEvent(object sender, VersionSettingsEventArgs e)
+        {
+            SettingsOpening?.Invoke(sender, e);
+        }
+
+        public void FireSettingsOpeningEvent(object sender, VersionSettingsEventArgs e)
+        {
+            SettingsOpening?.Invoke(sender, e);
+        }
+
+        public void FireRemovedEvent(object sender, VersionEventArgs e)
+        {
+            Removed?.Invoke(sender, e);
+        }
+
         #region *** INotifyPropertyChanged Members and Invoker ***
         public event PropertyChangedEventHandler PropertyChanged;
 

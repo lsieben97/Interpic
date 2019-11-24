@@ -3,11 +3,7 @@ using Interpic.Builders.MarkdownMKDocs.Tasks;
 using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Settings;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpic.Builders.MarkdownMKDocs
 {

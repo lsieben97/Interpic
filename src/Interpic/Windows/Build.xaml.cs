@@ -1,20 +1,10 @@
-﻿using Interpic.Alerts;
-using Interpic.Models.Extensions;
+﻿using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Settings;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Linq;
 
 namespace Interpic.Studio.Windows
 {
@@ -97,6 +87,12 @@ namespace Interpic.Studio.Windows
             {
                 options.VersionsToBuild.AddRange(project.Versions);
             }
+
+            if (! options.VersionsToBuild.Any())
+            {
+                return;
+            }
+
             if (cbCleanOutputDirectory.IsChecked.Value)
             {
                 if (!builder.CleanOutputDirectory(project))

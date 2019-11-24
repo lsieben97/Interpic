@@ -1,9 +1,5 @@
-﻿using Interpic.Alerts;
-using Interpic.AsyncTasks;
+﻿using Interpic.AsyncTasks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Interpic.Web.Selenium.Tasks

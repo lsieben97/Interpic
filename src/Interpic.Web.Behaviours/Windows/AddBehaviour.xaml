@@ -5,21 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
         mc:Ignorable="d"
-        Title="New Behaviour" Height="600" Width="800" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Behaviour" Height="600" Width="800" MinHeight="400" MinWidth="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Behaviour" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Stretch" Height="30" Margin="10,86,10,0" Width="auto" VerticalAlignment="Top" TextWrapping="Wrap" Style="{DynamicResource TextBoxStyle}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <TextBox x:Name="tbDescription" HorizontalAlignment="Stretch" Margin="10,143,10,301" Width="auto" TextWrapping="Wrap"  Style="{DynamicResource TextBoxStyle}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,273,0,0" TextWrapping="Wrap" Text="Actions" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <ListBox x:Name="lsbWebActions" HorizontalAlignment="Left" Height="217" Margin="10,295,0,0" VerticalAlignment="Top" Width="634"  Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" SelectionChanged="LsbWebActions_SelectionChanged"/>
-        <Button x:Name="btnNew" Content="New" HorizontalAlignment="Left" Margin="649,295,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnNew_Click"/>
-        <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Left" IsEnabled="False" Margin="649,330,0,0" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnEdit_Click"/>
-        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Margin="649,365,0,0" IsEnabled="False" VerticalAlignment="Top" Width="133" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click" />
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
-        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="190"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/BehaviourWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Behaviour" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <StackPanel Margin="10,0" Grid.Row="1">
+            <TextBlock Margin="10,0,0,2" Text="Name"/>
+            <TextBox x:Name="tbName" Margin="0,0,0,2" Style="{DynamicResource TextBoxStyle}"/>
+            <TextBlock Margin="0,0,0,2" Text="Description"/>
+            <TextBox x:Name="tbDescription" HorizontalAlignment="Stretch" Margin="0,0,0,2" Height="100" Style="{DynamicResource TextBoxStyle}"/>
+            <TextBlock Margin="00,0,0,0" Text="Actions"/>
+        </StackPanel>
+        <Grid VerticalAlignment="Stretch" Margin="10,0" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="20*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="lsbWebActions" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,5,0"  Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" SelectionChanged="LsbWebActions_SelectionChanged"/>
+            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                <Button x:Name="btnNew" Content="New" HorizontalAlignment="Stretch" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="BtnNew_Click"/>
+                <Button x:Name="btnEdit" Content="Edit" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,5" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="BtnEdit_Click"/>
+                <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Stretch" IsEnabled="False" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="BtnRemove_Click" />
+            </StackPanel>
+        </Grid>
+        <Button x:Name="btnCancel" Content="Cancel" Grid.Row="3" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
+        <Button x:Name="btnSave" Content="Save" Grid.Row="3" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnSave_Click"/>
 
     </Grid>
     <Window.Resources>

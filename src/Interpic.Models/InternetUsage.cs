@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interpic.Models
+﻿namespace Interpic.Models
 {
     /// <summary>
     /// Shows what actions require internet access. Used to by the studio to determine whether an action is allowed in offline mode. 

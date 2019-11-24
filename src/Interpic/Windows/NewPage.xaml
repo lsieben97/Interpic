@@ -5,20 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic"
         mc:Ignorable="d"
-        Title="New Page" Height="365.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/PageWhite.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Page" SizeToContent="WidthAndHeight" MinHeight="230" Width="400" MinWidth="300" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/PageWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Page" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name"/>
-        <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="10,283,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
-        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="55.836,70.076,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Type"/>
-        <ComboBox x:Name="cbbType" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ComboBoxStyle}" FontFamily="Verdana" SelectionChanged="cbbType_SelectionChanged">
-            <ComboBoxItem Content="Reference page" Tag="reference"/>
-            <ComboBoxItem Content="Text page" Tag="text"/>
-        </ComboBox>
-        <TextBox x:Name="tbTypeDescription" HorizontalAlignment="Left" Height="92" Margin="10,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="314" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/PageWhite.png" Width="48"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/PageWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Page" VerticalAlignment="Center" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="10,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" Text="Name" Foreground="White"/>
+                <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="5,0" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <TextBox x:Name="tbName" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Top" Style="{DynamicResource TextBoxStyle}"/>
+            <TextBlock HorizontalAlignment="Left" Margin="0,2" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Type"/>
+            <ComboBox x:Name="cbbType" HorizontalAlignment="Stretch" VerticalAlignment="Top" Style="{DynamicResource ComboBoxStyle}"  SelectionChanged="cbbType_SelectionChanged">
+                <ComboBoxItem Content="Reference page" Tag="reference"/>
+                <ComboBoxItem Content="Text page" Tag="text"/>
+            </ComboBox>
+            <TextBox x:Name="tbTypeDescription" HorizontalAlignment="Stretch" Height="100" Margin="0,5" TextWrapping="Wrap" VerticalAlignment="Top" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
+        </StackPanel>
+        <Button x:Name="btnCreate" Content="Create" Grid.Row="2" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" Grid.Row="2" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
     </Grid>
 </Window>

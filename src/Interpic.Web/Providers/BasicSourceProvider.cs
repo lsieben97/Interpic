@@ -1,28 +1,21 @@
 ﻿using HtmlAgilityPack;
-using Interpic.Alerts;
 using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Web.Selenium.Tasks;
-using Interpic.Web.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using static Interpic.Web.Selenium.SeleniumWrapper;
 
 namespace Interpic.Web.Providers
 {
     public class BasicSourceProvider : ISourceProvider
     {
-        public string GetSource(ref Project project, ref Models.Version version, ref Page page)
+        public Page GetSource(Page page)
         {
-            BrowserType type = WebProjectTypeProvider.GetBrowserType(version.Settings.GetMultipleChoiceSetting("BrowserType"));
+            BrowserType type = WebProjectTypeProvider.GetBrowserType(page.Parent.Settings.GetMultipleChoiceSetting("BrowserType"));
             if (WebProjectTypeProvider.CheckSelenium(type))
             {
-                string url = version.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
+                string url = page.Parent.Settings.GetTextSetting("BaseUrl") + page.Settings.GetTextSetting("PageUrl");
                 List<AsyncTasks.AsyncTask> tasks = new List<AsyncTasks.AsyncTask>();
 
 
@@ -46,14 +39,15 @@ namespace Interpic.Web.Providers
                         HtmlDocument document = new HtmlDocument();
                         document.LoadHtml(getHtmlTask.Html);
                         page.Extensions = new WebPageExtensions(document);
-                        return getHtmlTask.Html;
+                        page.Source = getHtmlTask.Html;
+                        return page;
                     }
                     else
                     {
                         return null;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }

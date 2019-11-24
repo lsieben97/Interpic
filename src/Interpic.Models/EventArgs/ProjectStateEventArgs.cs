@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interpic.Models.EventArgs
+﻿namespace Interpic.Models.EventArgs
 {
     /// <summary>
     /// Contains the entire project state. objects that are unavailable (for example no section is selected) will be <code>null</code>.

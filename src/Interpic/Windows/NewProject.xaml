@@ -5,25 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic"
         mc:Ignorable="d"
-        Title="New Project" Height="527" Width="345.744" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/Interpic.UI;component/Icons/Project.png">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Manual" SizeToContent="WidthAndHeight" MinHeight="230" Width="400" MinWidth="300" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/ProjectWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="New Manual" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,125,0,0" TextWrapping="Wrap" Text="Application Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <ComboBox x:Name="cbbApplicationType" HorizontalAlignment="Left" Margin="10,148.026,0,0" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="cbbApplicationType_SelectionChanged"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,275,0,0" TextWrapping="Wrap" Text="Output Type" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <ComboBox x:Name="cbbOutputType" HorizontalAlignment="Left" Margin="10,297,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbOutputType_SelectionChanged"/>
-        <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="137,440,0,0" VerticalAlignment="Top" Width="187" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
-        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="55.836,69.026,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock x:Name="lbApplicationTypeError" HorizontalAlignment="Left" Margin="129.653,131.039,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock x:Name="lbOutputTypeError" HorizontalAlignment="Left" Margin="101,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <Button x:Name="btnFromExtension" Content="From extension" HorizontalAlignment="Left" Margin="10,440,0,0" VerticalAlignment="Top" Width="122" Style="{DynamicResource ButtonStyle}" Click="btnFromExtension_Click" ToolTip="Click here if you want to create a new project using a project type from an extension"/>
-        <TextBox x:Name="tbProjectTypeDescription" HorizontalAlignment="Left" Height="65" Margin="10,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="314" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,183,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Application Type"/><Run Text=" description"/></TextBlock>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ProjectWhite.png" Width="48" Height="48"/>
-        <TextBox x:Name="tbOutputTypeDescription" HorizontalAlignment="Left" Height="65" Margin="10,361,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="314" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,339,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"><Run Text="Output Type"/><Run Text=" description"/></TextBlock>
-        <TextBlock x:Name="lbProjectFolderError" HorizontalAlignment="Left" Margin="122,440,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ProjectWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Manual" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="10,0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                <TextBlock HorizontalAlignment="Left" Text="Name"/>
+                <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <TextBox x:Name="tbName" Style="{DynamicResource TextBoxStyle}" Margin="0,0,0,2"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                <TextBlock Text="Application Type"/>
+                <TextBlock x:Name="lbApplicationTypeError" VerticalAlignment="Bottom" Margin="5,0,0,0" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <ComboBox x:Name="cbbApplicationType" Margin="0,0,0,2" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="cbbApplicationType_SelectionChanged"/>
+            <TextBox x:Name="tbProjectTypeDescription" Height="65" Margin="0,2,0,2" TextWrapping="Wrap" Style="{DynamicResource TextBoxStyle}" IsReadOnly="True"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                <TextBlock HorizontalAlignment="Left" Text="Output Type"/>
+                <TextBlock x:Name="lbOutputTypeError" Margin="5,0,0,0" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <ComboBox x:Name="cbbOutputType" Style="{DynamicResource ComboBoxStyle}" SelectionChanged="CbbOutputType_SelectionChanged"/>
+            <TextBox x:Name="tbOutputTypeDescription" Height="65" Margin="0,5,0,10" TextWrapping="Wrap" Style="{DynamicResource TextBoxStyle}" IsReadOnly="True"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="2" HorizontalAlignment="Right">
+            <Button x:Name="btnFromExtension" Content="From extension" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnFromExtension_Click"/>
+            <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
+        </StackPanel>
+        <Button x:Name="btnCancel" Grid.Row="2" Margin="10,0,0,10" HorizontalAlignment="Left" Content="Cancel" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
     </Grid>
 </Window>

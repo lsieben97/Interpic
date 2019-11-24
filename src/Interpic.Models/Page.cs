@@ -1,4 +1,5 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.EventArgs;
+using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
@@ -6,12 +7,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
-using System.Xml;
 
 namespace Interpic.Models
 {
     public class Page : INotifyPropertyChanged
     {
+        public const string PAGE_TYPE_TEXT = "text";
+        public const string PAGE_TYPE_REFERENCE = "reference";
+
         private string _name;
         private string _type;
         private string _text;
@@ -22,6 +25,7 @@ namespace Interpic.Models
         private byte[] _screenshot;
         private ExtensionObject _extensions;
         private List<string> _siblingPageIds;
+        private bool isLoaded;
 
         /// <summary>
         /// The name of the page.
@@ -82,6 +86,14 @@ namespace Interpic.Models
         /// </summary>
         public event OnPageSettingsOpening SettingsOpening;
 
+        /// <summary>
+        /// Occurs when the page is about to be deleted. This is the last time the <see cref="Models.Page"/> object is available.
+        /// This event occurs after the <see cref="IStudioEnvironment.PageRemoved"/> event.
+        /// </summary>
+        public event OnPageRemoved Removed;
+
+        public bool IsLoaded { get => isLoaded; set { isLoaded = value; RaisePropertyChanged("IsLoaded"); } }
+
         [JsonIgnore]
         public TreeViewItem TreeViewItem { get; set; }
 
@@ -92,6 +104,21 @@ namespace Interpic.Models
         /// This event fires before the <see cref="IStudioEnvironment.PageSettingsOpened"/> event;
         /// </summary>
         public event OnPageSettingsOpened SettingsOpened;
+
+        public void FireSettingsOpeningEvent(object sender, PageSettingsEventArgs e)
+        {
+            SettingsOpening?.Invoke(sender, e);
+        }
+
+        public void FireSettingsOpenedEvent(object sender, PageSettingsEventArgs e)
+        {
+            SettingsOpened?.Invoke(sender, e);
+        }
+
+        public void FireRemovedEvent(object sender, PageEventArgs e)
+        {
+            Removed?.Invoke(sender, e);
+        }
 
         [JsonIgnore]
         public ExtensionObject Extensions

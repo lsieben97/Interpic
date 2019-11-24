@@ -1,22 +1,8 @@
-﻿using Interpic.Alerts;
-using Interpic.Models.Extensions;
+﻿using Interpic.Models.Extensions;
 using Interpic.Models;
-using Interpic.Utils;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml;
 
 namespace Interpic.Studio.Windows
 {
@@ -61,6 +47,16 @@ namespace Interpic.Studio.Windows
                 lbNameError.Text = string.Empty;
             }
 
+            if (tbBaseNode.Text == string.Empty)
+            {
+                valid = false;
+                lbNodeError.Text = "Enter node";
+            }
+            else
+            {
+                lbNodeError.Text = string.Empty;
+            }
+
             if (valid == true)
             {
                 if (!edit)
@@ -80,6 +76,12 @@ namespace Interpic.Studio.Windows
             {
                     tbBaseNode.Text = NodeSelector.SelectedNode.Name;
             }
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Control = null;
+            Close();
         }
     }
 }

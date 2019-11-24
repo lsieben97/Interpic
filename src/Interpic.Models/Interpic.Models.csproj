@@ -38,6 +38,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,15 +48,20 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildInStudioViews.cs" />
     <Compile Include="BuildOptions.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="ControlIdentifier.cs" />
     <Compile Include="DiscoveredControl.cs" />
     <Compile Include="ElementBounds.cs" />
+    <Compile Include="EventArgs\ControlEventArgs.cs" />
+    <Compile Include="EventArgs\SectionEventArgs.cs" />
+    <Compile Include="EventArgs\PageEventArgs.cs" />
     <Compile Include="EventArgs\ControlSettingsEventArgs.cs" />
     <Compile Include="EventArgs\GlobalSettingsEventArgs.cs" />
     <Compile Include="EventArgs\PageSettingsEventArgs.cs" />
     <Compile Include="EventArgs\ProjectLoadedEventArgs.cs" />
+    <Compile Include="EventArgs\VersionSettingsEventArgs.cs" />
     <Compile Include="EventArgs\ProjectSettingsEventArgs.cs" />
     <Compile Include="EventArgs\ProjectStateEventArgs.cs" />
     <Compile Include="EventArgs\SectionSettingsEventArgs.cs" />
@@ -78,6 +84,7 @@
     <Compile Include="InternetUsage.cs" />
     <Compile Include="IStudioEnvironment.cs" />
     <Compile Include="LoadedAssembly.cs" />
+    <Compile Include="ManualElementType.cs" />
     <Compile Include="MenuItem.cs" />
     <Compile Include="Packaging\PackageManifest.cs" />
     <Compile Include="Packaging\PackageDefinition.cs" />
@@ -89,6 +96,9 @@
     <Compile Include="Section.cs" />
     <Compile Include="delegates.cs" />
     <Compile Include="SectionIdentifier.cs" />
+    <Compile Include="StudioTab.cs" />
+    <Compile Include="StudioView.cs" />
+    <Compile Include="IStudioViewHandler.cs" />
     <Compile Include="TrustedAssembly.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
@@ -96,6 +106,10 @@
     <ProjectReference Include="..\Interpic.AsyncTasks\Interpic.AsyncTasks.csproj">
       <Project>{36D32067-9305-4F38-8159-B5F5CC2CFB9A}</Project>
       <Name>Interpic.AsyncTasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpic.Icons\Interpic.UI.csproj">
+      <Project>{656BBAF2-BB4D-4674-9D64-FC8C25D7237B}</Project>
+      <Name>Interpic.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">
       <Project>{90f34232-79a3-4904-b093-fcfb4dca3666}</Project>

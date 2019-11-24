@@ -6,18 +6,11 @@ using Interpic.Models;
 using Interpic.Web.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml;
 
 namespace Interpic.Web.Windows
 {
@@ -143,7 +136,7 @@ namespace Interpic.Web.Windows
                         btnNextSearchResult.Visibility = Visibility.Hidden;
                     }
                     currentSearchResult = 0;
-                    lbSearchStatus.Text = string.Format("Found {0} result. Showing result {1}", SearchResults.Count, currentSearchResult + 1);
+                    lbSearchStatus.Text = string.Format("Found {0} result(s). Showing result {1}", SearchResults.Count, currentSearchResult + 1);
                     UpdateCurrentSearchResult();
                 }
                 else

@@ -8,9 +8,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes\MetroDark\MetroDark.MSControls.Toolkit.Implicit.xaml" />
-                <ResourceDictionary Source="Themes\MetroDark\MetroDark.MSControls.Toolkit.Implicit.xaml" />
-                <ResourceDictionary Source="Simple Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Interpic.UI;component/Themes/MetroDark/Styles.WPF.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="ErrorBrush" Color="#FFB00020"/>
         </ResourceDictionary>

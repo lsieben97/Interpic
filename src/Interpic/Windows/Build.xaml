@@ -5,17 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Studio.Windows"
         mc:Ignorable="d"
-        Title="Build Manual" Height="423" Width="610" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/BuildWhite.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="Build Manual" SizeToContent="WidthAndHeight" MinHeight="230" MinWidth="500"  Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/BuildWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Build Manual" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/BuildWhite.png" Width="48"/>
-        <RadioButton x:Name="cbBuildEntireProject" Content="Build entire manual" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle}" Height="22" FontFamily="Verdana" FontSize="14" Foreground="White" GroupName="buildType" IsChecked="True"/>
-        <RadioButton x:Name="cbBuildSpecificPages" Content="Build these specific versions" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle}" Height="22" FontFamily="Verdana" FontSize="14" Foreground="White" GroupName="buildType"/>
-        <ListBox x:Name="lsbVersions" HorizontalAlignment="Left" Height="149" Margin="10,151,0,0" VerticalAlignment="Top" Width="571" Style="{DynamicResource ListBoxStyle}" SelectionMode="Multiple"/>
-        <TextBlock HorizontalAlignment="Left" Margin="13,140,0,0" TextWrapping="Wrap" Text="Hold ctr or shift to select multiple versions" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="9"/>
-        <CheckBox x:Name="cbCleanOutputDirectory" Content="Clean output directory" HorizontalAlignment="Left" Margin="10,305,0,0" VerticalAlignment="Top" Style="{DynamicResource CheckBoxStyle}" FontFamily="Verdana" FontSize="14" Foreground="White" IsChecked="True"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,340,0,0" VerticalAlignment="Top" Width="74" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnCancel_Click"/>
-        <Button x:Name="btnBuild" Content="Build" HorizontalAlignment="Left" Margin="507,340,0,0" VerticalAlignment="Top" Width="74" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnBuild_Click"/>
-        <Button x:Name="btnBuildSettings" Content="Build Settings" HorizontalAlignment="Left" Margin="328,340,0,0" VerticalAlignment="Top" Width="174" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnBuildSettings_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="75"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/BuildWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="Build Manual" VerticalAlignment="Center" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="10,0">
+            <RadioButton x:Name="cbBuildEntireProject" Content="Build entire manual" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle}" Height="22" FontFamily="Verdana" FontSize="14" Foreground="White" GroupName="buildType" IsChecked="True"/>
+            <RadioButton x:Name="cbBuildSpecificPages" Content="Build these specific versions" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource RadioButtonStyle}" Height="22" FontFamily="Verdana" FontSize="14" Foreground="White" GroupName="buildType"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Hold ctr or shift to select multiple versions" VerticalAlignment="Top" FontSize="9"/>
+            <ListBox x:Name="lsbVersions" HorizontalAlignment="Stretch" MinHeight="100"  VerticalAlignment="Stretch" Grid.Row="2" Style="{DynamicResource ListBoxStyle}" SelectionMode="Multiple"/>
+            
+        </StackPanel>
+        <CheckBox x:Name="cbCleanOutputDirectory" Grid.Row="2" Content="Clean output directory" HorizontalAlignment="Left" Margin="4,0" VerticalAlignment="Top" Style="{DynamicResource CheckBoxStyle}" IsChecked="True"/>
+        <Button x:Name="btnCancel" Grid.Row="2" Margin="10,0,0,10" Content="Cancel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Row="2" Margin="0,0,10,10">
+            <Button x:Name="btnBuildSettings" Content="Build Settings" VerticalAlignment="Bottom" Margin="0,0,10,0" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnBuildSettings_Click"/>
+            <Button x:Name="btnBuild" Content="Build" Style="{DynamicResource ButtonStyle}" VerticalAlignment="Bottom" Click="BtnBuild_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

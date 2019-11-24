@@ -1,13 +1,9 @@
 ﻿using Interpic.AsyncTasks;
-using Interpic.Models;
 using Interpic.Models.Extensions;
 using Interpic.Models.Packaging;
-using Interpic.Settings;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Interpic.Models
 {
@@ -79,12 +75,42 @@ namespace Interpic.Models
 
         IDLLManager GetDLLManager();
 
-
         void RemoveExtensionMenuItem(string menuItemId);
 
         bool OfflineMode { get; }
 
         void RegisterPackageDefinition(PackageDefinition definition);
+
+        void CreateAndShowStudioTab<T>(string title, ImageSource icon, StudioView<T> view) where T : UserControl, IStudioViewHandler;
+
+        bool TabWithContentExists(string contents);
+
+        bool CloseTab(string contents, bool force);
+
+        void ShowBuiltinStudioView(BuildInStudioViews type);
+        void ShowBuiltinStudioView(Page page);
+        void ShowBuiltinStudioView(Section section);
+        void ShowBuiltinStudioView(Control control);
+
+        bool ShowManualItemSettings(Project project);
+        bool ShowManualItemSettings(Version version);
+        bool ShowManualItemSettings(Page page);
+        bool ShowManualItemSettings(Section section);
+        bool ShowManualItemSettings(Control control);
+
+        (Page page, bool succes) LoadManualItem(Page page);
+        (Section page, bool succes) LoadManualItem(Section page);
+        (Control control, bool succes) LoadManualItem(Control page);
+
+        bool AddVersion(bool autoSwitch);
+        bool AddPage(Version version, bool autoSwitch);
+        bool AddSection(Page page, bool autoSwitch);
+        bool AddControl(Section section, bool autoSwitch);
+
+        bool RemoveManualItem(Version version, bool confirm);
+        bool RemoveManualItem(Page page, bool confirm);
+        bool RemoveManualItem(Section section, bool confirm);
+        bool RemoveManualItem(Control control, bool confirm);
 
         #region Events
         /// <summary>
@@ -130,6 +156,21 @@ namespace Interpic.Models
         /// This event should not be used to validate settings unless a reference to the manual tree is required.
         /// </summary>
         event OnProjectSettingsOpened ProjectSettingsOpened;
+
+        /// <summary>
+        /// Occurs before the version settings window is shown.
+        /// Changes made to the settings will be visible in the window.
+        /// This event occures before the <see cref="Version.SettingsOpening"/> event.
+        /// </summary>
+        event OnVersionSettingsOpening VersionSettingsOpening;
+
+        /// <summary>
+        /// Occurs after the version settings window is shown.
+        /// 
+        /// This event should not be used to validate settings unless a reference to the manual tree is required.
+        /// This event occurs after the <see cref="Version.SettingsOpened"/> event.
+        /// </summary>
+        event OnVersionSettingsOpened VersionSettingsOpened;
 
         /// <summary>
         /// Occurs before the page settings window is shown.
@@ -181,15 +222,51 @@ namespace Interpic.Models
         /// </summary>
         event OnGlobalSettingsSaved GlobalSettingsSaved;
 
-        /// <summary>
-        /// Occurs after a new version has been added.
-        /// </summary>
-        event OnNewVersionAdded VersionAdded;
+
 
         /// <summary>
         /// Occurs when a version is about to be deleted. This is the last time the <see cref="Models.Version"/> object is available.
         /// </summary>
         event OnVersionRemoved VersionRemoved;
+
+        /// <summary>
+        /// Occurs when a page is about to be deleted. This is the last time the <see cref="Models.Page"/> object is available.
+        /// This event occurs before the <see cref="Page.Removed"/> event.
+        /// </summary>
+        event OnPageRemoved PageRemoved;
+
+        /// <summary>
+        /// Occurs when a page is about to be deleted. This is the last time the <see cref="Models.Section"/> object is available.
+        /// This event occurs before the <see cref="Section.Removed"/> event.
+        /// </summary>
+        event OnSectionRemoved SectionRemoved;
+
+        /// <summary>
+        /// Occurs when a page is about to be deleted. This is the last time the <see cref="Models.Control"/> object is available.
+        /// This event occurs before the <see cref="Control.Removed"/> event.
+        /// </summary>
+        event OnControlRemoved ControlRemoved;
+
+        /// <summary>
+        /// Occurs after a new version has been added.
+        /// </summary>
+        event OnVersionAdded VersionAdded;
+
+        /// <summary>
+        /// Occurs after a new page has been added.
+        /// </summary>
+        event OnPageAdded PageAdded;
+
+        /// <summary>
+        /// Occurs after a new section has been added.
+        /// </summary>
+        event OnSectionAdded SectionAdded;
+
+        /// <summary>
+        /// Occurs after a new control has been added.
+        /// </summary>
+        event OnControlAdded ControlAdded;
+
         #endregion
 
     }

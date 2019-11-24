@@ -1,14 +1,9 @@
 ﻿using Interpic.Settings;
 using Interpic.Web.Behaviours.Models;
 using Interpic.Web.Behaviours.Utils;
-using Interpic.Web.Selenium;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpic.Web.WebActions.BasicWebActions
 {

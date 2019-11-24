@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interpic.Alerts;
+﻿using System.Drawing;
 using Interpic.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Opera;
 using OpenQA.Selenium.Remote;
 
 namespace Interpic.Web.Selenium

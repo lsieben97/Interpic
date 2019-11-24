@@ -1,10 +1,5 @@
-﻿using Interpic.Models;
-using Interpic.Settings;
-using System;
+﻿using Interpic.Settings;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpic.Models.Extensions
 {

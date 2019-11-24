@@ -1,10 +1,6 @@
-﻿using Interpic.Alerts;
-using Interpic.AsyncTasks;
+﻿using Interpic.AsyncTasks;
 using Interpic.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static Interpic.Web.Selenium.SeleniumWrapper;
 

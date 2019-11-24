@@ -5,12 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Studio.Windows.Selectors"
         mc:Ignorable="d"
-        Title="Select control" Height="385.5" Width="610" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/BuildWhite.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="Select Control" SizeToContent="WidthAndHeight" MinHeight="400" MinWidth="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="CanResize" Icon="/Interpic.UI;component/Icons/ControlWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Select control" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ControlWhite.png" Width="48"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="11,304,0,0" VerticalAlignment="Top" Width="74" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnCancel_Click"/>
-        <Button x:Name="btnSelect" Content="Select" HorizontalAlignment="Left" Margin="508,304,0,0" VerticalAlignment="Top" Width="74" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" Click="BtnSelect_Click"/>
-        <ListBox x:Name="lsbControls" HorizontalAlignment="Left" Height="226" Margin="11,63,0,0" VerticalAlignment="Top" Width="571" Style="{DynamicResource ListBoxStyle}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ControlWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="Select control" VerticalAlignment="Center" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        </StackPanel>
+        <Button x:Name="btnCancel" Grid.Row="2" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
+        <Button x:Name="btnSelect" Grid.Row="2" Content="Select" HorizontalAlignment="Right" Margin="0,0,10,10"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnSelect_Click"/>
+        <ListBox x:Name="lsbControls" Grid.Row="1" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Stretch" Style="{DynamicResource ListBoxStyle}"/>
     </Grid>
 </Window>

@@ -1,11 +1,8 @@
 ﻿using Interpic.Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace Interpic.Utils
 {
@@ -31,6 +28,15 @@ namespace Interpic.Utils
                 string base64String = Convert.ToBase64String(imageBytes);
                 return base64String;
             }
+        }
+
+        public static BitmapImage ImageFromString(string imageString, bool useInterpicUIPackage = true)
+        {
+            if (useInterpicUIPackage)
+            {
+                imageString = "/Interpic.UI;component/Icons/" + imageString;
+            }
+            return new BitmapImage(new Uri(imageString, UriKind.RelativeOrAbsolute));
         }
     }
 }

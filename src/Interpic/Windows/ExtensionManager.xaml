@@ -5,19 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic"
         mc:Ignorable="d"
-        Title="ExtensionManager" Height="403.5" Width="684" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/Extension.png" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Page" SizeToContent="WidthAndHeight" Height="400" MinHeight="200" Width="650" MinWidth="500" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/ExtensionWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Extension manager" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Active extensions" VerticalAlignment="Top" Margin="10,79.999,0,0" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <ListBox x:Name="lsbActiveExtensions" HorizontalAlignment="Left" Height="218.5" Margin="10,102.012,0,0" VerticalAlignment="Top" Width="206.5" Style="{DynamicResource ListBoxStyle}" SelectionChanged="lsbActiveExtensions_SelectionChanged"/>
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Extension contents" VerticalAlignment="Top" Margin="226,79.999,0,0" FontFamily="Verdana" FontSize="14" Foreground="White"/>
-        <TextBox HorizontalAlignment="Left" Height="206.347" Margin="226,114.165,0,0" TextWrapping="Wrap" Text="No Extension selected" VerticalAlignment="Top" Width="435" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana"/>
-        <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,325.512,0,0" Style="{DynamicResource ButtonStyle}"/>
-        <Button x:Name="btnOpen" Content="Open new extension" HorizontalAlignment="Left" VerticalAlignment="Top" Width="169" Margin="226,325.512,0,0" Style="{DynamicResource ButtonStyle}"/>
-        <Button x:Name="btnAdd" Content="Add new extension" HorizontalAlignment="Left" VerticalAlignment="Top" Width="172.5" Margin="400,325.512,0,0" Style="{DynamicResource ButtonStyle}" IsEnabled="False"/>
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Location:" VerticalAlignment="Top" Margin="226,97.012,0,0" FontFamily="Verdana" FontSize="10" Foreground="White" FontStyle="Italic" Width="435"/>
-        <Image Margin="9.999,10,620.001,316.5" Source="/Interpic.UI;component/Icons/ExtensionWhite.png" Stretch="Fill"/>
-        <TextBlock x:Name="lbNewProjectMessage" HorizontalAlignment="Left" Margin="63,52,0,0" TextWrapping="Wrap" Text="Project extensions will be loaded after project creation." VerticalAlignment="Top" FontSize="10" Foreground="White" FontFamily="Verdana" Visibility="Hidden"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="70*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ExtensionWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="Extension Manager" VerticalAlignment="Center" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="0" Margin="10,10,5,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Active extensions" VerticalAlignment="Top"/>
+            <ListBox x:Name="lsbActiveExtensions" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{DynamicResource ListBoxStyle}" SelectionChanged="lsbActiveExtensions_SelectionChanged"/>
+            <Button x:Name="btnRemove" Content="Remove" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}"/>
+        </Grid>
+        <GridSplitter Width="3" Grid.Column="0" Grid.Row="1" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{DynamicResource Brush05}" />
+        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalAlignment="Left" Text="Extension contents" VerticalAlignment="Top" />
+            <TextBox Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="No Extension selected" Style="{DynamicResource TextBoxStyle}"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Bottom">
+                <Button x:Name="btnOpen" Content="Open extension" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Style="{DynamicResource ButtonStyle}"/>
+                <Button x:Name="btnAdd" Content="Add extension" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Style="{DynamicResource ButtonStyle}" Visibility="Collapsed"/>
+                <Button x:Name="btnUnload" Content="Unload Extension" Style="{DynamicResource ButtonStyle}" Visibility="Collapsed" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

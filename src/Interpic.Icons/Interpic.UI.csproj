@@ -34,12 +34,14 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Input.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Infragistics.Themes.MetroDark.Wpf.1.0.0\lib\net40\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,7 +55,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\StudioTabItem\IStudioTab.cs" />
+    <Compile Include="Controls\StudioViewHolder.xaml.cs">
+      <DependentUpon>StudioViewHolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controls\StudioTabItem\StudioTabItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\CheckmarkGreen.png" />
@@ -62,28 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\AddOutline.png" />
-    <Resource Include="Icons\Build.png" />
     <Resource Include="Icons\Confirm.png" />
-    <Resource Include="Icons\Control.png" />
     <Resource Include="Icons\Done.png" />
     <Resource Include="Icons\Error.png" />
-    <Resource Include="Icons\Exit.png" />
-    <Resource Include="Icons\Export.png" />
-    <Resource Include="Icons\Extension.png" />
     <Resource Include="Icons\ExtensionWhite.png" />
-    <Resource Include="Icons\Help.png" />
     <Resource Include="Icons\Icon.png" />
-    <Resource Include="Icons\Info.png" />
     <Resource Include="Icons\Logo.png" />
-    <Resource Include="Icons\New.png" />
-    <Resource Include="Icons\Open.png" />
-    <Resource Include="Icons\Page.png" />
     <Resource Include="Icons\PageWhite.png" />
-    <Resource Include="Icons\Project.png" />
-    <Resource Include="Icons\Save.png" />
-    <Resource Include="Icons\SaveAs.png" />
-    <Resource Include="Icons\Section.png" />
-    <Resource Include="Icons\Settings.png" />
     <Resource Include="Icons\Warning.png" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +91,14 @@
     <Resource Include="Icons\InfoWhite.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\StudioViewHolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\MetroDark\MetroDark.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,22 +126,29 @@
     <Resource Include="Icons\ControlWhite.png" />
     <Resource Include="Icons\BuildWhite.png" />
     <Resource Include="Icons\Array.png" />
-    <Content Include="Icons\HelpWhite.png" />
+    <Resource Include="Icons\HelpWhite.png" />
     <Resource Include="Icons\ProjectWhite.png" />
     <Resource Include="Icons\SectionWhite.png" />
     <Resource Include="Icons\Search.png" />
     <Resource Include="Icons\XmlWhite.png" />
     <Resource Include="Icons\SaveWhite.png" />
     <Resource Include="Icons\ObjectWhite.png" />
-    <Resource Include="Icons\Object.png" />
-    <Resource Include="Icons\Version.png" />
     <Resource Include="Icons\VersionWhite.png" />
-    <Resource Include="Icons\Log.png" />
     <Resource Include="Icons\LogWhite.png" />
-    <Resource Include="Icons\OfflineMode.png" />
     <Resource Include="Icons\OfflineModeRed.png" />
-    <Resource Include="Icons\Package.png" />
     <Resource Include="Icons\PackageWhite.png" />
+    <Resource Include="Icons\HomeWhite.png" />
+    <Resource Include="Icons\CloseWhite.png" />
+    <Resource Include="Icons\GetManualSourceWhite.png" />
+    <Resource Include="Icons\RemoveWhite.png" />
+    <Resource Include="Icons\OpenInTabWhite.png" />
+    <Resource Include="Icons\EditWhite.png" />
+    <Resource Include="Icons\NewWhite.png" />
+    <Resource Include="Icons\ExitWhite.png" />
+    <Resource Include="Icons\ExportWhite.png" />
+    <Resource Include="Icons\OfflineModeWhite.png" />
+    <Resource Include="Icons\OpenWhite.png" />
+    <Resource Include="Icons\Loading.png" />
     <Content Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <ItemGroup>

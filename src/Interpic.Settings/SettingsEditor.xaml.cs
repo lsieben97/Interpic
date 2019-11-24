@@ -1,11 +1,7 @@
 ﻿using Interpic.Alerts;
-using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;

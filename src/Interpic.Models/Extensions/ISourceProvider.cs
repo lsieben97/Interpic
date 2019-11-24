@@ -1,12 +1,4 @@
-﻿using Interpic.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-
-namespace Interpic.Models.Extensions
+﻿namespace Interpic.Models.Extensions
 {
     public interface ISourceProvider
     {
@@ -16,6 +8,6 @@ namespace Interpic.Models.Extensions
         /// <param name="project">The current project.</param>
         /// <param name="page">The page to get the source from.</param>
         /// <returns>The page source.</returns>
-        string GetSource(ref Project project, ref Models.Version version, ref Page page);
+        Page GetSource(Page page);
     }
 }

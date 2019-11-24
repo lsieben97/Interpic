@@ -1,10 +1,4 @@
-﻿using Interpic.Models;
-using Interpic.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Interpic.Settings;
 
 namespace Interpic.Models.Extensions
 {
@@ -39,6 +33,12 @@ namespace Interpic.Models.Extensions
         /// </summary>
         /// <returns>The default page settings for this project type.</returns>
         SettingsCollection GetDefaultPageSettings();
+
+        /// <summary>
+        /// Get the default text page settings for this project type.
+        /// </summary>
+        /// <returns>The default text page settings for this project type.</returns>
+        SettingsCollection GetDefaultTextPageSettings();
 
         /// <summary>
         /// Get the default project settings for this project type.

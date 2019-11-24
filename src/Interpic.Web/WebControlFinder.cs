@@ -3,13 +3,7 @@ using Interpic.AsyncTasks;
 using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Web.Tasks;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace Interpic.Web
 {

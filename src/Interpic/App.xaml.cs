@@ -1,16 +1,10 @@
 ﻿using Interpic.Alerts;
-using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Settings;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using Interpic.Studio.InternalModels;
 
@@ -25,7 +19,7 @@ namespace Interpic
         internal static readonly string RECENT_PROJECTS_FILE = "recent.json";
         internal static readonly string GLOBAL_SETTINGS_FILE = "globalSettings.json";
         internal static readonly string EXECUTABLE_DIRECTORY = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
-        internal static readonly string VERSION = "1.0.0";
+        internal static readonly string VERSION = "0.2-beta";
         internal static readonly Logger ApplicationLogger = new Logger();
 
         internal static SettingsCollection GlobalSettings { get; set; }
@@ -83,6 +77,12 @@ namespace Interpic
             showInfoOnAutomaticSettingsDialog.Value = true;
             showInfoOnAutomaticSettingsDialog.Key = "ShowInfoForSettings";
 
+            Setting<bool> showHomeTabOnStartup = new Setting<bool>();
+            showHomeTabOnStartup.Name = "Show home tab on startup";
+            showHomeTabOnStartup.Description = "Show the home tab when a project has been loaded.";
+            showHomeTabOnStartup.Value = true;
+            showHomeTabOnStartup.Key = "showHomeOnProjectLoad";
+
             Setting<bool> enableDeveloperMode = new Setting<bool>();
             enableDeveloperMode.Name = "Enable Developer mode.";
             enableDeveloperMode.Description = "Show the developer menu item in the menu bar.";
@@ -110,6 +110,7 @@ namespace Interpic
             DefaultGlobalSettings.NumeralSettings.Add(autosaveWarning);
             DefaultGlobalSettings.BooleanSettings.Add(showInfoOnAutomaticSettingsDialog);
             DefaultGlobalSettings.BooleanSettings.Add(enableDeveloperMode);
+            DefaultGlobalSettings.BooleanSettings.Add(showHomeTabOnStartup);
             DefaultGlobalSettings.PathSettings.Add(logDirectory);
             DefaultGlobalSettings.PathSettings.Add(workspaceDirectory);
         }

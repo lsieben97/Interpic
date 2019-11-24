@@ -5,17 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Studio.Windows"
         mc:Ignorable="d"
-        Title="New Control" Height="279.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/Control.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Control" SizeToContent="WidthAndHeight" MinHeight="230" Width="400" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/ControlWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"><Run Text="New "/><Run Text="Control"/></TextBlock>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" MaxLines="1"/>
-        <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
-        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="55.836,70.076,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Node"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ControlWhite.png" Width="48"/>
-        <TextBox x:Name="tbBaseNode" HorizontalAlignment="Left" Height="23" Margin="10,143,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True" MaxLines="1"/>
-        <Button x:Name="btnSelectNode" Content="Select" HorizontalAlignment="Left" Margin="245,143,0,0" VerticalAlignment="Top" Width="79" Style="{DynamicResource ButtonStyle}" Click="btnSelectNode_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/ControlWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Control" VerticalAlignment="Center" FontSize="22" Foreground="White" FontFamily="Verdana"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="10,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" Text="Name" VerticalAlignment="Top"/>
+                <TextBlock x:Name="lbNameError" Margin="5,0" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <TextBox x:Name="tbName" HorizontalAlignment="Stretch" Style="{DynamicResource TextBoxStyle}" MaxLines="1"/>
+            <StackPanel Orientation="Horizontal" Margin="0,2">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Node"/>
+                <TextBlock x:Name="lbNodeError" Margin="5,0" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="tbBaseNode" Grid.Column="0" HorizontalAlignment="Stretch" TextWrapping="Wrap" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" IsReadOnly="True" MaxLines="1"/>
+                <Button x:Name="btnSelectNode" Grid.Column="1" Content="Select" HorizontalAlignment="Right" Margin="5,0,0,0" VerticalAlignment="Top" Style="{DynamicResource ButtonStyle}" Click="btnSelectNode_Click"/>
+            </Grid>
+        </StackPanel>
+        <Button x:Name="btnCreate" Content="Create" Margin="0,0,10,10" HorizontalAlignment="Right" Grid.Row="2"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnCreate_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" Margin="10,0,0,10" HorizontalAlignment="Left" Grid.Row="2"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
 
     </Grid>
 </Window>

@@ -1,11 +1,6 @@
-﻿using Interpic.Alerts;
-using Interpic.Models.Extensions;
+﻿using Interpic.Models.Extensions;
 using Interpic.Models;
-using Interpic.Utils;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Interpic.Studio.Windows
 {
@@ -73,6 +68,12 @@ namespace Interpic.Studio.Windows
                 identifier = sectionIdentifierSelector.SectionIdentifier;
                 tbBaseNode.Text = sectionIdentifierSelector.SectionIdentifier.Name;
             }
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Section = null;
+            Close();
         }
     }
 }

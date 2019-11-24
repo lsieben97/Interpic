@@ -1,21 +1,9 @@
 ﻿using Interpic.Alerts;
 using Interpic.Models.Extensions;
 using Interpic.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml;
 
 namespace Interpic.Studio.Windows
 {
@@ -52,7 +40,7 @@ namespace Interpic.Studio.Windows
             SelectedNode = (lsbDiscoveredControls.SelectedItem as ListBoxItem).Tag as ControlIdentifier;
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             SelectedNode = null;
             Close();
@@ -74,7 +62,7 @@ namespace Interpic.Studio.Windows
         {
             if (SelectedNode == null)
             {
-                ErrorAlert.Show("Please select a node.");
+                WarningAlert.Show("Please select a node.");
                 return;
             }
             Close();

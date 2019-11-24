@@ -5,18 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Studio.Windows"
         mc:Ignorable="d"
-        Title="New Version" Height="338.333" Width="343" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.UI;component/Icons/VersionWhite.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="New Version" SizeToContent="WidthAndHeight" MinHeight="230" Width="400" MinWidth="300" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/VersionWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"><Run Text="New "/><Run Text="Version"/></TextBlock>
-        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <TextBox x:Name="tbName" HorizontalAlignment="Left" Height="23" Margin="10,86.013,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313.744" Style="{DynamicResource TextBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" MaxLines="1"/>
-        <Button x:Name="btnCreate" Content="Create" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top" Width="314" Style="{DynamicResource ButtonStyle}" Click="BtnCreate_Click"/>
-        <TextBlock x:Name="lbNameError" HorizontalAlignment="Left" Margin="55.836,70.076,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176" Text="Locale"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/VersionWhite.png" Width="48"/>
-        <ComboBox x:Name="cbLocales" HorizontalAlignment="Left" Height="23" Margin="10,143,0,0"  VerticalAlignment="Top" Width="314" Style="{DynamicResource ComboBoxStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" IsReadOnly="True" />
-        <TextBlock HorizontalAlignment="Left" Margin="10,181,0,0" TextWrapping="Wrap" Text="Options" VerticalAlignment="Top" FontFamily="Verdana" FontSize="14" Foreground="White" RenderTransformOrigin="2.049,0.176"/>
-        <Button x:Name="btnShowOptions" HorizontalAlignment="Left" Content="Open Options" Height="23" Margin="10,203,0,0"  VerticalAlignment="Top" Width="152" Style="{DynamicResource ButtonStyle}" FontFamily="Verdana" FontSize="14" ToolTip="Name" Click="BtnShowOptions_Click" />
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/VersionWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="New Version" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <StackPanel Margin="10,0" Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" Text="Name" VerticalAlignment="Top"/>
+                <TextBlock x:Name="lbNameError" Margin="5,0" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="9" Foreground="{DynamicResource ErrorBrush}"/>
+            </StackPanel>
+            <TextBox x:Name="tbName" HorizontalAlignment="Stretch" Style="{DynamicResource TextBoxStyle}" MaxLines="1"/>
+            <TextBlock Text="Locale"/>
+            <ComboBox x:Name="cbLocales" Margin="0,0,0,2" Style="{DynamicResource ComboBoxStyle}" IsReadOnly="True" />
+            <TextBlock Text="Settings"/>
+            <Button x:Name="btnShowOptions" HorizontalAlignment="Left" Content="Open Settings" Style="{DynamicResource ButtonStyle}" Click="BtnShowOptions_Click" />
+        </StackPanel>
+        <Button x:Name="btnCreate" Grid.Row="2" Content="Create" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCreate_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" Margin="10,0,0,10" HorizontalAlignment="Left" Grid.Row="2"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="BtnCancel_Click"/>
     </Grid>
 </Window>

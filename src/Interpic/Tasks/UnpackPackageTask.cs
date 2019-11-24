@@ -1,12 +1,7 @@
 ﻿using Interpic.AsyncTasks;
-using Interpic.Models;
 using Interpic.Studio.Functional;
 using Interpic.Studio.InternalModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Interpic.Studio.Tasks

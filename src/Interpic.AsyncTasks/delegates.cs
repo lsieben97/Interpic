@@ -1,5 +1,4 @@
 ﻿using Interpic.AsyncTasks.EventArgs;
-using System;
 
 namespace Interpic.AsyncTasks
 {

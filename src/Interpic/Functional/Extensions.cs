@@ -1,15 +1,4 @@
-﻿using Interpic.Alerts;
-using Interpic.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interpic.Studio.Functional
+﻿namespace Interpic.Studio.Functional
 {
     public static class Extensions
     {

@@ -1,29 +1,23 @@
 ﻿using Interpic.Alerts;
 using Interpic.Models;
+using Interpic.UI.Controls;
 using Interpic.Web.Behaviours.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Interpic.Web.Behaviours.Windows
 {
     /// <summary>
     /// Interaction logic for ManageWebBehaviours.xaml
     /// </summary>
-    public partial class ManageWebBehaviours : Window
+    public partial class ManageWebBehaviours : UserControl, IStudioViewHandler
     {
         public WebBehaviourConfiguration Configuration { get; set; }
+        public IStudioEnvironment Studio { get; set; }
+        public IStudioTab StudioTab { get; set; }
         private readonly Project project;
         private List<WebAction> availableWebActions = new List<WebAction>();
         private ObservableCollection<WebBehaviour> behaviours;
@@ -121,6 +115,21 @@ namespace Interpic.Web.Behaviours.Windows
                 btnEdit.IsEnabled = false;
                 btnRemove.IsEnabled = false;
             }
+        }
+
+        public void ViewAttached()
+        {
+            
+        }
+
+        public void ViewDetached()
+        {
+            
+        }
+
+        public string GetTabContents()
+        {
+            return "ManageBehaviours";
         }
     }
 }

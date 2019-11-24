@@ -5,19 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Interpic.Web.Behaviours.Windows"
         mc:Ignorable="d"
-        Title="Manage Web Actions" Height="536" Width="588.5" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" ResizeMode="NoResize" Icon="/Interpic.Web.Icons;component/Icons/WebWhite.png" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="Manage Actions" Height="530" MinHeight="250" Width="580" MinWidth="580" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.Web.Icons;component/Icons/WebWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="62.999,20.631,0,0" TextWrapping="Wrap" Text="Manage Web Actions" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana"/>
-        <Image HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/WebWhite.png" Width="48"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,63,0,0" TextWrapping="Wrap" Text="Installed Packs" VerticalAlignment="Top" Foreground="White" FontSize="22" FontFamily="Verdana"/>
-        <ListBox x:Name="lsbPacks" HorizontalAlignment="Left" Height="295" Margin="10,106,0,0" VerticalAlignment="Top" Width="244" Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" SelectionChanged="LsbPacks_SelectionChanged"/>
-        <ListBox x:Name="lsbActions" HorizontalAlignment="Left" Height="295" Margin="259,106,0,0" VerticalAlignment="Top" Width="307" Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" MouseDoubleClick="LsbActions_MouseDoubleClick"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,416,0,0" TextWrapping="Wrap" Text="get more actions by importing additional web action packs" VerticalAlignment="Top" Foreground="White" FontSize="14" FontFamily="Verdana" Width="556"/>
-        <Button Content="Add Web Action Pack" HorizontalAlignment="Left" Margin="10,444,0,0" VerticalAlignment="Top" Width="165" Style="{DynamicResource ButtonStyle}" RenderTransformOrigin="0.24,0.611"/>
-        <Button Content="Remove Web Action Pack" HorizontalAlignment="Left" Margin="180,444,0,0" VerticalAlignment="Top" Width="195" Style="{DynamicResource ButtonStyle}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="259,63,0,0" TextWrapping="Wrap" Text="Pack Contents" VerticalAlignment="Top" Foreground="White" FontSize="22" FontFamily="Verdana"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.Web.Icons;component/Icons/WebWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="Manage Actions" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <TextBlock HorizontalAlignment="Left" Grid.Row="1" Margin="10,5,0,0" Text="Installed Packs" VerticalAlignment="Top" FontSize="22"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" Text="Pack Contents" FontSize="22"/>
+        <TextBlock HorizontalAlignment="Left" Grid.Row="1" Grid.Column="1" Margin="5,0,0,0" TextWrapping="Wrap" Text="Double click on an action to read more" VerticalAlignment="Bottom" />
+        <ListBox x:Name="lsbPacks" Grid.Row="2" HorizontalAlignment="Stretch" Margin="10,0,5,0" VerticalAlignment="Stretch" Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" SelectionChanged="LsbPacks_SelectionChanged"/>
+        <ListBox x:Name="lsbActions" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="1" Margin="5,0,10,0" VerticalAlignment="Stretch" Width="307" Style="{DynamicResource ListBoxStyle}" DisplayMemberPath="Name" MouseDoubleClick="LsbActions_MouseDoubleClick"/>
+        <StackPanel VerticalAlignment="Bottom" Margin="10,0,0,10" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Content="Add Web Action Pack" HorizontalAlignment="Left" Style="{DynamicResource ButtonStyle}"/>
+            <Button Content="Remove Web Action Pack" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{DynamicResource ButtonStyle}"/>
+        </StackPanel>
         <TextBlock HorizontalAlignment="Left" Margin="259,90,0,0" TextWrapping="Wrap" Text="Double click on an action to read more" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="9" Width="181"/>
-
     </Grid>
     <Window.Resources>
         <ResourceDictionary>

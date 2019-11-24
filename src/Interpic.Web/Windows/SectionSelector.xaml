@@ -6,24 +6,45 @@
         xmlns:local="clr-namespace:Interpic.Web.Windows"
         x:Class="Interpic.Web.Windows.NodeSelector"
         mc:Ignorable="d"
-        Title="Select a node" Height="500" Width="412" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/SectionWhite.png" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        FontFamily="Verdana"
+        FontSize="14"
+        Foreground="White"
+        Title="Select a node" Height="500" Width="412" MinHeight="300" MinWidth="350" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" Icon="/Interpic.UI;component/Icons/SectionWhite.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Button x:Name="btnSelect" Content="Select" HorizontalAlignment="Left" Margin="319,429,0,0" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnSelect_Click"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,429,0,0" VerticalAlignment="Top" Width="75" Style="{DynamicResource ButtonStyle}" Click="btnCancel_Click"/>
-
-        <TreeView x:Name="tvNodes" Margin="10,123,12,47"  Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0" Foreground="White" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectedItemChanged="tvNodes_SelectedItemChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <Image HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Source="/Interpic.UI;component/Icons/SectionWhite.png" Width="48"/>
+            <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="10,0" TextWrapping="Wrap" Text="Select A Node" VerticalAlignment="Center" FontSize="22"/>
+        </StackPanel>
+        <TreeView x:Name="tvNodes" Grid.Row="2" Margin="10,0" Background="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="0" Foreground="White" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectedItemChanged="tvNodes_SelectedItemChanged">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
                       Color="#FF00AADE" />
             </TreeView.Resources>
         </TreeView>
-        <Image HorizontalAlignment="Left" Height="48" Margin="10,10,0,0" VerticalAlignment="Top" Width="48" Source="/Interpic.UI;component/Icons/SectionWhite.png"/>
-        <TextBlock x:Name="lbTitle" HorizontalAlignment="Left" Margin="63,19,0,0" TextWrapping="Wrap" Text="Select a node" VerticalAlignment="Top" FontSize="22" Foreground="White" FontFamily="Verdana" Width="219"/>
-        <TextBox x:Name="tbSearchQuery" HorizontalAlignment="Left" Height="23" Margin="63,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="219" Style="{DynamicResource TextBoxStyle}" SpellCheck.IsEnabled="True"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,81,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="14"/>
-        <Image x:Name="btnSearch" HorizontalAlignment="Left" Height="30" Margin="287,75,0,0" VerticalAlignment="Top" Width="30" Source="/Interpic.UI;component/Icons/Search.png" MouseUp="btnSearch_MouseUp"/>
-        <Image x:Name="btnPreviousSearchResult" HorizontalAlignment="Left" Height="30" Margin="321,75,0,0" VerticalAlignment="Top" Width="30" Source="/Interpic.UI;component/Icons/ArrowThickLeft.png" Visibility="Hidden" MouseUp="btnPreviousSearchResult_MouseUp"/>
-        <Image x:Name="btnNextSearchResult" HorizontalAlignment="Left" Height="30" Margin="357,75,0,0" VerticalAlignment="Top" Width="30" Source="/Interpic.UI;component/Icons/ArrowThickRight.png" Visibility="Hidden" MouseUp="btnNextSearchResult_MouseUp"/>
-        <TextBlock x:Name="lbSearchStatus" HorizontalAlignment="Left" Margin="63,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" FontSize="10" Width="333"/>
+        <StackPanel Grid.Row="1" Margin="10,0">
+            <TextBlock x:Name="lbSearchStatus" FontSize="9"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="35"/>
+                    <ColumnDefinition Width="35"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Search" VerticalAlignment="Center"/>
+                <TextBox x:Name="tbSearchQuery" HorizontalAlignment="Stretch" Grid.Column="1" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Style="{DynamicResource TextBoxStyle}"/>
+                <Image x:Name="btnSearch" HorizontalAlignment="Center" Height="30" Grid.Column="2" Margin="0,0,0,0" VerticalAlignment="Center" Width="30" Source="/Interpic.UI;component/Icons/Search.png" MouseUp="btnSearch_MouseUp"/>
+                <Image x:Name="btnPreviousSearchResult" HorizontalAlignment="Center" Height="30" Grid.Column="3" VerticalAlignment="Top" Width="30" Source="/Interpic.UI;component/Icons/ArrowThickLeft.png" Visibility="Hidden" MouseUp="btnPreviousSearchResult_MouseUp"/>
+                <Image x:Name="btnNextSearchResult" HorizontalAlignment="Center" Height="30" Grid.Column="4" VerticalAlignment="Top" Width="30" Source="/Interpic.UI;component/Icons/ArrowThickRight.png" Visibility="Hidden" MouseUp="btnNextSearchResult_MouseUp"/>
+            </Grid>
+        </StackPanel>
+        <Button x:Name="btnSelect" Grid.Row="3" Content="Select" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnSelect_Click"/>
+        <Button x:Name="btnCancel" Grid.Row="3" Content="Cancel" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle}" Click="btnCancel_Click"/>
     </Grid>
 </Window>
