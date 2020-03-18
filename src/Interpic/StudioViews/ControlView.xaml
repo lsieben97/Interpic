@@ -20,6 +20,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
             <Image x:Name="btnSettings" Width="24" Source="/Interpic.UI;component/Icons/SettingsWhite.png" ToolTip="Open settings" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" MouseUp="BtnSettings_MouseUp"/>
             <Image x:Name="btnRefresh" Width="24" Source="/Interpic.UI;component/Icons/GetManualSourceWhite.png" ToolTip="Refresh" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" MouseUp="BtnGetManualSource_MouseUp"/>
+            <Image x:Name="btnSelectBehaviours" Width="24" Source="/Interpic.UI;component/Icons/BehaviourWhite.png" ToolTip="Select Behaviours" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" MouseUp="btnSelectBehaviours_MouseUp"/>
             <Image x:Name="btnRemove" Width="24" Source="/Interpic.UI;component/Icons/RemoveWhite.png" ToolTip="Remove" Cursor="Hand" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5" MouseUp="BtnRemove_MouseUp"/>
         </StackPanel>
         <TextBox x:Name="tbControlDescription" Style="{DynamicResource TextBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Margin="10,0,10,5"/>

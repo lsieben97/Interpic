@@ -27,8 +27,11 @@ namespace Interpic.UI.Controls
         {
             FrameworkElement parent = Parent as FrameworkElement;
             FrameworkElement parentOfParent = parent.Parent as FrameworkElement;
-            gViewContent.Height = parentOfParent.ActualHeight - parent.ActualHeight - 63;
-            gViewContent.Width = parentOfParent.ActualWidth;
+            if (parentOfParent.ActualHeight != 0)
+            {
+                gViewContent.Height = parentOfParent.ActualHeight - parent.ActualHeight - 63;
+                gViewContent.Width = parentOfParent.ActualWidth;
+            }
         }
 
         public override void OnApplyTemplate()

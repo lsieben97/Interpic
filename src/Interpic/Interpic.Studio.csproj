@@ -81,6 +81,7 @@
       <DependentUpon>PageListItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="DLLManager.cs" />
+    <Compile Include="ExtensionRepsentingStudioEnvironment.cs" />
     <Compile Include="Functional\Packages.cs" />
     <Compile Include="Functional\StudioTabs.cs" />
     <Compile Include="InternalModels\PackageCache.cs" />
@@ -97,6 +98,10 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="StudioViews\ControlStudioView.cs" />
+    <Compile Include="StudioViews\ManageBehaviours.xaml.cs">
+      <DependentUpon>ManageBehaviours.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudioViews\ManageBehavioursStudioView.cs" />
     <Compile Include="StudioViews\ManageVersionsStudioView.cs" />
     <Compile Include="StudioViews\SectionStudioView.cs" />
     <Compile Include="StudioViews\PageStudioView.cs" />
@@ -110,6 +115,7 @@
     <Compile Include="StudioViews\SectionView.xaml.cs">
       <DependentUpon>SectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tasks\Behaviours\ExecuteActionTask.cs" />
     <Compile Include="Tasks\CleanUpAfterPackageCreationTask.cs" />
     <Compile Include="Tasks\CreatePackageManifestTask.cs" />
     <Compile Include="Tasks\CreateProjectFilesTask.cs" />
@@ -117,6 +123,7 @@
     <Compile Include="Tasks\LoadGlobalSettingsTask.cs" />
     <Compile Include="Tasks\CleanPackageCacheTask.cs" />
     <Compile Include="Tasks\CreatePackageTask.cs" />
+    <Compile Include="Tasks\LoadBehavioursTask.cs" />
     <Compile Include="Tasks\PreparePackageContentsTask.cs" />
     <Compile Include="Tasks\SavePackageCacheTask.cs" />
     <Compile Include="Tasks\LoadPackageCacheTask.cs" />
@@ -132,6 +139,18 @@
     </Compile>
     <Compile Include="Windows\AddControl.xaml.cs">
       <DependentUpon>AddControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Behaviours\AddBehaviour.xaml.cs">
+      <DependentUpon>AddBehaviour.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Behaviours\AddWebAction.xaml.cs">
+      <DependentUpon>AddWebAction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Behaviours\ManageWebActions.xaml.cs">
+      <DependentUpon>ManageWebActions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Behaviours\PickWebBehaviours.xaml.cs">
+      <DependentUpon>PickWebBehaviours.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Build.xaml.cs">
       <DependentUpon>Build.xaml</DependentUpon>
@@ -205,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="StudioViews\ManageBehaviours.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StudioViews\PageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -224,6 +247,22 @@
     <Page Include="Windows\AddControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Behaviours\AddBehaviour.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Behaviours\AddWebAction.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Behaviours\ManageWebActions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Behaviours\PickWebBehaviours.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Build.xaml">
       <SubType>Designer</SubType>
@@ -327,6 +366,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

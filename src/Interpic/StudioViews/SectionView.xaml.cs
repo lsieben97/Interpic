@@ -1,6 +1,8 @@
 ﻿using Interpic.Models;
 using Interpic.Studio.Controls;
+using Interpic.Studio.Windows.Behaviours;
 using Interpic.UI.Controls;
+using Interpic.Utils;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -116,6 +118,14 @@ namespace Interpic.Studio.StudioViews
         private void BtnAddControl_Click(object sender, RoutedEventArgs e)
         {
             Studio.AddControl(Section, true);
+        }
+
+        private void btnSelectBehaviours_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PickBehaviours pickBehavioursWindow = new PickBehaviours(Studio.GetBehaviourConfiguration().Behaviours, Section.Behaviours);
+            pickBehavioursWindow.ShowDialog();
+            Section.Behaviours = pickBehavioursWindow.SelectedBehaviours;
+            Section.BehaviourIds = BehaviourUtils.GetBehaviourIds(Section.Behaviours);
         }
     }
 }

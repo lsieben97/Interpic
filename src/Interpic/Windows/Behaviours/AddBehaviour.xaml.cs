@@ -1,29 +1,31 @@
 ﻿using Interpic.Alerts;
+using Interpic.Models.Behaviours;
 using Interpic.Web.Behaviours.Models;
+using Interpic.Web.Behaviours.Windows;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Interpic.Web.Behaviours.Windows
+namespace Interpic.Studio.Windows.Behaviours
 {
     /// <summary>
     /// Interaction logic for AddBehaviour.xaml
     /// </summary>
     public partial class AddBehaviour : Window
     {
-        private readonly List<WebAction> availableActions;
-        private readonly List<WebBehaviour> availableWebBehaviours;
+        private readonly List<Action> availableActions;
+        private readonly List<Behaviour> availableWebBehaviours;
         private readonly bool edit;
-        private ObservableCollection<WebAction> webActions = new ObservableCollection<WebAction>();
-        public WebBehaviour WebBehaviour { get; set; }
+        private ObservableCollection<Action> webActions = new ObservableCollection<Action>();
+        public Behaviour WebBehaviour { get; set; }
 
-        public AddBehaviour(List<WebAction> availableActions, List<WebBehaviour> availableWebBehaviours, bool edit = false)
+        public AddBehaviour(List<Action> availableActions, List<Behaviour> availableBehaviours, bool edit = false)
         {
             InitializeComponent();
             this.availableActions = availableActions;
-            this.availableWebBehaviours = availableWebBehaviours;
+            this.availableWebBehaviours = availableBehaviours;
             this.edit = edit;
 
             lsbWebActions.ItemsSource = webActions;
@@ -35,7 +37,7 @@ namespace Interpic.Web.Behaviours.Windows
             {
                 if (!edit)
                 {
-                    WebBehaviour = new WebBehaviour();
+                    WebBehaviour = new Behaviour();
                 }
 
                 WebBehaviour.Name = tbName.Text;
@@ -75,7 +77,7 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnRemove_Click(object sender, RoutedEventArgs e)
         {
-            WebAction webAction = (WebAction)lsbWebActions.SelectedItem;
+            Action webAction = (Action)lsbWebActions.SelectedItem;
             if (ConfirmAlert.Show($"Web action '{webAction.Name}' will be removed.").DialogResult.Value)
             {
                 webActions.Remove(webAction);
@@ -84,7 +86,7 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnNew_Click(object sender, RoutedEventArgs e)
         {
-            AddWebAction addWebActionDialog = new AddWebAction(availableActions, availableWebBehaviours);
+            AddAction addWebActionDialog = new AddAction(availableActions, availableWebBehaviours);
             addWebActionDialog.ShowDialog();
             if (addWebActionDialog.WebAction != null)
             {
@@ -94,12 +96,12 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
-            AddWebAction editWebActionDialog = new AddWebAction(availableActions, availableWebBehaviours, true);
-            editWebActionDialog.WebAction = (WebAction)lsbWebActions.SelectedItem;
+            AddAction editWebActionDialog = new AddAction(availableActions, availableWebBehaviours, true);
+            editWebActionDialog.WebAction = (Action)lsbWebActions.SelectedItem;
             editWebActionDialog.ShowDialog();
             if (editWebActionDialog.WebAction != null)
             {
-                webActions[webActions.IndexOf((WebAction)lsbWebActions.SelectedItem)] = editWebActionDialog.WebAction;
+                webActions[webActions.IndexOf((Action)lsbWebActions.SelectedItem)] = editWebActionDialog.WebAction;
             }
         }
 
@@ -121,7 +123,7 @@ namespace Interpic.Web.Behaviours.Windows
             {
                 tbName.Text = WebBehaviour.Name;
                 tbDescription.Text = WebBehaviour.Description;
-                webActions = new ObservableCollection<WebAction>(WebBehaviour.Actions);
+                webActions = new ObservableCollection<Action>(WebBehaviour.Actions);
             }
         }
     }

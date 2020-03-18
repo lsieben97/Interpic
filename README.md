@@ -11,14 +11,18 @@ The concept of interpic comes from html image maps: the ablilty for a user to cl
 ## Project status
 This project is in beta. there is a lot to be done before v1.0  
 
-### Todo before V1.0
+Currently behaviours are now part of the studio environment. This means that any `IProjectTypeProvider` can specify whether the project supports behaviours through a `ProjectCapabilities` object.
+
+**Behaviours are currently not tested** as the project is overhauled to add dependency injection and subsequently unit testing.
+
+## Todo before V1.0
 - [ ] Add context menu to manual tree.
 - [ ] Add rename action for all manual items.
 - [ ] Change selectors to be able to present a UI to select 1 or more manual items and expose through `IStudioEnvironment`.
 - [ ] Add Migrations. Migrations are a way of advancing a manual to a new version of the software that the manual is for.
 - [ ] Add migration previews. Migration previews are a way for a project type provider to 'peek' at the changes in the software and generate a changes report. The user can then accept, remove or save the report for later use.
 - [ ] Add version history through migrations.
-- [ ] Move behaviours into the studio. The studio will manage behaviours while extension specific implementations provide custom functionality.
+- [x] Move behaviours into the studio. The studio will manage behaviours while extension specific implementations provide custom functionality.
 - [ ] Add more behaviours to the base package.
 - [ ] Allow extensions to be able to add menu items to menus form other extensions.
 - [ ] Add screenshot viewer with highlights of sections / controls.
@@ -27,7 +31,7 @@ This project is in beta. there is a lot to be done before v1.0
 - [ ] add editors. An editor is a window that floats on top of a textbox and provides help with inputting text in the output format of the project.
 - [ ] Add HTML output type together with web studio. Web studio is a quick way of creating html template files. complex editing tasks will be forwarded to external editors like VS-Code or Atom.
 - [ ] Add CLI interface so a manual can be generated as part of the build process of an application.
-- [ ] Add Bulk actions extension to privide optional bulk actions to the studio. (will also test the extension system)
+- [ ] Add Bulk actions extension to provide optional bulk actions to the studio. (will also test the extension system)
 
 ### After V1.0
 - [ ] Behaviour scripts, micro programming language to specify the actions of a behaviour.

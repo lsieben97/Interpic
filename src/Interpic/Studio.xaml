@@ -76,6 +76,16 @@
                         <Image Source="/Interpic.UI;component/Icons/SettingsWhite.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem x:Name="miManageBehaviours" Header="Manage Behaviours" MouseEnter="DisplayControlHint" Tag="Open the Manage behaviours tab." Click="miManageBehaviours_Click">
+                    <MenuItem.Icon>
+                        <Image Source="/Interpic.UI;component/Icons/BehaviourWhite.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="miManageActions" Header="Manage Actions" MouseEnter="DisplayControlHint" Tag="Open the Manage actions tab." Click="miManageActions_Click">
+                    <MenuItem.Icon>
+                        <Image Source="/Interpic.UI;component/Icons/BehaviourWhite.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Build">
                 <MenuItem x:Name="miBuildProject" Header="Manual" MouseEnter="DisplayControlHint" Tag="Build the project." Click="miBuildProject_Click">
@@ -163,7 +173,7 @@
                 <TextBlock FontFamily="Verdana" FontSize="17" Text="Double-click on a manual item on the left to view it here." Foreground="White"/>
             </StackPanel>
         </Grid>
-        
+
         <Grid Margin="0,0,1,0" Grid.Row="4" Grid.ColumnSpan="2" Background="{DynamicResource Brush05}">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
                 <Image x:Name="imOfflineModeIndicator" Source="/Interpic.UI;component/Icons/OfflineModeRed.png" Width="20" Margin="12,0,0,0" ToolTip="Offline mode is active. Click to disable." MouseUp="ImOfflineModeIndicator_MouseUp" Visibility="Collapsed"/>

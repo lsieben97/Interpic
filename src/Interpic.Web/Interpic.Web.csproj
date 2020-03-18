@@ -66,12 +66,11 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Providers\BasicSourceProvider.cs" />
     <Compile Include="RegularExpressions.cs" />
-    <Compile Include="Tasks\ExecuteWebBehavioursTask.cs" />
-    <Compile Include="Tasks\ExecuteWebBehaviourTask.cs" />
     <Compile Include="Tasks\FindWebControlsTask.cs" />
     <Compile Include="Tasks\SearchXmlNodeTask.cs" />
     <Compile Include="UrlValidator.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="WebBehaviourExecutionContext.cs" />
     <Compile Include="WebControlFinder.cs" />
     <Compile Include="WebExtension.cs" />
     <Compile Include="WebPageExtensions.cs" />

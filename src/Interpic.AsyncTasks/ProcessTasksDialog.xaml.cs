@@ -257,18 +257,21 @@ namespace Interpic.AsyncTasks
             {
                 if (!canceling)
                 {
-                    if (TaskToExecute.IsCancelable)
+                    if (TaskToExecute != null)
                     {
-                        canceling = true;
-                        lbTaskName.Text += " - Canceling...";
-                        pbProgress.IsIndeterminate = true;
-                        TaskToExecute.CancellationTokenSource.Cancel();
+                        if (TaskToExecute.IsCancelable)
+                        {
+                            canceling = true;
+                            lbTaskName.Text += " - Canceling...";
+                            pbProgress.IsIndeterminate = true;
+                            TaskToExecute.CancellationTokenSource.Cancel();
+                        }
+                        else
+                        {
+                            ErrorAlert.Show("The current task cannot be canceled.");
+                        }
+                        e.Cancel = true;
                     }
-                    else
-                    {
-                        ErrorAlert.Show("The current task cannot be canceled.");
-                    }
-                    e.Cancel = true;
                 }
             }
 

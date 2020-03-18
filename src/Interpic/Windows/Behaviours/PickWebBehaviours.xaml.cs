@@ -1,34 +1,35 @@
-﻿using Interpic.Web.Behaviours.Models;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Web.Behaviours.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Interpic.Web.Behaviours.Windows
+namespace Interpic.Studio.Windows.Behaviours
 {
     /// <summary>
     /// Interaction logic for PickWebBehaviours.xaml
     /// </summary>
-    public partial class PickWebBehaviours : Window
+    public partial class PickBehaviours : Window
     {
-        private readonly ObservableCollection<WebBehaviour> availableBehaviours;
+        private readonly ObservableCollection<Behaviour> availableBehaviours;
 
-        public ObservableCollection<WebBehaviour> SelectedBehaviours { get; set; }
+        public ObservableCollection<Behaviour> SelectedBehaviours { get; set; }
 
-        public PickWebBehaviours(List<WebBehaviour> availableBehaviours, List<WebBehaviour> selectedBehaviours)
+        public PickBehaviours(List<Behaviour> availableBehaviours, ObservableCollection<Behaviour> selectedBehaviours)
         {
             InitializeComponent();
-            this.availableBehaviours = new ObservableCollection<WebBehaviour>(availableBehaviours);
-            SelectedBehaviours = new ObservableCollection<WebBehaviour>(selectedBehaviours);
+            this.availableBehaviours = new ObservableCollection<Behaviour>(availableBehaviours);
+            SelectedBehaviours = selectedBehaviours;
             lsbSelectedBehaviours.ItemsSource = SelectedBehaviours;
             lsbAvailableBehaviours.ItemsSource = this.availableBehaviours;
         }
 
-        public PickWebBehaviours(List<WebBehaviour> availableBehaviours)
+        public PickBehaviours(List<Behaviour> availableBehaviours)
         {
             InitializeComponent();
-            this.availableBehaviours = new ObservableCollection<WebBehaviour>(availableBehaviours);
-            SelectedBehaviours = new ObservableCollection<WebBehaviour>();
+            this.availableBehaviours = new ObservableCollection<Behaviour>(availableBehaviours);
+            SelectedBehaviours = new ObservableCollection<Behaviour>();
             lsbSelectedBehaviours.ItemsSource = SelectedBehaviours;
             lsbAvailableBehaviours.ItemsSource = this.availableBehaviours;
         }
@@ -49,14 +50,14 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnAddToSelected_Click(object sender, RoutedEventArgs e)
         {
-            WebBehaviour selectedbehaviour = (WebBehaviour)lsbAvailableBehaviours.SelectedValue;
+            Behaviour selectedbehaviour = (Behaviour)lsbAvailableBehaviours.SelectedValue;
             SelectedBehaviours.Add(selectedbehaviour);
             availableBehaviours.Remove(selectedbehaviour);
         }
 
         private void BtnRemoveFromSelected_Click(object sender, RoutedEventArgs e)
         {
-            WebBehaviour selectedbehaviour = (WebBehaviour)lsbSelectedBehaviours.SelectedValue;
+            Behaviour selectedbehaviour = (Behaviour)lsbSelectedBehaviours.SelectedValue;
             SelectedBehaviours.Remove(selectedbehaviour);
             availableBehaviours.Add(selectedbehaviour);
         }

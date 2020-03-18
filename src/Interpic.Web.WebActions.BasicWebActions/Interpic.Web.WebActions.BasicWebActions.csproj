@@ -54,6 +54,10 @@
     <Compile Include="SetValue.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interpic.Models\Interpic.Models.csproj">
+      <Project>{0C2B5F62-9F46-487E-A16E-090A2B8F5DBE}</Project>
+      <Name>Interpic.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpic.Settings\Interpic.Settings.csproj">
       <Project>{90F34232-79A3-4904-B093-FCFB4DCA3666}</Project>
       <Name>Interpic.Settings</Name>

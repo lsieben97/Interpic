@@ -1,4 +1,6 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Settings;
+using System.Collections.Generic;
 
 namespace Interpic.Models.Extensions
 {
@@ -117,5 +119,11 @@ namespace Interpic.Models.Extensions
         (Page page, bool succes) RefreshPage(Page page, Models.Version version, Project project);
 
         InternetUsage InternetUsage { get; set; }
+
+        IBehaviourExecutionContext GetBehaviourExecutionContext();
+
+        ProjectCapabilities ProjectCapabilities { get; set; }
+
+        List<ActionPack> GetBuildInActionPacks();
     }
 }

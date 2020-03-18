@@ -121,9 +121,12 @@ namespace Interpic.Studio.Windows
                 {
                     project.Versions = new ObservableCollection<Models.Version>();
                     project.Versions.Add(newVersionDialog.Version);
-                    ProcessTaskDialog dialog = new ProcessTaskDialog(new CreateProjectFilesTask(project));
+                    List<AsyncTask> tasks = new List<AsyncTask>();
+                    tasks.Add(new CreateProjectFilesTask(project));
+                    tasks.Add(new SaveProjectTask(project));
+                    ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks);
                     dialog.ShowDialog();
-                    if (!dialog.TaskToExecute.IsCanceled)
+                    if (!dialog.AllTasksCanceled)
                     {
                         Close();
                     }

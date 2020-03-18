@@ -1,4 +1,5 @@
 ﻿using Interpic.Alerts;
+using Interpic.Models.Behaviours;
 using Interpic.Settings;
 using Interpic.Web.Behaviours.Models;
 using System;
@@ -12,22 +13,22 @@ namespace Interpic.Web.Behaviours.Windows
     /// <summary>
     /// Interaction logic for AddWebAction.xaml
     /// </summary>
-    public partial class AddWebAction : Window
+    public partial class AddAction : Window
     {
-        private readonly List<WebAction> availableActions;
-        private readonly List<WebBehaviour> availableBehaviours;
+        private readonly List<Interpic.Models.Behaviours.Action> availableActions;
+        private readonly List<Behaviour> availableBehaviours;
         private readonly bool edit;
         private SettingsCollection parameters;
 
-        public WebAction WebAction { get; set; }
-        public AddWebAction(List<WebAction> availableActions, List<WebBehaviour> availableBehaviours, bool edit = false)
+        public Interpic.Models.Behaviours.Action WebAction { get; set; }
+        public AddAction(List<Interpic.Models.Behaviours.Action> availableActions, List<Behaviour> availableBehaviours, bool edit = false)
         {
             InitializeComponent();
             this.availableActions = availableActions;
             this.availableBehaviours = availableBehaviours;
             this.edit = edit;
             cbbType.ItemsSource = availableActions;
-            availableBehaviours.Insert(0, WebBehaviour.None);
+            availableBehaviours.Insert(0, Behaviour.None);
             cbbBehaviourWhenFalse.ItemsSource = availableBehaviours;
             cbbBehaviourWhenTrue.ItemsSource = availableBehaviours;
         }
@@ -39,9 +40,9 @@ namespace Interpic.Web.Behaviours.Windows
                 cbbType.SelectedValue = WebAction.Id;
                 parameters = WebAction.Parameters;
                 btnSetParameters.IsEnabled = parameters == null;
-                if (WebAction.Type == WebAction.WebActionType.Check)
+                if (WebAction.Type == Interpic.Models.Behaviours.Action.ActionType.Check)
                 {
-                    CheckWebAction checkWebAction = WebAction as CheckWebAction;
+                    CheckAction checkWebAction = WebAction as CheckAction;
                     cbbBehaviourWhenFalse.SelectedItem = checkWebAction.BehaviourWhenFalse;
                     cbbBehaviourWhenTrue.SelectedItem = checkWebAction.BehaviourWhenTrue;
                 }
@@ -61,12 +62,12 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void CbbType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WebAction webAction = availableActions.Find(webaction => webaction.Id == cbbType.SelectedValue.ToString());
+            Interpic.Models.Behaviours.Action webAction = availableActions.Find(webaction => webaction.Id == cbbType.SelectedValue.ToString());
             webAction.Parameters = webAction.GetDefaultParameters();
             parameters = webAction.Parameters;
             
             btnSetParameters.IsEnabled = parameters != null;
-            if (webAction.Type == WebAction.WebActionType.Action)
+            if (webAction.Type == Interpic.Models.Behaviours.Action.ActionType.Action)
             {
                 cbbBehaviourWhenFalse.IsEnabled = false;
                 cbbBehaviourWhenTrue.IsEnabled = false;
@@ -91,11 +92,11 @@ namespace Interpic.Web.Behaviours.Windows
                 WebAction = availableActions.Find(webaction => webaction.Id == cbbType.SelectedValue.ToString());
                 WebAction.Parameters = parameters;
 
-                if (WebAction.Type == WebAction.WebActionType.Check)
+                if (WebAction.Type == Interpic.Models.Behaviours.Action.ActionType.Check)
                 {
-                    CheckWebAction checkWebAction = WebAction as CheckWebAction;
-                    checkWebAction.BehaviourWhenFalse = (WebBehaviour)cbbBehaviourWhenFalse.SelectedItem;
-                    checkWebAction.BehaviourWhenTrue = (WebBehaviour)cbbBehaviourWhenTrue.SelectedItem;
+                    CheckAction checkWebAction = WebAction as CheckAction;
+                    checkWebAction.BehaviourWhenFalse = (Behaviour)cbbBehaviourWhenFalse.SelectedItem;
+                    checkWebAction.BehaviourWhenTrue = (Behaviour)cbbBehaviourWhenTrue.SelectedItem;
                     WebAction = checkWebAction;
                 }
                 Close();
@@ -108,7 +109,7 @@ namespace Interpic.Web.Behaviours.Windows
 
         private void BtnSetParameters_Click(object sender, RoutedEventArgs e)
         {
-            SettingsEditor settingsEditor = new SettingsEditor(parameters, new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute)), "Edit Parameters", "Parameter description");
+            SettingsEditor settingsEditor = new SettingsEditor(parameters, new BitmapImage(new Uri("/Interpic.UI;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute)), "Edit Parameters", "Parameter description");
             bool? result = settingsEditor.ShowDialog();
             if (result.HasValue)
             {

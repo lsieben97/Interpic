@@ -1,8 +1,11 @@
-﻿using Interpic.Models.EventArgs;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Models.EventArgs;
 using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 
@@ -17,6 +20,7 @@ namespace Interpic.Models
         private ExtensionObject _extensions;
         private string _description;
         private bool isLoaded;
+        private ObservableCollection<Behaviour> behaviours = new ObservableCollection<Behaviour>();
 
         /// <summary>
         /// The name of the control.
@@ -44,6 +48,10 @@ namespace Interpic.Models
         /// The settings of the control.
         /// </summary>
         public SettingsCollection Settings { get => _settings; set { _settings = value; RaisePropertyChanged("Settings"); } }
+
+        public ObservableCollection<Behaviour> Behaviours { get => behaviours; set { behaviours = value; RaisePropertyChanged("Behaviours"); } }
+
+        public List<string> BehaviourIds { get; set; }
 
         /// <summary>
         /// Whether the control has settings.

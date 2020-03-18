@@ -1,5 +1,7 @@
 ﻿using Interpic.Models;
+using Interpic.Studio.Windows.Behaviours;
 using Interpic.UI.Controls;
+using Interpic.Utils;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -80,6 +82,14 @@ namespace Interpic.Studio.StudioViews
             {
                 btnRefresh.Visibility = Control.IsLoaded ? Visibility.Collapsed : Visibility.Visible;
             }
+        }
+
+        private void btnSelectBehaviours_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PickBehaviours pickBehavioursWindow = new PickBehaviours(Studio.GetBehaviourConfiguration().Behaviours, Control.Behaviours);
+            pickBehavioursWindow.ShowDialog();
+            Control.Behaviours = pickBehavioursWindow.SelectedBehaviours;
+            Control.BehaviourIds = BehaviourUtils.GetBehaviourIds(Control.Behaviours);
         }
     }
 }

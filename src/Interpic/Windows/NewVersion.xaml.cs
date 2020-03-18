@@ -1,4 +1,5 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Alerts;
+using Interpic.Settings;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -63,6 +64,11 @@ namespace Interpic.Studio.Windows
         }
         private void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
+            if (! versionSettings.Validate())
+            {
+                WarningAlert.Show("Invalid settings. One or more settings are not filled in.");
+                return;
+            }
             if (! edit)
             {
                 Version = new Models.Version();

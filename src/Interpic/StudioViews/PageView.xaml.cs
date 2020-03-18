@@ -1,6 +1,8 @@
 ﻿using Interpic.Models;
 using Interpic.Studio.Controls;
+using Interpic.Studio.Windows.Behaviours;
 using Interpic.UI.Controls;
+using Interpic.Utils;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -110,6 +112,7 @@ namespace Interpic.Studio.StudioViews
             LoadSections();
             BindEvents();
             btnGetManualSource.Visibility = Page.IsLoaded ? Visibility.Collapsed : Visibility.Visible;
+            btnSelectBehaviours.Visibility = Studio.GetProjectCapabilities().Behaviours ? Visibility.Visible : Visibility.Collapsed;
             btnAddSection.Visibility = Page.Type == Models.Page.PAGE_TYPE_TEXT ? Visibility.Collapsed : Visibility.Visible;
             if (Page.Type == Models.Page.PAGE_TYPE_TEXT)
             {
@@ -126,6 +129,14 @@ namespace Interpic.Studio.StudioViews
         private void BtnAddSection_Click(object sender, RoutedEventArgs e)
         {
             Studio.AddSection(Page, true);
+        }
+
+        private void btnSelectBehaviours_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            PickBehaviours pickBehavioursWindow = new PickBehaviours(Studio.GetBehaviourConfiguration().Behaviours, Page.Behaviours);
+            pickBehavioursWindow.ShowDialog();
+            Page.Behaviours = pickBehavioursWindow.SelectedBehaviours;
+            Page.BehaviourIds = BehaviourUtils.GetBehaviourIds(Page.Behaviours);
         }
     }
 }

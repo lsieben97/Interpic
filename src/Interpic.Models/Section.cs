@@ -1,8 +1,10 @@
-﻿using Interpic.Models.EventArgs;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Models.EventArgs;
 using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -20,6 +22,7 @@ namespace Interpic.Models
         private ElementBounds _elementBounds;
         private ExtensionObject _extensions;
         private bool isLoaded;
+        private ObservableCollection<Behaviour> behaviours = new ObservableCollection<Behaviour>();
 
         /// <summary>
         /// The name of the Section.
@@ -53,6 +56,10 @@ namespace Interpic.Models
         /// The bounds of the element.
         /// </summary>
         public ElementBounds ElementBounds { get => _elementBounds; set { _elementBounds = value; RaisePropertyChanged("ElementBounds"); } }
+
+        public ObservableCollection<Behaviour> Behaviours { get => behaviours; set { behaviours = value; RaisePropertyChanged("Behaviours"); } }
+
+        public List<string> BehaviourIds { get; set; }
 
         [JsonIgnore]
         public TreeViewItem TreeViewItem { get; set; }

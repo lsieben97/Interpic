@@ -4,6 +4,8 @@
     {
         Home,
         Version,
-        ManageVersions
+        ManageVersions,
+        ManageBehaviours,
+        ManageActions
     }
 }

@@ -1,4 +1,5 @@
-﻿using Interpic.Settings;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
 using System;
@@ -24,6 +25,7 @@ namespace Interpic.Models
         private ExtensionObject _extensions;
         private ObservableCollection<Version> _versions;
         private ObservableCollection<TrustedAssembly> _trustedAssemblies = new ObservableCollection<TrustedAssembly>();
+        private BehaviourConfiguration behaviourConfiguration;
 
         public string Name { get => _name; set { _name = value; RaisePropertyChanged("Name"); } }
         public string Path { get => _path; set { _path = value; RaisePropertyChanged("Path"); } }
@@ -53,6 +55,9 @@ namespace Interpic.Models
         public TreeViewItem TreeViewItem { get; set; }
 
         public bool HasSettingsAvailable { get => Settings != null; }
+
+        [JsonIgnore]
+        public BehaviourConfiguration BehaviourConfiguration { get => behaviourConfiguration; set { behaviourConfiguration = value; RaisePropertyChanged("BehaviourConfiguration"); } }
 
         [JsonIgnore]
         public ExtensionObject Extensions

@@ -1,4 +1,5 @@
 ﻿using Interpic.AsyncTasks;
+using Interpic.Models.Behaviours;
 using Interpic.Models.Extensions;
 using Interpic.Models.Packaging;
 using System.Collections.Generic;
@@ -47,6 +48,8 @@ namespace Interpic.Models
         /// The project that's currently loaded.
         /// </summary>
         Project CurrentProject { get; }
+
+        Version CurrentVersion { get; }
 
         /// <summary>
         /// Logger to write to the log for this session.
@@ -111,6 +114,16 @@ namespace Interpic.Models
         bool RemoveManualItem(Page page, bool confirm);
         bool RemoveManualItem(Section section, bool confirm);
         bool RemoveManualItem(Control control, bool confirm);
+
+        BehaviourConfiguration GetBehaviourConfiguration();
+
+        bool RemoveBehaviour(string behaviourId);
+        void UpdateBehaviour(string behaviourId, Behaviour newBehaviour);
+        void AddBehaviour(Behaviour behaviour);
+        bool ExecuteBehaviour(string behaviourId, IBehaviourExecutionContext context);
+        bool ExecuteBehaviour(Behaviour behaviour, IBehaviourExecutionContext context);
+
+        ProjectCapabilities GetProjectCapabilities();
 
         #region Events
         /// <summary>

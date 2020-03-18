@@ -10,7 +10,7 @@ namespace Interpic.Studio.Tasks
         public Project Project { get; set; }
         public StartStudioTask()
         {
-            TaskName = "Starting Studio;...";
+            TaskName = "Starting Studio...";
             TaskDescription = "Interpic Studio v" + App.VERSION;
             ActionName = "Start Studio";
             IsIndeterminate = true;

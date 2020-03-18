@@ -1,4 +1,5 @@
-﻿using Interpic.Models.EventArgs;
+﻿using Interpic.Models.Behaviours;
+using Interpic.Models.EventArgs;
 using Interpic.Settings;
 using Interpic.Studio.RecursiveChangeListener;
 using Newtonsoft.Json;
@@ -26,6 +27,7 @@ namespace Interpic.Models
         private ExtensionObject _extensions;
         private List<string> _siblingPageIds;
         private bool isLoaded;
+        private ObservableCollection<Behaviour> behaviours = new ObservableCollection<Behaviour>();
 
         /// <summary>
         /// The name of the page.
@@ -78,6 +80,11 @@ namespace Interpic.Models
         public SettingsCollection Settings { get => _settings; set { _settings = value; RaisePropertyChanged("Settings"); } }
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [JsonIgnore]
+        public ObservableCollection<Behaviour> Behaviours { get => behaviours; set { behaviours = value; RaisePropertyChanged("Behaviours"); } }
+
+        public List<string> BehaviourIds { get; set; }
 
         /// <summary>
         /// Occurs before the page settings window is shown for this page.

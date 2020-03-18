@@ -1,4 +1,5 @@
 ﻿using Interpic.Alerts;
+using Interpic.Models.Behaviours;
 using Interpic.Web.Behaviours.Models;
 using System.Linq;
 using System.Text;
@@ -6,21 +7,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Interpic.Web.Behaviours.Windows
+namespace Interpic.Studio.Windows.Behaviours
 {
     /// <summary>
     /// Interaction logic for ManageWebActions.xaml
     /// </summary>
-    public partial class ManageWebActions : Window
+    public partial class ManageActions : Window
     {
-        public WebBehaviourConfiguration Configuration { get; set; }
+        public BehaviourConfiguration Configuration { get; set; }
 
-        public ManageWebActions()
+        public ManageActions()
         {
             InitializeComponent();
         }
 
-        public ManageWebActions(WebBehaviourConfiguration configuration)
+        public ManageActions(BehaviourConfiguration configuration)
         {
             InitializeComponent();
             Configuration = configuration;
@@ -31,7 +32,7 @@ namespace Interpic.Web.Behaviours.Windows
         {
             if (lsbPacks.SelectedItem != null)
             {
-                lsbActions.ItemsSource = ((WebActionPack)lsbPacks.SelectedItem).GetActions();
+                lsbActions.ItemsSource = ((ActionPack)lsbPacks.SelectedItem).GetActions();
             }
         }
 
@@ -39,12 +40,12 @@ namespace Interpic.Web.Behaviours.Windows
         {
             if (lsbActions.SelectedItem != null)
             {
-                WebAction action = (WebAction)lsbActions.SelectedItem;
+                Action action = (Action)lsbActions.SelectedItem;
                 InfoAlert.Show($"{action.Name}\n\n{action.Description}\n\nType:\n{action.Type.ToString()}\n\nParameters:\n{GetParametersForAction(action)}");
             }
         }
 
-        private string GetParametersForAction(WebAction action)
+        private string GetParametersForAction(Action action)
         {
             if (action.Parameters == null)
             {

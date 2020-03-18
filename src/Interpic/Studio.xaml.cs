@@ -27,6 +27,9 @@ using Interpic.Studio.InternalModels;
 using Interpic.Utils;
 using Interpic.Studio.StudioViews;
 using Interpic.UI.Controls;
+using Interpic.Models.Behaviours;
+using Interpic.Studio.Tasks.Behaviours;
+using Interpic.Studio.Windows.Behaviours;
 
 namespace Interpic.Studio
 {
@@ -39,6 +42,7 @@ namespace Interpic.Studio
         internal static List<PackageDefinition> packageDefinitions = new List<PackageDefinition>();
         internal static List<IProjectBuilder> AvailableBuilders = new List<IProjectBuilder>();
         internal static PackageCache packageCache;
+        internal static Extension extensionRepresentingStudio = new ExtensionRepsentingStudioEnvironment();
         internal static Studio Instance { get; set; }
         private DispatcherTimer checkTimer = new DispatcherTimer();
         private Models.Page currentPage;
@@ -92,6 +96,8 @@ namespace Interpic.Studio
 
         public bool OfflineMode => offlineMode;
 
+        public Models.Version CurrentVersion => currentVersion;
+
         public Studio(Models.Project project)
         {
             Instance = this;
@@ -118,8 +124,48 @@ namespace Interpic.Studio
 
             InitializeObjectModel(project);
 
+            InitializeBehaviours();
+
             CheckDeveloperMode();
             BindEvents();
+
+            InitializeStudio();
+        }
+
+        private void InitializeStudio()
+        {
+            if (CurrentProject.IsNew)
+            {
+                InitializeNewProject();
+            }
+            projectChangeListener = ChangeListener.Create(CurrentProject);
+            projectChangeListener.PropertyChanged += ProjectChangeListener_PropertyChanged;
+            projectChangeListener.CollectionChanged += ProjectChangeListener_CollectionChanged;
+            currentVersion = CurrentProject.Versions[0];
+            CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
+            currentVersion = CurrentProject.Versions.Single(version => version.Id == CurrentProject.LastViewedVersionId);
+            currentVersion.IsCurrent = true;
+            lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
+            lsbVersions.ItemsSource = CurrentProject.Versions;
+            lsbVersions.SelectedValue = currentVersion.Id;
+            lsbVersions.SelectionChanged += LsbVersions_SelectionChanged;
+            RedrawTreeView();
+            (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
+            InitializeUI();
+            if (App.GlobalSettings.GetBooleanSetting("showHomeOnProjectLoad"))
+            {
+                CreateAndShowStudioTab("Home", ImageUtils.ImageFromString("HomeWhite.png"), new HomeStudioView());
+            }
+        }
+
+        private void InitializeBehaviours()
+        {
+            if (ProjectTypeProvider.ProjectCapabilities.Behaviours)
+            {
+
+                ProcessTaskDialog dialog = new ProcessTaskDialog(new LoadBehavioursTask(this, CurrentProject));
+                dialog.ShowDialog();
+            }
         }
 
         private void InitializeProjectBuilder(Project project)
@@ -155,8 +201,6 @@ namespace Interpic.Studio
 
         private void InitializeNewProject()
         {
-            currentVersion = CurrentProject.Versions[0];
-            CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
             lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
             if (CurrentProject.HasSettingsAvailable)
             {
@@ -245,9 +289,11 @@ namespace Interpic.Studio
                 }
             }
 
-            projectChangeListener = ChangeListener.Create(CurrentProject);
-            projectChangeListener.PropertyChanged += ProjectChangeListener_PropertyChanged;
-            projectChangeListener.CollectionChanged += ProjectChangeListener_CollectionChanged;
+            if (CurrentProject.IsNew)
+            {
+                currentVersion = CurrentProject.Versions[0];
+                CurrentProject.LastViewedVersionId = CurrentProject.Versions[0].Id;
+            }
             ProjectLoaded?.Invoke(this as IStudioEnvironment, new ProjectLoadedEventArgs(this, CurrentProject));
         }
 
@@ -292,23 +338,7 @@ namespace Interpic.Studio
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CurrentProject.IsNew)
-            {
-                InitializeNewProject();
-            }
-            currentVersion = CurrentProject.Versions.Single(version => version.Id == CurrentProject.LastViewedVersionId);
-            currentVersion.IsCurrent = true;
-            lbCurrentVersion.Text = "Current version: " + currentVersion.Name;
-            lsbVersions.ItemsSource = CurrentProject.Versions;
-            lsbVersions.SelectedValue = currentVersion.Id;
-            lsbVersions.SelectionChanged += LsbVersions_SelectionChanged;
-            RedrawTreeView();
-            (tvManualTree.Items[0] as TreeViewItem).IsSelected = true;
-            InitializeUI();
-            if (App.GlobalSettings.GetBooleanSetting("showHomeOnProjectLoad"))
-            {
-                CreateAndShowStudioTab("Home", ImageUtils.ImageFromString("HomeWhite.png"), new HomeStudioView());
-            }
+
 
         }
 
@@ -342,15 +372,17 @@ namespace Interpic.Studio
                 tvManualTree.Items.RemoveAt(0);
             }
             tvManualTree.Items.Add(Projects.GetTreeViewForProject(CurrentProject, currentVersion));
-            foreach (object item in tvManualTree.Items)
+            if (this.Visibility != Visibility.Collapsed)
             {
-                TreeViewItem treeItem = tvManualTree.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                if (treeItem != null)
-                    ExpandAll(treeItem, true);
-                treeItem.IsExpanded = true;
+                foreach (object item in tvManualTree.Items)
+                {
+                    TreeViewItem treeItem = tvManualTree.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                    if (treeItem != null)
+                        ExpandAll(treeItem, true);
+                    treeItem.IsExpanded = true;
+                }
+                tvManualTree.SelectedValuePath = previousPath;
             }
-            tvManualTree.SelectedValuePath = previousPath;
-
         }
 
         internal void ReselectPage(Models.Page page)
@@ -364,61 +396,6 @@ namespace Interpic.Studio
             Project project = CurrentProject;
             new ExtensionManager(ref project).ShowDialog();
             CurrentProject = project;
-        }
-
-        private void AddPage()
-        {
-            //if (offlineMode && ProjectTypeProvider.InternetUsage.RefreshingPage)
-            //{
-            //    ShowOfflineError();
-            //    return;
-            //}
-            //NewPage dialog = new NewPage();
-            //dialog.ShowDialog();
-            //if (dialog.Page != null)
-            //{
-            //    if (ProjectTypeProvider.GetDefaultPageSettings() != null)
-            //    {
-            //        dialog.Page.Settings = ProjectTypeProvider.GetDefaultPageSettings();
-            //        if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
-            //        {
-            //            InfoAlert.Show("The page settings dialog will now be shown to further configure the page.");
-            //        }
-            //        SettingsCollection oldSettings = dialog.Page.Settings.Copy();
-            //        PageSettingsEventArgs eventArgs = new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, null);
-            //        PageSettingsOpening?.Invoke(this, eventArgs);
-            //        ShowPageSettings(dialog, eventArgs);
-            //        PageSettingsOpened?.Invoke(this, new PageSettingsEventArgs(this, dialog.Page, dialog.Page.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Page.Settings)));
-            //    }
-            //    Project currentProject = CurrentProject;
-            //    Models.Page currentPage = dialog.Page;
-            //    Models.Version currentVersion = this.currentVersion;
-            //    string document = ProjectTypeProvider.GetSourceProvider().GetSource(ref currentProject, ref currentVersion, ref currentPage);
-            //    CurrentProject = currentProject;
-            //    this.currentVersion = currentVersion;
-            //    dialog.Page = currentPage;
-            //    if (document != null)
-            //    {
-            //        dialog.Page.Source = document;
-            //        dialog.Page.Parent = currentVersion;
-
-            //        (Models.Page page, bool succes) result = ProjectTypeProvider.RefreshPage(dialog.Page, currentVersion, CurrentProject);
-            //        if (result.succes)
-            //        {
-            //            if (result.page.Screenshot != null)
-            //            {
-            //                currentVersion.Pages.Add(dialog.Page);
-            //                RedrawTreeView();
-            //                dialog.Page.TreeViewItem.IsSelected = true;
-            //            }
-            //            else
-            //            {
-            //                SetStatusBar("page not added because refreshing failed.");
-            //            }
-            //        }
-            //    }
-
-            //}
         }
 
         private void ShowPageSettings(NewPage dialog, PageSettingsEventArgs eventArgs)
@@ -779,6 +756,37 @@ namespace Interpic.Studio
             {
                 ErrorAlert.Show("Invalid settings entered.");
                 ShowSectionSettings(ref dialog, eventArgs);
+            }
+        }
+
+        private void ShowVersionSettings(ref NewVersion dialog, VersionSettingsEventArgs eventArgs)
+        {
+            SettingsEditor editor = new SettingsEditor(eventArgs.Settings);
+            editor.ShowDialog();
+            if (editor.DialogResult.HasValue)
+            {
+                if (editor.DialogResult.Value == true)
+                {
+                    if (editor.SettingsCollection.Validate())
+                    {
+                        dialog.Version.Settings = editor.SettingsCollection;
+                    }
+                    else
+                    {
+                        ErrorAlert.Show("Invalid settings entered.");
+                        ShowVersionSettings(ref dialog, eventArgs);
+                    }
+                }
+                else
+                {
+                    ErrorAlert.Show("Invalid settings entered.");
+                    ShowVersionSettings(ref dialog, eventArgs);
+                }
+            }
+            else
+            {
+                ErrorAlert.Show("Invalid settings entered.");
+                ShowVersionSettings(ref dialog, eventArgs);
             }
         }
 
@@ -1218,6 +1226,17 @@ namespace Interpic.Studio
                         CreateAndShowStudioTab(CurrentProject.Name, ImageUtils.ImageFromString("ProjectWhite.png"), studioView);
                     }
                     break;
+                case BuildInStudioViews.ManageBehaviours:
+                    if (TabWithContentExists("ManageBehaviours"))
+                    {
+                        ShowExistingTab("ManageBehaviours");
+                    }
+                    else
+                    {
+                        ManageBehavioursStudioView studioView = new ManageBehavioursStudioView(CurrentProject);
+                        CreateAndShowStudioTab("Manage Behaviours", ImageUtils.ImageFromString("BehaviourWhite.png"), studioView);
+                    }
+                    break;
             }
         }
 
@@ -1463,6 +1482,18 @@ namespace Interpic.Studio
             if (dialog.ShowDialog().Value)
             {
                 dialog.Version.Parent = CurrentProject;
+                if (dialog.Version.HasSettingsAvailable)
+                {
+                    if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                    {
+                        InfoAlert.Show("The version settings dialog will now be shown to further configure the version.");
+                    }
+                    SettingsCollection oldSettings = dialog.Version.Settings.Copy();
+                    VersionSettingsEventArgs eventArgs = new VersionSettingsEventArgs(this, dialog.Version, dialog.Version.Settings, null);
+                    VersionSettingsOpening?.Invoke(this, eventArgs);
+                    ShowVersionSettings(ref dialog, eventArgs);
+                    VersionSettingsOpened?.Invoke(this, new VersionSettingsEventArgs(this, dialog.Version, dialog.Version.Settings, SettingsCollection.GetChanges(oldSettings, dialog.Version.Settings)));
+                }
                 CurrentProject.Versions.Add(dialog.Version);
                 VersionAdded?.Invoke(this, new VersionEventArgs(this, dialog.Version));
                 if (autoSwitch)
@@ -1495,6 +1526,10 @@ namespace Interpic.Studio
                 dialog.Section.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
                 if (dialog.Section.HasSettingsAvailable)
                 {
+                    if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                    {
+                        InfoAlert.Show("The section settings dialog will now be shown to further configure the section.");
+                    }
                     SettingsCollection oldSettings = dialog.Section.Settings.Copy();
                     SectionSettingsEventArgs eventArgs = new SectionSettingsEventArgs(this, dialog.Section, dialog.Section.Settings, null);
                     SectionSettingsOpening?.Invoke(this, eventArgs);
@@ -1556,6 +1591,10 @@ namespace Interpic.Studio
                 dialog.Control.Settings = ProjectTypeProvider.GetDefaultSectionSettings();
                 if (dialog.Control.HasSettingsAvailable)
                 {
+                    if (App.GlobalSettings.GetBooleanSetting("ShowInfoForSettings"))
+                    {
+                        InfoAlert.Show("The control settings dialog will now be shown to further configure the control.");
+                    }
                     SettingsCollection oldSettings = dialog.Control.Settings.Copy();
                     ControlSettingsEventArgs eventArgs = new ControlSettingsEventArgs(this, dialog.Control, dialog.Control.Settings, null);
                     ControlSettingsOpening?.Invoke(this, eventArgs);
@@ -1735,6 +1774,77 @@ namespace Interpic.Studio
         private void Image_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ShowBuiltinStudioView(BuildInStudioViews.ManageVersions);
+        }
+
+        private void miManageBehaviours_Click(object sender, RoutedEventArgs e)
+        {
+            ShowBuiltinStudioView(BuildInStudioViews.ManageBehaviours);
+        }
+
+        public BehaviourConfiguration GetBehaviourConfiguration()
+        {
+            return CurrentProject.BehaviourConfiguration;
+        }
+
+        public bool RemoveBehaviour(string behaviourId)
+        {
+            Behaviour behaviourToRemove = CurrentProject.BehaviourConfiguration.Behaviours.Find(b => b.Id == behaviourId);
+            if (behaviourToRemove != null)
+            {
+                CurrentProject.BehaviourConfiguration.Behaviours.Remove(behaviourToRemove);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void UpdateBehaviour(string behaviourId, Behaviour newBehaviour)
+        {
+            Behaviour oldBehaviour = CurrentProject.BehaviourConfiguration.Behaviours.Find((b) => b.Id == behaviourId);
+            CurrentProject.BehaviourConfiguration.Behaviours[CurrentProject.BehaviourConfiguration.Behaviours.IndexOf(oldBehaviour)] = newBehaviour;
+        }
+
+        public void AddBehaviour(Behaviour behaviour)
+        {
+            CurrentProject.BehaviourConfiguration.Behaviours.Add(behaviour);
+        }
+
+        public bool ExecuteBehaviour(string behaviourId, IBehaviourExecutionContext context)
+        {
+            return ExecuteBehaviour(CurrentProject.BehaviourConfiguration.Behaviours.Find((b) => b.Id == behaviourId), context);
+        }
+
+        public bool ExecuteBehaviour(Behaviour behaviour, IBehaviourExecutionContext context)
+        {
+            if (behaviour == null)
+            {
+                return false;
+            }
+
+            List<AsyncTask> tasks = new List<AsyncTask>();
+
+            foreach (Models.Behaviours.Action action in behaviour.Actions)
+            {
+                ExecuteActionTask task = new ExecuteActionTask(action, context, this);
+                tasks.Add(task);
+            }
+
+            ProcessTasksDialog dialog = new ProcessTasksDialog(ref tasks, "Executing actions...");
+            dialog.ShowDialog();
+
+            return dialog.AllTasksCanceled;
+        }
+
+        public ProjectCapabilities GetProjectCapabilities()
+        {
+            return ProjectTypeProvider.ProjectCapabilities;
+        }
+
+        private void miManageActions_Click(object sender, RoutedEventArgs e)
+        {
+            new ManageActions(CurrentProject.BehaviourConfiguration).ShowDialog();
         }
     }
 }

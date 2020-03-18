@@ -149,6 +149,7 @@
     <Resource Include="Icons\OfflineModeWhite.png" />
     <Resource Include="Icons\OpenWhite.png" />
     <Resource Include="Icons\Loading.png" />
+    <Resource Include="Icons\BehaviourWhite.png" />
     <Content Include="Themes\MetroDark\HowToApplyTheme.txt" />
   </ItemGroup>
   <ItemGroup>

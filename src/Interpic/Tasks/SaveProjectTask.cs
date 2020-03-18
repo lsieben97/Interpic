@@ -1,5 +1,8 @@
 ﻿using Interpic.Models;
 using Interpic.Studio.Functional;
+using Newtonsoft.Json;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Interpic.Studio.Tasks
@@ -28,6 +31,26 @@ namespace Interpic.Studio.Tasks
             if (result == false)
             {
                 Dialog.CancelAllTasks();
+            }
+
+            try
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                if (Project.BehaviourConfiguration == null)
+                {
+                    Project.BehaviourConfiguration = new Models.Behaviours.BehaviourConfiguration();
+                }
+
+                Project.BehaviourConfiguration.BehavioursJson = JsonConvert.SerializeObject(Project.BehaviourConfiguration.Behaviours, settings);
+                
+                File.WriteAllText(Project.ProjectFolder + "\\Behaviours.dat", JsonConvert.SerializeObject(Project.BehaviourConfiguration, settings));
+            }
+            catch (Exception ex)
+            {
+                Dialog.CancelAllTasks("Could not save web behaviour configuration:\n" + ex.Message);
             }
         }
     }

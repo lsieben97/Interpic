@@ -5,7 +5,6 @@ using Interpic.Models.Extensions;
 using Interpic.Models;
 using Interpic.Models.EventArgs;
 using Interpic.Settings;
-using Interpic.Web.Behaviours.Tasks;
 using Interpic.Web.Behaviours.Windows;
 using Interpic.Web.Providers;
 using Interpic.Web.Selenium.Tasks;
@@ -21,6 +20,7 @@ using Interpic.Web.Behaviours.Models;
 using Interpic.Web.WebActions.BasicWebActions;
 using Interpic.Web.Behaviours.Utils;
 using Interpic.Web.Tasks;
+using Interpic.Models.Behaviours;
 
 namespace Interpic.Web
 {
@@ -29,22 +29,11 @@ namespace Interpic.Web
         public IStudioEnvironment Studio { get; set; }
         public static Dictionary<BrowserType, Selenium.SeleniumWrapper> Selenium { get; set; } = new Dictionary<BrowserType, Selenium.SeleniumWrapper>();
         public InternetUsage InternetUsage { get; set; } = new InternetUsage();
-        public WebBehaviourConfiguration WebBehaviourConfiguration { get; set; }
+        public ProjectCapabilities ProjectCapabilities { get; set; } = new ProjectCapabilities() { Behaviours = true };
 
         public Settings.SettingsCollection GetDefaultControlSettings()
         {
-            SettingsCollection collection = new SettingsCollection();
-
-            Setting<string> webBehaviours = new Setting<string>();
-            webBehaviours.Key = "WebBehaviours";
-            webBehaviours.Name = "Web Behaviours";
-            webBehaviours.Description = "List of webbehaviours to execute when refreshing the control.";
-            webBehaviours.Value = string.Empty;
-            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
-
-            collection.TextSettings.Add(webBehaviours);
-            collection.Name = "Control settings";
-            return collection;
+            return null;
         }
 
         public Settings.SettingsCollection GetDefaultPageSettings()
@@ -57,15 +46,7 @@ namespace Interpic.Web
             baseUrl.Description = "URL of this page.\nThe base URL of the manual will be prepended to this value.";
             baseUrl.Value = "";
 
-            Setting<string> webBehaviours = new Setting<string>();
-            webBehaviours.Key = "WebBehaviours";
-            webBehaviours.Name = "Web Behaviours";
-            webBehaviours.Description = "List of webbehaviours to execute when refreshing the page.";
-            webBehaviours.Value = string.Empty;
-            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
-
             collection.TextSettings.Add(baseUrl);
-            collection.TextSettings.Add(webBehaviours);
             collection.Name = "Page settings";
             return collection;
         }
@@ -145,18 +126,7 @@ namespace Interpic.Web
 
         public Settings.SettingsCollection GetDefaultSectionSettings()
         {
-            SettingsCollection collection = new SettingsCollection();
-
-            Setting<string> webBehaviours = new Setting<string>();
-            webBehaviours.Key = "WebBehaviours";
-            webBehaviours.Name = "Web Behaviours";
-            webBehaviours.Description = "List of webbehaviours to execute when refreshing the section.";
-            webBehaviours.Value = string.Empty;
-            webBehaviours.Helper = new WebBehaviourSelectorSettingHelper();
-
-            collection.TextSettings.Add(webBehaviours);
-            collection.Name = "Section settings";
-            return collection;
+            return null;
         }
 
         public string GetProjectTypeDescription()
@@ -236,7 +206,7 @@ namespace Interpic.Web
             {
                 browserKey = "chromeSettings";
             }
-            else if(browserType == BrowserType.FireFox)
+            else if (browserType == BrowserType.FireFox)
             {
                 browserKey = "FirefoxSettings";
             }
@@ -270,95 +240,7 @@ namespace Interpic.Web
         {
             PrepareObjectModel();
             StartSelenium();
-            RegisterMenuItems();
-            LoadWebBehaviourConfiguration();
             Studio.RegisterPackageDefinition(new Models.Packaging.PackageDefinition() { Name = "Web action package", Extension = "iwp" });
-        }
-
-        private void LoadWebBehaviourConfiguration()
-        {
-            if (File.Exists(Studio.CurrentProject.ProjectFolder + "\\Webbehaviours.dat"))
-            {
-                LoadWebBehaviourConfigurationTask loadWebBehaviourConfigurationTask = new LoadWebBehaviourConfigurationTask(Studio.CurrentProject);
-                ProcessTaskDialog dialog = new ProcessTaskDialog(loadWebBehaviourConfigurationTask);
-                dialog.ShowDialog();
-                if (!dialog.TaskToExecute.IsCanceled)
-                {
-                    WebBehaviourConfiguration = loadWebBehaviourConfigurationTask.WebBehaviourConfiguration;
-                    WebBehaviourConfiguration.InternalWebActionPacks.Add(new BaseWebActionPack());
-                    WebBehaviour.AvailableBehaviours = WebBehaviourConfiguration.Behaviours;
-                    List<string> assembliesToLoad = WebBehaviourConfiguration.WebActionpacks.FindAll(pack => pack != "BasicWebActionsPack");
-                    if (assembliesToLoad.Count > 0)
-                    {
-
-                        List<LoadedAssembly> loadedAssemblies = Studio.GetDLLManager().LoadAssemblies(assembliesToLoad, WebExtension.Instance);
-                        foreach (LoadedAssembly assembly in loadedAssemblies)
-                        {
-                            try
-                            {
-                                Type packType = assembly.Assembly.GetExportedTypes().First(ass => ass.BaseType.Name == "WebActionPack");
-                                WebActionPack pack = Activator.CreateInstance<WebActionPack>();
-                                WebBehaviourConfiguration.InternalWebActionPacks.Add(pack);
-                            }
-                            catch (Exception ex)
-                            {
-                                ErrorAlert.Show($"Could not load web action pack from assembly {assembly.Path}:\n\n{ex.Message}");
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                WebBehaviourConfiguration configuration = new WebBehaviourConfiguration();
-                configuration.WebActionpacks.Add("BasicWebActionsPack");
-                configuration.InternalWebActionPacks.Add(new BaseWebActionPack());
-                WebBehaviourConfiguration = configuration;
-                SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, configuration);
-                ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
-                dialog.ShowDialog();
-            }
-        }
-
-        private void RegisterMenuItems()
-        {
-            MenuItem webToolsItem = new MenuItem("Web tools");
-
-            MenuItem behavioursMenuItem = new MenuItem("Web Behaviours");
-            behavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
-
-            MenuItem manageWebActionsMenuItem = new MenuItem("Manage Web Actions");
-            manageWebActionsMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
-            manageWebActionsMenuItem.Clicked += ManageWebActionsMenuItemClicked;
-            behavioursMenuItem.SubItems.Add(manageWebActionsMenuItem);
-
-            MenuItem manageBehavioursMenuItem = new MenuItem("Manage Web Behaviours");
-            manageBehavioursMenuItem.Icon = new BitmapImage(new Uri("/Interpic.Web.Icons;component/Icons/BehaviourWhite.png", UriKind.RelativeOrAbsolute));
-            manageBehavioursMenuItem.Clicked += ManageBehavioursMenuItemClicked;
-            behavioursMenuItem.SubItems.Add(manageBehavioursMenuItem);
-            webToolsItem.SubItems.Add(behavioursMenuItem);
-
-            Studio.RegisterExtensionMenuItem(webToolsItem);
-        }
-
-        private void ManageBehavioursMenuItemClicked(object sender, ProjectStateEventArgs e)
-        {
-            ManageWebBehaviours manageWebBehaviours = new ManageWebBehaviours(WebBehaviourConfiguration, Studio.CurrentProject);
-            //manageWebBehaviours.ShowDialog();
-            WebBehaviourConfiguration = manageWebBehaviours.Configuration;
-            SaveWebBehaviourConfigurationTask saveWebBehaviourConfigurationTask = new SaveWebBehaviourConfigurationTask(Studio.CurrentProject, WebBehaviourConfiguration);
-            ProcessTaskDialog dialog = new ProcessTaskDialog(saveWebBehaviourConfigurationTask);
-            dialog.ShowDialog();
-            if (! dialog.TaskToExecute.IsCanceled)
-            {
-                WebBehaviour.AvailableBehaviours = WebBehaviourConfiguration.Behaviours;
-            }
-        }
-
-        private void ManageWebActionsMenuItemClicked(object sender, ProjectStateEventArgs e)
-        {
-            ManageWebActions manageWebActions = new ManageWebActions(WebBehaviourConfiguration);
-            manageWebActions.ShowDialog();
         }
 
         private void StartSelenium()
@@ -387,9 +269,12 @@ namespace Interpic.Web
             {
                 foreach (Page page in version.Pages)
                 {
-                    HtmlDocument document = new HtmlDocument();
-                    document.LoadHtml(page.Source);
-                    page.Extensions = new WebPageExtensions(document);
+                    if (page.IsLoaded)
+                    {
+                        HtmlDocument document = new HtmlDocument();
+                        document.LoadHtml(page.Source);
+                        page.Extensions = new WebPageExtensions(document);
+                    }
                 }
             }
         }
@@ -450,15 +335,6 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (control.Settings.GetTextSetting("WebBehaviours") != string.Empty)
-                {
-                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(control.Settings.GetTextSetting("WebBehaviours"), null);
-                    executeWebBehavioursTask.PassThrough = true;
-                    executeWebBehavioursTask.PassThroughSource = "Selenium";
-                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
-                    tasks.Add(executeWebBehavioursTask);
-                }
-
                 GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(control.Identifier.Identifier);
                 getElementBoundsTask.PassThrough = true;
                 getElementBoundsTask.PassThroughSource = "Selenium";
@@ -500,15 +376,6 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (section.Settings.GetTextSetting("WebBehaviours") != string.Empty)
-                {
-                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(section.Settings.GetTextSetting("WebBehaviours"), null);
-                    executeWebBehavioursTask.PassThrough = true;
-                    executeWebBehavioursTask.PassThroughSource = "Selenium";
-                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
-                    tasks.Add(executeWebBehavioursTask);
-                }
-
                 GetElementBoundsTask getElementBoundsTask = new GetElementBoundsTask(section.SectionIdentifier.Identifier);
                 getElementBoundsTask.PassThrough = true;
                 getElementBoundsTask.PassThroughSource = "Selenium";
@@ -549,15 +416,6 @@ namespace Interpic.Web
                 navigateTask.PassThroughTarget = "Selenium";
                 tasks.Add(navigateTask);
 
-                if (page.Settings.GetTextSetting("WebBehaviours") != string.Empty)
-                {
-                    ExecuteWebBehavioursTask executeWebBehavioursTask = new ExecuteWebBehavioursTask(page.Settings.GetTextSetting("WebBehaviours"), null);
-                    executeWebBehavioursTask.PassThrough = true;
-                    executeWebBehavioursTask.PassThroughSource = "Selenium";
-                    executeWebBehavioursTask.PassThroughTarget = "Selenium";
-                    tasks.Add(executeWebBehavioursTask);
-                }
-
                 MakeScreenshotTask makeScreenshotTask = new MakeScreenshotTask();
                 makeScreenshotTask.PassThrough = true;
                 makeScreenshotTask.PassThroughSource = "Selenium";
@@ -594,7 +452,6 @@ namespace Interpic.Web
             baseUrl.Name = "Base URL";
             baseUrl.Description = "Base url of the website for the manual.\nPage urls will be appended to this value.";
             baseUrl.Validator = new UrlValidator();
-            baseUrl.Value = "";
 
             collection.TextSettings.Add(baseUrl);
 
@@ -629,6 +486,27 @@ namespace Interpic.Web
         public SettingsCollection GetDefaultTextPageSettings()
         {
             return null;
+        }
+
+        public IBehaviourExecutionContext GetBehaviourExecutionContext()
+        {
+            BrowserType type = GetBrowserType(Studio.CurrentVersion.Settings.GetMultipleChoiceSetting("BrowserType"));
+            if (CheckSelenium(type))
+            {
+                return new WebBehaviourExecutionContext(Selenium[type], Studio);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public List<ActionPack> GetBuildInActionPacks()
+        {
+            return new List<ActionPack>()
+            {
+                new BaseWebActionPack()
+            };
         }
     }
 }

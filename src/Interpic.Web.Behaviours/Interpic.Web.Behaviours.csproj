@@ -62,12 +62,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\CheckWebAction.cs" />
-    <Compile Include="Models\ElementSelector.cs" />
-    <Compile Include="Models\WebAction.cs" />
-    <Compile Include="Models\WebActionPack.cs" />
-    <Compile Include="Models\WebBehaviour.cs" />
-    <Compile Include="Models\WebBehaviourConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -81,30 +75,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Tasks\ExecuteWebActionTask.cs" />
-    <Compile Include="Tasks\LoadWebBehaviourConfigurationTask.cs" />
-    <Compile Include="Tasks\SaveWebBehaviourConfigurationTask.cs" />
     <Compile Include="Utils\ElementSelectorSettingHelper.cs" />
     <Compile Include="Utils\WebActionUtils.cs" />
-    <Compile Include="Utils\WebBehaviourSelectorSettingHelper.cs" />
-    <Compile Include="WebActionException.cs" />
-    <Compile Include="Windows\AddBehaviour.xaml.cs">
-      <DependentUpon>AddBehaviour.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\AddWebAction.xaml.cs">
-      <DependentUpon>AddWebAction.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ElementSelectorEditor.xaml.cs">
       <DependentUpon>ElementSelectorEditor.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\ManageWebActions.xaml.cs">
-      <DependentUpon>ManageWebActions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\ManageWebBehaviours.xaml.cs">
-      <DependentUpon>ManageWebBehaviours.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\PickWebBehaviours.xaml.cs">
-      <DependentUpon>PickWebBehaviours.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -147,29 +121,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Windows\AddBehaviour.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\AddWebAction.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="Windows\ElementSelectorEditor.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\ManageWebActions.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\ManageWebBehaviours.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\PickWebBehaviours.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
